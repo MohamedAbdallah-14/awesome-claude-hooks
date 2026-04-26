@@ -23,7 +23,7 @@ emit_annotation() {
   fi
 }
 
-VALID_EVENTS='^(PreToolUse|PostToolUse|Stop|SubagentStop|PreCompact|SessionStart|SessionEnd|Notification|UserPromptSubmit)( |$)'
+VALID_EVENTS='^(SessionStart|UserPromptSubmit|UserPromptExpansion|PreToolUse|PermissionRequest|PermissionDenied|PostToolUse|PostToolUseFailure|PostToolBatch|Notification|SubagentStart|SubagentStop|TaskCreated|TaskCompleted|Stop|StopFailure|TeammateIdle|InstructionsLoaded|ConfigChange|CwdChanged|FileChanged|WorktreeCreate|WorktreeRemove|PreCompact|PostCompact|Elicitation|ElicitationResult|SessionEnd)( |$)'
 
 errors=0
 checked=0

@@ -146,8 +146,16 @@ fi
 # ── decision ──────────────────────────────────────────────────────────────────
 
 if [[ -n "$BLOCK_REASON" ]]; then
-  jq -n --arg reason "$BLOCK_REASON" '{"decision":"block","reason":$reason}'
-  exit 2
+  jq -n --arg reason "$BLOCK_REASON" '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+  exit 0
 fi
 
 exit 0

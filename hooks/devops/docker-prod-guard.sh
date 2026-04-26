@@ -44,8 +44,14 @@ if ! echo "$COMMAND" | grep -qE '(^|[[:space:]])docker[[:space:]]'; then
 fi
 
 block() {
-  printf '{"decision":"block","reason":"docker command targets production container/volume. Set CLAUDE_ALLOW_DOCKER_PROD=1 to allow."}'
-  exit 2
+  jq -n '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: "docker command targets production container/volume. Set CLAUDE_ALLOW_DOCKER_PROD=1 to allow."
+    }
+  }'
+  exit 0
 }
 
 if [[ "${CLAUDE_ALLOW_DOCKER_PROD:-}" == "1" ]]; then

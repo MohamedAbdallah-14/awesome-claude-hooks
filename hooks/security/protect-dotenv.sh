@@ -86,8 +86,16 @@ if [[ "$IS_ENV_FILE" == "1" ]]; then
   jq -n \
     --arg path "$FILE_PATH" \
     --arg reason "Blocked: write to env file '${FILE_PATH}' is not allowed. Env files typically contain secrets and should be managed manually. Set CLAUDE_ALLOW_ENV_WRITES=1 to override." \
-    '{"decision":"block","reason":$reason}'
-  exit 2
+    '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+  exit 0
 fi
 
 exit 0

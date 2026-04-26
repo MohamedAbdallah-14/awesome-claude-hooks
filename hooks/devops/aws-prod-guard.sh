@@ -44,8 +44,14 @@ fi
 
 block() {
   local reason="$1"
-  printf '{"decision":"block","reason":"%s"}' "$reason"
-  exit 2
+  jq -n --arg reason "$reason" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: $reason
+    }
+  }'
+  exit 0
 }
 
 if [[ "${CLAUDE_ALLOW_AWS_PROD:-}" == "1" ]]; then

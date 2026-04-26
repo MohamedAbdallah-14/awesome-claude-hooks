@@ -231,27 +231,34 @@ select_hooks_in_category() {
 
 # ── build settings.json snippet ───────────────────────────────────────────────
 
-# Reads hook metadata from file header, emits a jq-compatible object:
-#   { "event": "Stop", "matcher": "", "command": "/abs/path/hook.sh" }
+# Full set of Claude Code hook events. Keep in sync with
+# scripts/lint-hooks.sh:VALID_EVENTS and docs/hook-contract.md.
+# Source: https://code.claude.com/docs/en/hooks
+HOOK_EVENT_NAMES='SessionStart|UserPromptSubmit|UserPromptExpansion|PreToolUse|PermissionRequest|PermissionDenied|PostToolUse|PostToolUseFailure|PostToolBatch|Notification|SubagentStart|SubagentStop|TaskCreated|TaskCompleted|Stop|StopFailure|TeammateIdle|InstructionsLoaded|ConfigChange|CwdChanged|FileChanged|WorktreeCreate|WorktreeRemove|PreCompact|PostCompact|Elicitation|ElicitationResult|SessionEnd'
+
+# Reads hook metadata from file header, emits one TSV row:
+#   <event>\t<matcher>\t<absolute_path>
+# Fails loudly when the header is missing or names an unknown event.
+# Silent fallback to Stop is gone — bad metadata should not install hooks
+# under the wrong event.
 get_hook_meta() {
   local fpath="$1"
   local event_line
-  event_line=$(grep -m1 '^# Event:' "$fpath" 2>/dev/null | sed 's/^# Event:[[:space:]]*//' | xargs || echo "Stop")
+  event_line=$(grep -m1 '^# Event:' "$fpath" 2>/dev/null | sed 's/^# Event:[[:space:]]*//' | xargs || true)
 
-  # Extract primary event name and optional matcher
+  if [[ -z "$event_line" ]]; then
+    err "Missing '# Event:' header in $fpath"
+    exit 1
+  fi
+
   local event matcher=""
-  if [[ "$event_line" =~ ^(PreToolUse|PostToolUse|Stop|SubagentStop|PreCompact)([[:space:]]+\(matcher:[[:space:]]*\"([^\"]+)\"\))? ]]; then
+  if [[ "$event_line" =~ ^($HOOK_EVENT_NAMES)([[:space:]]+\(matcher:[[:space:]]*\"([^\"]+)\"\))?[[:space:]]*$ ]]; then
     event="${BASH_REMATCH[1]}"
     matcher="${BASH_REMATCH[3]:-}"
-  elif [[ "$event_line" =~ (PreToolUse|PostToolUse|Stop|SubagentStop|PreCompact) ]]; then
-    event="${BASH_REMATCH[1]}"
-    # Try extracting matcher from parentheses
-    if [[ "$event_line" =~ matcher:[[:space:]]*\"([^\"]+)\" ]]; then
-      matcher="${BASH_REMATCH[1]}"
-    fi
   else
-    # Default to Stop if we can't parse
-    event="Stop"
+    err "Unknown hook event in $fpath: '$event_line'"
+    err "Valid events: $(printf '%s' "$HOOK_EVENT_NAMES" | tr '|' ' ')"
+    exit 1
   fi
 
   printf '%s\t%s\t%s\n' "$event" "$matcher" "$fpath"

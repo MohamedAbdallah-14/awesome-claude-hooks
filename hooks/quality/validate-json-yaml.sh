@@ -126,8 +126,14 @@ except json.JSONDecodeError as e:
     jq -n \
       --arg path "$FILE_PATH" \
       --arg err "$PARSE_ERROR" \
-      '{"decision":"block","reason":("Blocked: content for " + $path + " is not valid JSON.\n\nParse error: " + $err + "\n\nFix the JSON syntax before writing.")}'
-    exit 2
+      '{
+        hookSpecificOutput: {
+          hookEventName: "PreToolUse",
+          permissionDecision: "deny",
+          permissionDecisionReason: ("Blocked: content for " + $path + " is not valid JSON.\n\nParse error: " + $err + "\n\nFix the JSON syntax before writing.")
+        }
+      }'
+    exit 0
     ;;
 
   *.yaml|*.yml)
@@ -160,8 +166,14 @@ except yaml.YAMLError as e:
     jq -n \
       --arg path "$FILE_PATH" \
       --arg err "$PARSE_ERROR" \
-      '{"decision":"block","reason":("Blocked: content for " + $path + " is not valid YAML.\n\nParse error: " + $err + "\n\nFix the YAML syntax before writing.")}'
-    exit 2
+      '{
+        hookSpecificOutput: {
+          hookEventName: "PreToolUse",
+          permissionDecision: "deny",
+          permissionDecisionReason: ("Blocked: content for " + $path + " is not valid YAML.\n\nParse error: " + $err + "\n\nFix the YAML syntax before writing.")
+        }
+      }'
+    exit 0
     ;;
 esac
 

@@ -132,8 +132,16 @@ Set CLAUDE_CONFLICT_SKIP=1 to silence this warning."
 
 if [[ "${CLAUDE_BLOCK_CONFLICT_EDITS:-0}" == "1" ]]; then
   BLOCK_REASON="Blocked: '${FILE_PATH}' has ${OURS_COUNT} unresolved merge conflict(s). Resolve the conflict markers before editing. Set CLAUDE_CONFLICT_SKIP=1 to bypass."
-  jq -n --arg reason "$BLOCK_REASON" '{"decision":"block","reason":$reason}'
-  exit 2
+  jq -n --arg reason "$BLOCK_REASON" '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+  exit 0
 fi
 
 jq -n --arg ctx "$WARN_MSG" '{"decision":"approve","context":$ctx}'

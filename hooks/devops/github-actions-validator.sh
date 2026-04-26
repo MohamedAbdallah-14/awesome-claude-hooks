@@ -78,10 +78,15 @@ except yaml.YAMLError as e:
     print(str(e))
     sys.exit(1)
 " 2>&1) || {
-  # Escape double quotes in error for valid JSON
-  SAFE_ERROR=$(printf '%s' "$YAML_ERROR" | tr '"' "'" | tr '\n' ' ')
-  printf '{"decision":"block","reason":"GitHub Actions workflow has invalid YAML: %s"}' "$SAFE_ERROR"
-  exit 2
+  # jq handles all the JSON escaping (quotes, newlines, control chars).
+  jq -n --arg err "$YAML_ERROR" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: ("GitHub Actions workflow has invalid YAML: " + $err)
+    }
+  }'
+  exit 0
 }
 
 exit 0
