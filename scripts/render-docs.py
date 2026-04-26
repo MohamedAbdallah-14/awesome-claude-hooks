@@ -149,7 +149,7 @@ def render_hooks_md(reg: dict) -> str:
         lines.append("|------|-------|------|-------------|")
         for h in sorted(by_cat[cat], key=lambda x: x["id"]):
             lines.append(
-                f"| [`{h['id']}`]({h['path']}) | {fmt_event(h)} | "
+                f"| [`{h['id']}`](../{h['path']}) | {fmt_event(h)} | "
                 f"`{h['risk_level']}` | {h['description'] or '_no description_'} |"
             )
         lines.append("")
@@ -172,7 +172,7 @@ def render_events_md(reg: dict) -> str:
         for h in sorted(by_event[ev], key=lambda x: x["id"]):
             matcher = f" matcher `{h['matcher']}`" if h.get("matcher") else ""
             lines.append(
-                f"- [`{h['id']}`]({h['path']}){matcher} — {h['description'] or 'no description'}"
+                f"- [`{h['id']}`](../{h['path']}){matcher} — {h['description'] or 'no description'}"
             )
         lines.append("")
     return "\n".join(lines)
@@ -189,7 +189,7 @@ def render_compat_md(reg: dict) -> str:
     ]
     for h in sorted(reg["hooks"], key=lambda x: (x["category"], x["id"])):
         lines.append(
-            f"| [`{h['id']}`]({h['path']}) | {fmt_event(h)} | "
+            f"| [`{h['id']}`](../{h['path']}) | {fmt_event(h)} | "
             f"{fmt_yes_no(h['blocks_actions'])} | "
             f"{fmt_yes_no(h['network_access'])} | "
             f"{fmt_yes_no(h['writes_files'])} | "
