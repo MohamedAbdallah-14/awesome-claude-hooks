@@ -4,6 +4,24 @@
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Blocks destructive AWS CLI commands targeting production profiles.
 #
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "PreToolUse": [
+#         {
+#           "matcher": "Bash",
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/devops/aws-prod-guard.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 
 set -euo pipefail
 

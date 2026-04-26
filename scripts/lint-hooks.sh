@@ -23,7 +23,7 @@ emit_annotation() {
   fi
 }
 
-VALID_EVENTS='^(PreToolUse|PostToolUse|Stop|SubagentStop|PreCompact|SessionStart|Notification|UserPromptSubmit)( |$)'
+VALID_EVENTS='^(PreToolUse|PostToolUse|Stop|SubagentStop|PreCompact|SessionStart|SessionEnd|Notification|UserPromptSubmit)( |$)'
 
 errors=0
 checked=0
@@ -79,8 +79,10 @@ while IFS= read -r f; do
     fail "$rel" "missing 'set -euo pipefail'"
   fi
 
-  # 7. Install JSON snippet must parse. Extract the JSON-ish block from the
-  # header comments by counting brace depth, and feed it to jq.
+  # 7. Install JSON snippet must be present and parse. Extract the JSON-ish
+  # block from the header comments by counting brace depth — but skip braces
+  # inside double-quoted strings so a JSON value like "use {scope}" doesn't
+  # throw off the depth counter.
   install_block=$(awk '
     /^# Install/ { in_install = 1; next }
     in_install && !capturing && /^#[[:space:]]*\{/ { capturing = 1; depth = 0 }
@@ -88,17 +90,20 @@ while IFS= read -r f; do
       line = $0
       sub(/^#[[:space:]]?/, "", line)
       print line
-      n_open = gsub(/\{/, "{", line)
-      n_close = gsub(/\}/, "}", line)
+      # Strip "..." string literals before counting braces.
+      stripped = line
+      gsub(/"[^"]*"/, "", stripped)
+      n_open  = gsub(/\{/, "&", stripped)
+      n_close = gsub(/\}/, "&", stripped)
       depth += n_open - n_close
       if (depth <= 0) { capturing = 0; in_install = 0; exit }
     }
   ' "$f")
 
-  if [[ -n "$install_block" ]]; then
-    if ! printf '%s\n' "$install_block" | jq empty >/dev/null 2>&1; then
-      fail "$rel" "install snippet in header is not valid JSON"
-    fi
+  if [[ -z "$install_block" ]]; then
+    fail "$rel" "missing required '# Install' JSON snippet in header"
+  elif ! printf '%s\n' "$install_block" | jq empty >/dev/null 2>&1; then
+    fail "$rel" "install snippet in header is not valid JSON"
   fi
 done < <(find "$HOOKS_DIR" -mindepth 2 -name '*.sh' -type f -not -path '*/_lib/*' | sort)
 

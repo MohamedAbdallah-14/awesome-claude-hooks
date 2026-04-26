@@ -4,6 +4,24 @@
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Blocks kubectl commands targeting production clusters or namespaces.
 #
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "PreToolUse": [
+#         {
+#           "matcher": "Bash",
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/devops/kubernetes-prod-guard.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 
 set -euo pipefail
 

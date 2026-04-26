@@ -5,6 +5,24 @@
 # Description: Blocks docker rm/stop/kill/volume rm on containers or volumes whose name
 #              contains prod, production, or live.
 #
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "PreToolUse": [
+#         {
+#           "matcher": "Bash",
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/devops/docker-prod-guard.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 
 set -euo pipefail
 

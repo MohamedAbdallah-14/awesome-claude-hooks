@@ -5,6 +5,24 @@
 # Description: Silently logs infrastructure commands (terraform, kubectl, aws, gcloud, helm, docker)
 #              to ~/.claude/infra-audit.log. Always exits 0.
 #
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "PostToolUse": [
+#         {
+#           "matcher": "Bash",
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/devops/infra-audit-log.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 
 set -euo pipefail
 

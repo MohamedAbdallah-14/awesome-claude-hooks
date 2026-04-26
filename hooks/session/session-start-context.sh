@@ -4,6 +4,23 @@
 # Event:       SessionStart
 # Description: Injects useful project context at session start: current branch, recent commits, modified files, and any project notes.
 #
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "SessionStart": [
+#         {
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/session/session-start-context.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 set -euo pipefail
 
 INPUT=$(cat)

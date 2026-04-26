@@ -37,6 +37,10 @@ jobs:
             capture && /^## \[/ { exit }
             capture { print }
           ' CHANGELOG.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "::error::No CHANGELOG section found for [${version}]" >&2
+            exit 1
+          fi
 
       - name: Create release
         env:

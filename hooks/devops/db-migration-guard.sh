@@ -5,6 +5,24 @@
 # Description: Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM,
 #              and migration rollback commands.
 #
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "PreToolUse": [
+#         {
+#           "matcher": "Bash",
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/devops/db-migration-guard.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 
 set -euo pipefail
 

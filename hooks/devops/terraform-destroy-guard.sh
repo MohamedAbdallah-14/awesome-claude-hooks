@@ -5,6 +5,24 @@
 # Description: Blocks terraform destroy unless CLAUDE_ALLOW_DESTROY=1 is set.
 #              Warns (but allows) on terraform apply -destroy.
 #
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "PreToolUse": [
+#         {
+#           "matcher": "Bash",
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/devops/terraform-destroy-guard.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 
 set -euo pipefail
 

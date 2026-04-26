@@ -10,9 +10,15 @@ help:
 	@echo "  make all            lint + test"
 
 install-deps:
-	@command -v brew >/dev/null 2>&1 && brew install shellcheck bats-core jq || \
-	  (command -v apt-get >/dev/null 2>&1 && sudo apt-get update && sudo apt-get install -y shellcheck bats jq python3-yaml) || \
-	  (echo "Install shellcheck, bats-core, jq manually for your platform" && exit 1)
+	@if command -v brew >/dev/null 2>&1; then \
+	  brew install shellcheck bats-core jq && \
+	  python3 -m pip install --user --break-system-packages pyyaml; \
+	elif command -v apt-get >/dev/null 2>&1; then \
+	  sudo apt-get update && sudo apt-get install -y shellcheck bats jq python3-yaml; \
+	else \
+	  echo "Install shellcheck, bats-core, jq, pyyaml manually for your platform" >&2; \
+	  exit 1; \
+	fi
 
 shellcheck:
 	@shellcheck -S warning hooks/**/*.sh hooks/_lib/*.sh scripts/*.sh

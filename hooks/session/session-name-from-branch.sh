@@ -4,6 +4,23 @@
 # Event:       SessionStart
 # Description: Names the session after the current git branch. Slugifies the branch name and adds it to the session context.
 #
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "SessionStart": [
+#         {
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/session/session-name-from-branch.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 set -euo pipefail
 
 INPUT=$(cat)

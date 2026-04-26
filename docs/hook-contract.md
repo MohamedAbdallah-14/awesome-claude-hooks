@@ -4,14 +4,14 @@ Every hook in `hooks/<category>/<name>.sh` must follow this shape. The CI gate `
 
 ## File header
 
-The first 60 lines of every hook must contain (in this order):
+The first 80 lines of every hook must contain (in this order):
 
 1. Shebang: `#!/usr/bin/env bash`
 2. SPDX line: `# SPDX-License-Identifier: CC0-1.0`
 3. `# Hook name:` — kebab-case, matches the basename minus `.sh`
-4. `# Event:` — one of `PreToolUse`, `PostToolUse`, `Stop`, `SubagentStop`, `PreCompact`, `SessionStart`, `Notification`, `UserPromptSubmit`. May include a matcher: `PreToolUse (matcher: "Write|Edit")`
+4. `# Event:` — one of `PreToolUse`, `PostToolUse`, `Stop`, `SubagentStop`, `PreCompact`, `SessionStart`, `SessionEnd`, `Notification`, `UserPromptSubmit`. May include a matcher: `PreToolUse (matcher: "Write|Edit")`
 5. `# Description:` — one or more lines describing what the hook does
-6. `# Install` — a code block containing a JSON snippet that parses cleanly through `jq`
+6. `# Install` — a code block containing a JSON snippet that parses cleanly through `jq`. Required for every hook.
 
 `set -euo pipefail` must appear before any logic.
 

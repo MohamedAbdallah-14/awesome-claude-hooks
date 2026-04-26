@@ -24,7 +24,12 @@ PROJECT_SETTINGS=".claude/settings.json"
 ALL_CATEGORIES=()
 while IFS= read -r dir; do
   ALL_CATEGORIES+=("$(basename "$dir")")
-done < <(find "${HOOKS_DIR}" -mindepth 1 -maxdepth 1 -type d | sort)
+done < <(find "${HOOKS_DIR}" -mindepth 1 -maxdepth 1 -type d -not -name '_*' | sort)
+
+if [[ ${#ALL_CATEGORIES[@]} -eq 0 ]]; then
+  echo "No hook categories found under ${HOOKS_DIR}" >&2
+  exit 1
+fi
 
 # ── argument parsing ──────────────────────────────────────────────────────────
 

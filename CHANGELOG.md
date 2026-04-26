@@ -19,7 +19,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version
 - `hooks/security/protect-dotenv.sh`: no longer false-positives on `.env.example`, `.env.sample`, `.env.template`, `.env.dist`.
 - `hooks/quality/test-coverage-check.sh`: collapsed shadowed dart pattern.
 - `hooks/prompt/auto-approve-readonly.sh`: corrected event from the non-existent `PermissionRequest` to `PreToolUse` with a `Read|Glob|Grep|LS|WebSearch|WebFetch|TodoRead` matcher.
-- README count adjusted to the actual 78 hooks.
+- README count adjusted to the actual 79 hooks (78 prior + the new cross-platform `desktop-notify`).
 
 ### Fixed
 - `hooks/git/auto-create-branch.sh`: malformed install snippet (stray indentation broke the JSON).
@@ -28,4 +28,4 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version
 ## [0.1.0] — 2026-04-26
 
 ### Added
-- Initial release: 78 production-ready hooks across 12 categories, 11 stack-specific starter packs, interactive installer.
+- Initial release: 79 production-ready hooks across 12 categories, 11 stack-specific starter packs, interactive installer.
