@@ -1,7 +1,28 @@
 #!/usr/bin/env bash
-# PreToolUse | Bash
-# Blocks docker rm/stop/kill/volume rm on containers or volumes whose name
-# contains prod, production, or live.
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   docker-prod-guard
+# Event:       PreToolUse (matcher: "Bash")
+# Description: Blocks docker rm/stop/kill/volume rm on containers or volumes whose name
+#              contains prod, production, or live.
+#
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "PreToolUse": [
+#         {
+#           "matcher": "Bash",
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/devops/docker-prod-guard.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 
 set -euo pipefail
 

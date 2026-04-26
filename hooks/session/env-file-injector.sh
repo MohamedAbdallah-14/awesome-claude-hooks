@@ -1,4 +1,26 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   env-file-injector
+# Event:       SessionStart
+# Description: Loads .claude.env from the repo root and injects key=value pairs as session context. Redacts values that look like real secrets.
+#
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "SessionStart": [
+#         {
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/session/env-file-injector.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 set -euo pipefail
 
 INPUT=$(cat)

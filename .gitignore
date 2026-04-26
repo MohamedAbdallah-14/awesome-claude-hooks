@@ -36,3 +36,4 @@ settings.json.backup
 
 # macOS extended attribute junk that leaks into zips
 __MACOSX/
+AGENTS.md

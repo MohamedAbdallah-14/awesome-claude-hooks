@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   motivational-quote
 # Event:       Stop
 # Description: Prints a random programmer quote in a simple ASCII box when

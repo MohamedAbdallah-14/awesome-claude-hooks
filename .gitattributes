@@ -1,0 +1,8 @@
+# gitattributes is last-match-wins, so the catch-all goes first, then
+# the specific overrides for shell scripts (LF only, even on Windows
+# checkouts, otherwise the shebang breaks).
+* text=auto
+
+*.sh   text eol=lf
+*.bash text eol=lf
+*.bats text eol=lf

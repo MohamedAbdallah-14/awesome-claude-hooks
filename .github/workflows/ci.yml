@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Read-only by default. PRs from forks cannot escalate.
+permissions:
+  contents: read
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y shellcheck
+          shellcheck --version
+
+      # `-f gcc` produces output GitHub Actions parses into PR annotations.
+      # The matcher line below registers the gcc-style pattern.
+      - name: Enable problem matcher
+        run: echo "::add-matcher::.github/matchers/shellcheck.json"
+
+      - name: Run shellcheck
+        run: |
+          set -o pipefail
+          shellcheck -S warning -f gcc \
+            hooks/**/*.sh hooks/_lib/*.sh scripts/*.sh
+
+  lint-hooks:
+    name: hook contract lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update -qq && sudo apt-get install -y jq
+
+      - name: Enable problem matcher
+        run: echo "::add-matcher::.github/matchers/lint-hooks.json"
+
+      - name: Run hook contract linter
+        run: bash scripts/lint-hooks.sh
+
+  bats:
+    name: bats (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install bats and jq (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y bats jq python3-yaml
+
+      - name: Install bats and jq (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install bats-core jq
+          python3 -m pip install --user --break-system-packages pyyaml
+
+      - name: Run tests
+        # CI has no TTY; --pretty calls tput which then barfs on broken pipes.
+        # The default TAP formatter is what we want here anyway.
+        run: bats -r tests
+
+  required-checks:
+    # Aggregator job so branch protection only needs one required check.
+    name: required checks
+    needs: [shellcheck, lint-hooks, bats]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Verify all jobs succeeded
+        env:
+          SHELLCHECK: ${{ needs.shellcheck.result }}
+          LINT_HOOKS: ${{ needs.lint-hooks.result }}
+          BATS: ${{ needs.bats.result }}
+        run: |
+          echo "shellcheck=$SHELLCHECK"
+          echo "lint-hooks=$LINT_HOOKS"
+          echo "bats=$BATS"
+          if [ "$SHELLCHECK" != "success" ] || [ "$LINT_HOOKS" != "success" ] || [ "$BATS" != "success" ]; then
+            echo "One or more required checks failed." >&2
+            exit 1
+          fi

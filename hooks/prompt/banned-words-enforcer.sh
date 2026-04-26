@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   banned-words-enforcer
 # Event:       UserPromptSubmit
 # Description: Reads banned words/phrases from ~/.claude/banned-words.txt

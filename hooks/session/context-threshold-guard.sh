@@ -1,4 +1,26 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   context-threshold-guard
+# Event:       UserPromptSubmit
+# Description: Warns when transcript size grows past a threshold so the user can /compact.
+#
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "UserPromptSubmit": [
+#         {
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/session/context-threshold-guard.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 set -euo pipefail
 
 INPUT=$(cat)

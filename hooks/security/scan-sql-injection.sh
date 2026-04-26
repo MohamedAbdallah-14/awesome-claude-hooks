@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   scan-sql-injection
 # Event:       PreToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: Scans source files for SQL injection anti-patterns before they

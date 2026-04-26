@@ -1,7 +1,28 @@
 #!/usr/bin/env bash
-# PreToolUse | Write
-# Validates YAML syntax of GitHub Actions workflow files before they are written.
-# Fires on Write tool calls; payload has tool_input.path and tool_input.content.
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   github-actions-validator
+# Event:       PreToolUse (matcher: "Write")
+# Description: Validates YAML syntax of GitHub Actions workflow files before they are written.
+#              Fires on Write tool calls; payload has tool_input.path and tool_input.content.
+#
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "PreToolUse": [
+#         {
+#           "matcher": "Write",
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/devops/github-actions-validator.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 
 set -euo pipefail
 

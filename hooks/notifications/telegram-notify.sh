@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   telegram-notify
 # Event:       Stop
 # Description: Sends a Telegram message via the Bot API when Claude Code

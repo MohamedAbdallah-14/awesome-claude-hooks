@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security issue
+    url: https://github.com/MohamedAbdallah-14/awesome-claude-hooks/security/advisories/new
+    about: Do NOT open a public issue for security problems. Use a GitHub security advisory instead. See SECURITY.md.
+  - name: Question or usage help
+    url: https://github.com/MohamedAbdallah-14/awesome-claude-hooks/discussions
+    about: Use Discussions for "how do I..." questions about installing or configuring hooks.

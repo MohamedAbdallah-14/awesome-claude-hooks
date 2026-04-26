@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   pr-description-gen
 # Event:       PostToolUse (matcher: "Bash")
 # Description: After a gh pr create or git push command, collects the commit

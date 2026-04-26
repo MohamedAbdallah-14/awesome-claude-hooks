@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   check-npm-audit
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Intercepts npm install / yarn add / pnpm add commands and

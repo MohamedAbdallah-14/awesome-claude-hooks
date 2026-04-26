@@ -1,0 +1,5 @@
+# Project-wide shellcheck config.
+# SC2034: unused variables. Several hooks read stdin into INPUT to drain the
+# pipe even when they don't parse the JSON; suppressing globally is cleaner
+# than per-line directives.
+disable=SC2034

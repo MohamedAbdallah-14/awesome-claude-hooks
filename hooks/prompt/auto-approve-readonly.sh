@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-approve-readonly
-# Event:       PermissionRequest (no matcher needed — fires for every tool request)
+# Event:       PreToolUse
 # Description: Auto-approves read-only tool requests so Claude can explore freely
 #              without interrupting the user. For any non-read-only tool, outputs
 #              nothing and lets Claude Code apply its normal permission logic.
@@ -11,8 +12,9 @@
 #
 #   {
 #     "hooks": {
-#       "PermissionRequest": [
+#       "PreToolUse": [
 #         {
+#           "matcher": "Read|Glob|Grep|LS|WebSearch|WebFetch|TodoRead",
 #           "hooks": [
 #             {
 #               "type": "command",
@@ -47,7 +49,8 @@ fi
 
 case "$TOOL_NAME" in
   Read|Glob|Grep|LS|WebSearch|WebFetch|TodoRead)
-    jq -n '{"hookSpecificOutput":{"permissionDecision":"allow","updatedInput":{}}}'
+    # PreToolUse contract: hookSpecificOutput must include hookEventName.
+    jq -n '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow"}}'
     ;;
   *)
     # Emit nothing — let Claude Code decide via its normal permission flow.

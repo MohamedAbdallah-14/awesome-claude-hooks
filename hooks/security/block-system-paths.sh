@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   block-system-paths
 # Event:       PreToolUse (matcher: "Write|Edit|Bash")
 # Description: Blocks writes to OS system paths and dangerous shell commands

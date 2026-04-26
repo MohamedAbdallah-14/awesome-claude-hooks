@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   audit-bash-commands
 # Event:       PostToolUse (matcher: "Bash")
 # Description: Logs every bash command Claude executes to an audit log.

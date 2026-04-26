@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   sound-complete
 # Event:       Stop
 # Description: Plays an audio completion chime when Claude Code finishes a task.

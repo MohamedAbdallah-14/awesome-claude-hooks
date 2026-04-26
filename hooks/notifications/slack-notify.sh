@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   slack-notify
 # Event:       Stop
 # Description: Posts a Slack message via an Incoming Webhook when Claude Code

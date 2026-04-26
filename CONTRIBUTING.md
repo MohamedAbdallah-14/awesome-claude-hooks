@@ -1,5 +1,16 @@
 # Contributing to awesome-claude-hooks
 
+## TL;DR
+
+```bash
+make install-deps   # shellcheck, bats-core, jq
+make all            # shellcheck + hook contract lint + bats
+```
+
+If `make all` is green, your PR will pass CI on Ubuntu and macOS.
+
+The full contract every hook must follow lives in [docs/hook-contract.md](docs/hook-contract.md). Read it before adding a hook — `scripts/lint-hooks.sh` enforces every rule in there.
+
 ## Before you open a PR
 
 Scan the existing hooks and the category READMEs. If something close to your idea already exists, extend it or open an issue to discuss. Duplicate hooks with slightly different env vars are not useful.

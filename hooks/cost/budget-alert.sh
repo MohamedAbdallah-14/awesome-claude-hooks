@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   budget-alert
 # Event:       PostToolUse
 # Description: Tracks a per-session operation count as a proxy for cost.

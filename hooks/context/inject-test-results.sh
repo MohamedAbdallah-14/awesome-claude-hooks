@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   inject-test-results
 # Event:       Stop
 # Description: After each response, scans for recent test output and writes a

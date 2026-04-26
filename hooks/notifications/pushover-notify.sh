@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   pushover-notify
 # Event:       Stop
 # Description: Sends a push notification to iOS or Android via the Pushover API

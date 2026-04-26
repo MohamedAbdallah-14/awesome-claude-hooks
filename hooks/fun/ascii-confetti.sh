@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   ascii-confetti
 # Event:       Stop
 # Description: Prints a small colorful ASCII celebration to the terminal when

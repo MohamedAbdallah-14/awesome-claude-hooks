@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-update-readme
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: When Claude updates a manifest file (package.json, pubspec.yaml,

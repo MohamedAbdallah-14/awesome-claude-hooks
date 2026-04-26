@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-changelog
 # Event:       Stop
 # Description: Appends a dated entry to CHANGELOG.md when Claude finishes a

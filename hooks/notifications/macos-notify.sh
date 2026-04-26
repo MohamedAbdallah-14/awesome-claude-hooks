@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   macos-notify
 # Event:       Stop
 # Description: Shows a macOS notification banner when Claude Code finishes a task.

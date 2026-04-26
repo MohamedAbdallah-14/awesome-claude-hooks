@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   audit-file-writes
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: Appends a structured log entry for every file write Claude

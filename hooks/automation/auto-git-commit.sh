@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-git-commit
 # Event:       Stop
 # Description: When Claude's session ends, stages all modified tracked files

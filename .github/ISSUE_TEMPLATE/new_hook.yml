@@ -1,0 +1,91 @@
+name: Propose a new hook
+description: Suggest a hook that should ship with this collection.
+title: "[hook] "
+labels: [new-hook]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Proposed hook name
+      description: kebab-case, matches the eventual filename.
+      placeholder: block-aws-billing-spike
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - ai
+        - automation
+        - context
+        - cost
+        - devops
+        - fun
+        - git
+        - notifications
+        - prompt
+        - quality
+        - security
+        - session
+    validations:
+      required: true
+
+  - type: dropdown
+    id: event
+    attributes:
+      label: Hook event
+      options:
+        - PreToolUse
+        - PostToolUse
+        - Stop
+        - SubagentStop
+        - PreCompact
+        - SessionStart
+        - SessionEnd
+        - Notification
+        - UserPromptSubmit
+    validations:
+      required: true
+
+  - type: input
+    id: matcher
+    attributes:
+      label: Matcher (if PreToolUse/PostToolUse)
+      placeholder: 'Bash  or  Write|Edit|MultiEdit'
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What it does
+      description: One paragraph. Concrete behavior, not marketing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it belongs in this collection
+      description: What problem does it solve that existing hooks don't?
+    validations:
+      required: true
+
+  - type: input
+    id: bypass
+    attributes:
+      label: Bypass env var
+      description: If the hook can block, propose a `CLAUDE_*` env var to disable it.
+      placeholder: CLAUDE_ALLOW_BILLING_SPIKE
+
+  - type: checkboxes
+    id: contract
+    attributes:
+      label: Contract
+      options:
+        - label: I've read docs/hook-contract.md
+          required: true
+        - label: A bats test is feasible (no network, no human input)
+          required: false
+        - label: I'm willing to open the PR myself
+          required: false

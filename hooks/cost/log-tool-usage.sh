@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   log-tool-usage
 # Event:       PostToolUse
 # Description: Appends a structured CSV entry for every tool call Claude makes.

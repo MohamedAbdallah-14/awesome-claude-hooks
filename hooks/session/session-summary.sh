@@ -1,4 +1,26 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   session-summary
+# Event:       Stop
+# Description: Appends a one-line summary of the session (start time, cwd, tool call count) to a daily markdown log.
+#
+#
+# Install — add to ~/.claude/settings.json (or project .claude/settings.json):
+#
+#   {
+#     "hooks": {
+#       "Stop": [
+#         {
+#           "hooks": [
+#             {
+#               "type": "command",
+#               "command": "/path/to/hooks/session/session-summary.sh"
+#             }
+#           ]
+#         }
+#       ]
+#     }
+#   }
 set -euo pipefail
 
 INPUT=$(cat)

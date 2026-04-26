@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   python-lint
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: After Claude writes a .py file, runs the best available Python

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   daily-usage-report
 # Event:       Stop
 # Description: Generates a brief Markdown summary of today's Claude usage once

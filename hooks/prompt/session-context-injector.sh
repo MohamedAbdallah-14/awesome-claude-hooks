@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   session-context-injector
 # Event:       UserPromptSubmit
 # Description: Prepends a compact one-line context header to every user prompt.

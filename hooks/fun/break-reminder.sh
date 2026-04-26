@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   break-reminder
 # Event:       Stop
 # Description: Watches your cumulative Claude session time for the day. When

@@ -1,0 +1,28 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: New hooks
+      labels:
+        - new-hook
+    - title: Hook fixes
+      labels:
+        - bug
+        - fix
+    - title: New starter packs
+      labels:
+        - area:starter-pack
+        - starter-pack
+    - title: CI and infrastructure
+      labels:
+        - area:ci
+        - ci
+        - dependencies
+    - title: Documentation
+      labels:
+        - area:docs
+        - docs
+    - title: Other
+      labels:
+        - "*"

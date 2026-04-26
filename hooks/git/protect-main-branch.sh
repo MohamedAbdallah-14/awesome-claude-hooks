@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   protect-main-branch
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Blocks destructive git operations targeting protected branches.

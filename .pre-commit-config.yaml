@@ -1,0 +1,25 @@
+# Run: pre-commit install
+# See https://pre-commit.com
+repos:
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.10.0
+    hooks:
+      - id: shellcheck
+        args: ["-S", "warning"]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-json
+      - id: check-yaml
+
+  - repo: local
+    hooks:
+      - id: lint-hooks
+        name: lint-hooks (header contract)
+        entry: bash scripts/lint-hooks.sh
+        language: system
+        pass_filenames: false
+        files: ^hooks/.*\.sh$

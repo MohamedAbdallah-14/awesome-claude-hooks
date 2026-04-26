@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-create-branch
 # Event:       Stop
 # Description: After each session, warns Claude when it has left uncommitted
@@ -28,7 +29,7 @@
 #             {
 #               "type": "command",
 #               "command": "/path/to/hooks/git/auto-create-branch.sh"
-                #             }
+#             }
 #           ]
 #         }
 #       ]
@@ -92,12 +93,6 @@ fi
 # Uncommitted changes (tracked or untracked-but-staged)
 UNCOMMITTED=$(git status --porcelain 2>/dev/null | grep -v '^??' || true)
 
-# Commits made in this session: check reflog for commits since the last
-# "checkout" or "reset" entry (a proxy for "session start").
-# We look at the last 20 reflog entries for this branch and count commits
-# that appear after the most recent non-commit entry.
-RECENT_COMMITS_ON_BRANCH=$(git log --oneline -10 2>/dev/null || true)
-
 # Count commits ahead of upstream (or just commits if no upstream)
 UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" 2>/dev/null || echo "")
 COMMITS_AHEAD=0
@@ -120,8 +115,14 @@ fi
 SUGGESTED_SLUG=""
 
 if [[ "$COMMITS_AHEAD" -gt 0 ]]; then
-  # Use the first commit message ahead of upstream
-  FIRST_COMMIT_MSG=$(git log --oneline -1 2>/dev/null | sed 's/^[a-f0-9]* //' || echo "")
+  # Use the oldest commit message ahead of upstream (or HEAD if no upstream).
+  # Picking the oldest reads better as a branch slug — it's the anchor of the
+  # session, not the most recent fixup.
+  if [[ -n "$UPSTREAM" ]]; then
+    FIRST_COMMIT_MSG=$(git log --reverse --format='%s' "${UPSTREAM}..HEAD" 2>/dev/null | head -1 || echo "")
+  else
+    FIRST_COMMIT_MSG=$(git log -1 --format='%s' 2>/dev/null || echo "")
+  fi
   # Slugify: lowercase, replace non-alphanumerics with dashes, strip leading/trailing dashes
   SUGGESTED_SLUG=$(printf '%s' "$FIRST_COMMIT_MSG" \
     | tr '[:upper:]' '[:lower:]' \
