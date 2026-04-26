@@ -1,0 +1,99 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-secrets.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/protect-dotenv.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-dangerous-bash.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/git/conflict-detector.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-secrets.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/protect-dotenv.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-secrets.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/quality/dart-analyze.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/automation/auto-format-on-save.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/quality/test-coverage-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/context/inject-recent-commits.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/notifications/macos-notify.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/context/inject-git-context.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/fun/session-stats.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/fun/motivational-quote.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

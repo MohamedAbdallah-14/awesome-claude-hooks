@@ -1,0 +1,102 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-secrets.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/protect-dotenv.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-dangerous-bash.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/git/conflict-detector.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-secrets.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/scan-sql-injection.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/quality/validate-json-yaml.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/git/protect-main-branch.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/quality/eslint-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/quality/tsc-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/quality/prettier-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/audit-file-writes.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/context/inject-recent-commits.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/notifications/macos-notify.sh || bash $HOOKS_DIR/notifications/linux-notify.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/context/inject-git-context.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/fun/session-stats.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/git/validate-commit-message.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

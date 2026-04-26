@@ -1,0 +1,38 @@
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V3
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.editorconfig.local
+
+# Local config overrides (never commit real credentials or local settings)
+.env
+.env.local
+.env.*.local
+settings.local.json
+*.local.json
+
+# Test artifacts written to the repo root (all test output should go to /tmp)
+/tmp/
+
+# Installer-generated backups (these belong next to the real settings.json,
+# which is outside this repo — but guard against accidental copies here)
+settings.json.backup
+*.backup
+
+# Hook run logs that someone might accidentally write inside the repo
+*.log
+/logs/
+
+# macOS extended attribute junk that leaks into zips
+__MACOSX/

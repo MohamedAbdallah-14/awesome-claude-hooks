@@ -1,0 +1,74 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-secrets.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/protect-dotenv.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-dangerous-bash.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/block-secrets.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/quality/go-vet.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/context/inject-recent-commits.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/security/audit-bash-commands.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/notifications/linux-notify.sh || bash $HOOKS_DIR/notifications/macos-notify.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/context/inject-git-context.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOOKS_DIR/fun/session-stats.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
