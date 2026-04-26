@@ -72,7 +72,7 @@ bash scripts/install.sh --profile=devops --dry-run
 
 ---
 
-## Start here — by intent
+## Start here by intent
 
 If you don't know what to install, pick the goal that sounds like you.
 
