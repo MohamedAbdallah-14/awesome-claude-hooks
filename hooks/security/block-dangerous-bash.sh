@@ -85,7 +85,7 @@ check_pattern \
 
 # Simpler catch-all for rm -rf /
 if [[ -z "$MATCHED_LABEL" ]]; then
-  if printf '%s' "$COMMAND" | grep -qP 'rm\s+(-\w+\s+)*-\w*r\w*\s+(/\s*$|/\*|~/?)' 2>/dev/null || \
+  if printf '%s' "$COMMAND" | grep -qE 'rm[[:space:]]+(-[[:alnum:]]+[[:space:]]+)*-[[:alnum:]]*r[[:alnum:]]*[[:space:]]+(/[[:space:]]*$|/\*|~/?)' 2>/dev/null || \
      printf '%s' "$COMMAND" | grep -qE 'rm[[:space:]]+-rf[[:space:]]+(/[[:space:]]*$|/\*|~/?)' 2>/dev/null || \
      printf '%s' "$COMMAND" | grep -qE 'rm[[:space:]]+-fr[[:space:]]+(/[[:space:]]*$|/\*|~/?)' 2>/dev/null; then
     MATCHED_LABEL="rm -rf filesystem root"

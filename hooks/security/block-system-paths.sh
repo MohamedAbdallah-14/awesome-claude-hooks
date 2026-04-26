@@ -84,7 +84,7 @@ if [[ "$TOOL_NAME" == "Write" || "$TOOL_NAME" == "Edit" || "$TOOL_NAME" == "Mult
   fi
 
   # Normalize: collapse // and ensure absolute path comparison
-  NORMALIZED=$(realpath -m "$FILE_PATH" 2>/dev/null || printf '%s' "$FILE_PATH")
+  NORMALIZED=$(python3 -c "import os,sys; print(os.path.abspath(sys.argv[1]))" "$FILE_PATH" 2>/dev/null || printf '%s' "$FILE_PATH")
 
   BLOCKED_PREFIXES=(
     /etc

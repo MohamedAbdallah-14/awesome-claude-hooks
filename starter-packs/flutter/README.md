@@ -21,5 +21,5 @@ Pre-configured Claude Code hooks and project instructions for Flutter cross-plat
 
 1. Copy `settings.json` to `.claude/settings.json` in your Flutter project root.
 2. Copy `CLAUDE.md` to your project root.
-3. Replace `$HOOKS_DIR` in `settings.json` with the absolute path to the cloned `awesome-claude-hooks/hooks/` directory.
+3. Hooks in `settings.json` are pre-configured to use `~/.claude/hooks/hooks` — the default clone path from the quick-start. If you cloned the repo elsewhere, do a find-and-replace of `~/.claude/hooks/hooks` with your actual path.
 4. Update the state management note in `CLAUDE.md` to match your actual package (`flutter_bloc` or `flutter_riverpod`).

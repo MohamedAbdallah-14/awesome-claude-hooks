@@ -17,22 +17,22 @@ Multiple hooks can fire on the same event. Understanding how they interact lets 
       {
         "matcher": "Bash",
         "hooks": [
-          {"type": "command", "command": "bash $HOOKS_DIR/security/block-secrets.sh"},
-          {"type": "command", "command": "bash $HOOKS_DIR/security/bash-guard.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/security/bash-guard.sh"}
         ]
       },
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
-          {"type": "command", "command": "bash $HOOKS_DIR/security/protect-dotenv.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"}
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          {"type": "command", "command": "bash $HOOKS_DIR/notifications/sound-complete.sh"},
-          {"type": "command", "command": "bash $HOOKS_DIR/cost/session-timer.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/notifications/sound-complete.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/cost/session-timer.sh"}
         ]
       }
     ]
@@ -80,15 +80,15 @@ You want to know what's happening without interruptions. These three hooks add a
     "PreToolUse": [
       {
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/context/terminal-title.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/context/terminal-title.sh"}
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/notifications/sound-complete.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/cost/session-stats.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/notifications/sound-complete.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/cost/session-stats.sh"}
         ]
       }
     ]
@@ -115,15 +115,15 @@ Blocks the common foot-guns: leaked secrets, modified env files, force-pushes to
       {
         "matcher": "Bash",
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/security/block-secrets.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/git/protect-main-branch.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/git/protect-main-branch.sh"}
         ]
       },
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/security/block-secrets.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/security/protect-dotenv.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"}
         ]
       }
     ],
@@ -131,7 +131,7 @@ Blocks the common foot-guns: leaked secrets, modified env files, force-pushes to
       {
         "matcher": "Bash",
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/git/validate-commit-message.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/git/validate-commit-message.sh"}
         ]
       }
     ]
@@ -158,10 +158,10 @@ All file writes go through linting and formatting. TypeScript errors and broken 
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/quality/validate-json-yaml.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/quality/prettier-gate.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/quality/eslint-gate.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/quality/tsc-check.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/quality/validate-json-yaml.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/quality/prettier-gate.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/quality/eslint-gate.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/quality/tsc-check.sh"}
         ]
       }
     ]
@@ -189,16 +189,16 @@ Every tool call is logged, every session is timed, and Claude always has git con
     "PreToolUse": [
       {
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/cost/log-tool-usage.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/context/inject-git-context.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/cost/log-tool-usage.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/context/inject-git-context.sh"}
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/cost/session-timer.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/cost/daily-usage-report.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/cost/session-timer.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/cost/daily-usage-report.sh"}
         ]
       }
     ]
@@ -225,16 +225,16 @@ Dart analysis, auto-format, test coverage, and macOS notification on completion.
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/automation/auto-format-on-save.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/quality/dart-analyze.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/automation/auto-format-on-save.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/quality/dart-analyze.sh"}
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/automation/test-coverage-check.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/notifications/macos-notify.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/automation/test-coverage-check.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/notifications/macos-notify.sh"}
         ]
       }
     ]
@@ -262,17 +262,17 @@ TypeScript type checking and ESLint after every edit, Prettier auto-applied, tes
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/quality/prettier-gate.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/quality/eslint-gate.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/quality/tsc-check.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/quality/prettier-gate.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/quality/eslint-gate.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/quality/tsc-check.sh"}
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          {"type": "command", "command": "bash HOOKS_DIR/automation/auto-run-tests.sh"},
-          {"type": "command", "command": "bash HOOKS_DIR/notifications/slack-notify.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/automation/auto-run-tests.sh"},
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/notifications/slack-notify.sh"}
         ]
       }
     ]

@@ -108,7 +108,8 @@ if [[ -z "$LOG_OUTPUT" ]]; then
   approve
 fi
 
-RELATIVE_PATH=$(realpath --relative-to="$REPO_ROOT" "$FILE_PATH" 2>/dev/null || echo "$FILE_PATH")
+_relpath() { python3 -c "import os,sys; print(os.path.relpath(sys.argv[1], sys.argv[2]))" "$1" "$2" 2>/dev/null || echo "$1"; }
+RELATIVE_PATH=$(_relpath "$FILE_PATH" "$REPO_ROOT")
 
 CONTEXT="Recent changes to \`${RELATIVE_PATH}\` (last ${LOG_COUNT} commits):\n\`\`\`\n${LOG_OUTPUT}\n\`\`\`"
 

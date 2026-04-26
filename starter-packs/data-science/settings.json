@@ -1,0 +1,85 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/security/block-dangerous-bash.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/git/protect-main-branch.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/devops/db-migration-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/security/audit-file-writes.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/security/scan-sql-injection.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/quality/python-lint.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/ai/ai-security-scan.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/notifications/macos-notify.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/context/inject-git-context.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/cost/session-timer.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/cost/budget-alert.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/hooks/context/inject-test-results.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

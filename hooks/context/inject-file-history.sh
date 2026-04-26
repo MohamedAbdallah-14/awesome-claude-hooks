@@ -78,7 +78,7 @@ if [[ -d "$FILE_PATH" ]]; then
 fi
 
 # Skip binary files (heuristic: check for null bytes in first 512 bytes)
-if [[ -f "$FILE_PATH" ]] && LC_ALL=C grep -qP '\x00' <(head -c 512 "$FILE_PATH" 2>/dev/null) 2>/dev/null; then
+if [[ -f "$FILE_PATH" ]] && LC_ALL=C python3 -c "import sys; data=open(sys.argv[1],'rb').read(512); sys.exit(0 if b'\x00' in data else 1)" "$FILE_PATH" 2>/dev/null; then
   approve
 fi
 

@@ -22,7 +22,7 @@ Just a completion notification. Drop this in and you have one useful behavior wi
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/notifications/sound-complete.sh"
+            "command": "bash ~/.claude/hooks/hooks/notifications/sound-complete.sh"
           }
         ]
       }
@@ -48,11 +48,11 @@ Notifications when done, secrets scanning on all writes and bash calls, basic gi
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/block-secrets.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/git/protect-main-branch.sh"
+            "command": "bash ~/.claude/hooks/hooks/git/protect-main-branch.sh"
           }
         ]
       },
@@ -61,11 +61,11 @@ Notifications when done, secrets scanning on all writes and bash calls, basic gi
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/block-secrets.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/protect-dotenv.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"
           }
         ]
       }
@@ -76,11 +76,11 @@ Notifications when done, secrets scanning on all writes and bash calls, basic gi
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/validate-json-yaml.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/validate-json-yaml.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/tsc-check.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/tsc-check.sh"
           }
         ]
       }
@@ -90,11 +90,11 @@ Notifications when done, secrets scanning on all writes and bash calls, basic gi
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/notifications/sound-complete.sh"
+            "command": "bash ~/.claude/hooks/hooks/notifications/sound-complete.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/cost/session-stats.sh"
+            "command": "bash ~/.claude/hooks/hooks/cost/session-stats.sh"
           }
         ]
       }
@@ -120,15 +120,15 @@ Every write and bash call goes through secrets scanning. Git operations are vali
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/block-secrets.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/bash-guard.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/bash-guard.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/git/protect-main-branch.sh"
+            "command": "bash ~/.claude/hooks/hooks/git/protect-main-branch.sh"
           }
         ]
       },
@@ -137,19 +137,19 @@ Every write and bash call goes through secrets scanning. Git operations are vali
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/block-secrets.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/protect-dotenv.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/protect-ssh-keys.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/protect-ssh-keys.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/protect-credentials.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/protect-credentials.sh"
           }
         ]
       },
@@ -158,7 +158,7 @@ Every write and bash call goes through secrets scanning. Git operations are vali
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/audit-file-reads.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/audit-file-reads.sh"
           }
         ]
       }
@@ -169,7 +169,7 @@ Every write and bash call goes through secrets scanning. Git operations are vali
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/scan-bash-output.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/scan-bash-output.sh"
           }
         ]
       },
@@ -178,7 +178,7 @@ Every write and bash call goes through secrets scanning. Git operations are vali
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/validate-json-yaml.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/validate-json-yaml.sh"
           }
         ]
       }
@@ -188,11 +188,11 @@ Every write and bash call goes through secrets scanning. Git operations are vali
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/session-audit-log.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/session-audit-log.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/notifications/sound-complete.sh"
+            "command": "bash ~/.claude/hooks/hooks/notifications/sound-complete.sh"
           }
         ]
       }
@@ -215,11 +215,11 @@ All quality hooks active. Context injection on every tool call so Claude knows t
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/context/inject-git-context.sh"
+            "command": "bash ~/.claude/hooks/hooks/context/inject-git-context.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/context/inject-test-results.sh"
+            "command": "bash ~/.claude/hooks/hooks/context/inject-test-results.sh"
           }
         ]
       }
@@ -230,27 +230,27 @@ All quality hooks active. Context injection on every tool call so Claude knows t
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/validate-json-yaml.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/validate-json-yaml.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/prettier-gate.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/prettier-gate.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/eslint-gate.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/eslint-gate.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/tsc-check.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/tsc-check.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/python-lint.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/python-lint.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/dart-analyze.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/dart-analyze.sh"
           }
         ]
       },
@@ -259,7 +259,7 @@ All quality hooks active. Context injection on every tool call so Claude knows t
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/context/inject-typescript-errors.sh"
+            "command": "bash ~/.claude/hooks/hooks/context/inject-typescript-errors.sh"
           }
         ]
       }
@@ -269,11 +269,11 @@ All quality hooks active. Context injection on every tool call so Claude knows t
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/context/session-summary.sh"
+            "command": "bash ~/.claude/hooks/hooks/context/session-summary.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/notifications/sound-complete.sh"
+            "command": "bash ~/.claude/hooks/hooks/notifications/sound-complete.sh"
           }
         ]
       }
@@ -304,11 +304,11 @@ Auto-format on every save, auto-run tests at session end, auto-commit staged cha
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/block-secrets.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/git/protect-main-branch.sh"
+            "command": "bash ~/.claude/hooks/hooks/git/protect-main-branch.sh"
           }
         ]
       }
@@ -319,19 +319,19 @@ Auto-format on every save, auto-run tests at session end, auto-commit staged cha
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/automation/auto-format-on-save.sh"
+            "command": "bash ~/.claude/hooks/hooks/automation/auto-format-on-save.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/validate-json-yaml.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/validate-json-yaml.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/eslint-gate.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/eslint-gate.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/tsc-check.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/tsc-check.sh"
           }
         ]
       }
@@ -341,19 +341,19 @@ Auto-format on every save, auto-run tests at session end, auto-commit staged cha
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/automation/auto-run-tests.sh"
+            "command": "bash ~/.claude/hooks/hooks/automation/auto-run-tests.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/automation/auto-changelog.sh"
+            "command": "bash ~/.claude/hooks/hooks/automation/auto-changelog.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/automation/auto-commit.sh"
+            "command": "bash ~/.claude/hooks/hooks/automation/auto-commit.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/notifications/sound-complete.sh"
+            "command": "bash ~/.claude/hooks/hooks/notifications/sound-complete.sh"
           }
         ]
       }
@@ -381,19 +381,19 @@ Requires: `SLACK_WEBHOOK_URL` exported in your shell environment (add to `~/.zsh
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/block-secrets.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/bash-guard.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/bash-guard.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/git/protect-main-branch.sh"
+            "command": "bash ~/.claude/hooks/hooks/git/protect-main-branch.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/cost/log-tool-usage.sh"
+            "command": "bash ~/.claude/hooks/hooks/cost/log-tool-usage.sh"
           }
         ]
       },
@@ -402,15 +402,15 @@ Requires: `SLACK_WEBHOOK_URL` exported in your shell environment (add to `~/.zsh
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/block-secrets.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/security/protect-dotenv.sh"
+            "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/cost/log-tool-usage.sh"
+            "command": "bash ~/.claude/hooks/hooks/cost/log-tool-usage.sh"
           }
         ]
       }
@@ -421,15 +421,15 @@ Requires: `SLACK_WEBHOOK_URL` exported in your shell environment (add to `~/.zsh
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/validate-json-yaml.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/validate-json-yaml.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/eslint-gate.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/eslint-gate.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/quality/tsc-check.sh"
+            "command": "bash ~/.claude/hooks/hooks/quality/tsc-check.sh"
           }
         ]
       },
@@ -438,7 +438,7 @@ Requires: `SLACK_WEBHOOK_URL` exported in your shell environment (add to `~/.zsh
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/git/validate-commit-message.sh"
+            "command": "bash ~/.claude/hooks/hooks/git/validate-commit-message.sh"
           }
         ]
       }
@@ -448,15 +448,15 @@ Requires: `SLACK_WEBHOOK_URL` exported in your shell environment (add to `~/.zsh
         "hooks": [
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/cost/session-timer.sh"
+            "command": "bash ~/.claude/hooks/hooks/cost/session-timer.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/cost/daily-usage-report.sh"
+            "command": "bash ~/.claude/hooks/hooks/cost/daily-usage-report.sh"
           },
           {
             "type": "command",
-            "command": "bash HOOKS_DIR/notifications/slack-notify.sh"
+            "command": "bash ~/.claude/hooks/hooks/notifications/slack-notify.sh"
           }
         ]
       }
@@ -498,7 +498,7 @@ cat > ~/.claude/settings.json << EOF
     "Stop": [
       {
         "hooks": [
-          {"type": "command", "command": "bash $HOOKS_DIR/notifications/sound-complete.sh"}
+          {"type": "command", "command": "bash ~/.claude/hooks/hooks/notifications/sound-complete.sh"}
         ]
       }
     ]

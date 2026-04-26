@@ -43,6 +43,20 @@ if [[ "${CLAUDE_RUN_TESTS_ON_SAVE:-0}" != "1" ]]; then
   exit 0
 fi
 
+# ── cross-platform timeout wrapper ───────────────────────────────────────────
+# macOS ships without GNU timeout; use gtimeout (coreutils) if available, else
+# fall back to the bare command (no timeout enforcement).
+_timeout() {
+  if command -v gtimeout &>/dev/null; then
+    gtimeout "$@"
+  elif command -v timeout &>/dev/null; then
+    timeout "$@"
+  else
+    shift  # drop the seconds argument
+    "$@"
+  fi
+}
+
 # ── dependency check ──────────────────────────────────────────────────────────
 
 if ! command -v jq &>/dev/null; then
@@ -130,7 +144,7 @@ case "$FRAMEWORK" in
       exit 0
     fi
 
-    TEST_OUTPUT=$(timeout "$TIMEOUT" ${JEST_BIN} --no-coverage --testPathPattern="$(basename "$FILE_PATH")" 2>&1) \
+    TEST_OUTPUT=$(_timeout "$TIMEOUT" ${JEST_BIN} --no-coverage --testPathPattern="$(basename "$FILE_PATH")" 2>&1) \
       || TEST_EXIT=$?
     ;;
 
@@ -139,7 +153,7 @@ case "$FRAMEWORK" in
       echo "[test-coverage] WARNING: pytest not found — skipping test run" >&2
       exit 0
     fi
-    TEST_OUTPUT=$(timeout "$TIMEOUT" pytest "$FILE_PATH" -v 2>&1) || TEST_EXIT=$?
+    TEST_OUTPUT=$(_timeout "$TIMEOUT" pytest "$FILE_PATH" -v 2>&1) || TEST_EXIT=$?
     ;;
 
   go)
@@ -147,7 +161,7 @@ case "$FRAMEWORK" in
       echo "[test-coverage] WARNING: go not found in PATH — skipping test run" >&2
       exit 0
     fi
-    TEST_OUTPUT=$(cd "$FILE_DIR" && timeout "$TIMEOUT" go test ./... -v 2>&1) || TEST_EXIT=$?
+    TEST_OUTPUT=$(cd "$FILE_DIR" && _timeout "$TIMEOUT" go test ./... -v 2>&1) || TEST_EXIT=$?
     ;;
 
   dart)
@@ -163,7 +177,7 @@ case "$FRAMEWORK" in
       exit 0
     fi
 
-    TEST_OUTPUT=$(timeout "$TIMEOUT" ${DART_TEST_BIN} "$FILE_PATH" 2>&1) || TEST_EXIT=$?
+    TEST_OUTPUT=$(_timeout "$TIMEOUT" ${DART_TEST_BIN} "$FILE_PATH" 2>&1) || TEST_EXIT=$?
     ;;
 esac
 

@@ -1,10 +1,22 @@
 # awesome-claude-hooks
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
+[![License: CC0](https://img.shields.io/badge/License-CC0-lightgrey.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Hooks](https://img.shields.io/badge/hooks-55%2B-blue.svg)](#hook-categories)
+[![Hooks](https://img.shields.io/badge/hooks-80%2B-blue.svg)](#hook-categories)
 
-A production-ready hook library for Claude Code — every entry is a working shell script you can drop in today.
+A production-ready hook library for Claude Code — every entry is a working shell script you can drop in today. 80+ hooks across 12 categories.
+
+---
+
+## Contents
+
+- [What are hooks?](#what-are-claude-code-hooks)
+- [Quick start](#quick-start)
+- [Hook categories](#hook-categories)
+- [Starter packs](#starter-packs)
+- [Docs](#docs)
+- [Contributing](#contributing)
 
 ---
 
@@ -51,14 +63,18 @@ That's it. Claude Code picks up settings changes on the next session start.
 
 ## Hook categories
 
-- [Notifications](#notifications) — alerts when Claude finishes or fails
-- [Security](#security) — block dangerous operations before they execute
-- [Context Injection](#context-injection) — feed Claude information it doesn't have yet
-- [Quality Gates](#quality-gates) — lint and type-check after every edit
-- [Automation](#automation) — format, test, commit, changelog on autopilot
-- [Git Workflows](#git-workflows) — guard branches, enforce commit conventions
-- [Cost & Usage](#cost--usage) — track what Claude is doing and how much
-- [Fun & Productivity](#fun--productivity) — quality-of-life extras
+- [notifications/](#notifications) (9 hooks) — Desktop, mobile, and chat alerts when Claude finishes
+- [security/](#security) (8 hooks) — Block secrets, protect dotenv, SQL injection scanner, path guards
+- [quality/](#quality-gates) (8 hooks) — ESLint, Prettier, Ruff, Dart analyzer, TSC, JSON/YAML validator
+- [context/](#context-injection) (8 hooks) — Inject git state, recent commits, TS errors, test results
+- [automation/](#automation) (7 hooks) — Auto-format, auto-test, auto-commit, auto-changelog
+- [git/](#git-workflows) (6 hooks) — Protect main, conventional commits, conflict detector, PR generator
+- [cost/](#cost--usage) (5 hooks) — Usage logging, session timer, budget alerts
+- [session/](#session) (6 hooks) — SessionStart context, PreCompact backup, context threshold guard
+- [devops/](#devops) (7 hooks) — Terraform/K8s/AWS guards, DB migration safety, audit log
+- [ai/](#ai) (5 hooks) — Haiku-powered code review, security scan, commit message
+- [prompt/](#prompt) (5 hooks) — Auto-approve readonly, rate limiter, banned words
+- [fun/](#fun--productivity) (4 hooks) — Motivational quotes, break reminders, confetti
 
 ---
 
@@ -211,6 +227,65 @@ Run as `PostToolUse` or `Stop` hooks. They write to local files — no external 
 
 ---
 
+## Session
+
+Run on `SessionStart`, `PreCompact`, and `Stop` hooks. They manage context health and persist state across compactions.
+
+| Hook | Event | Description | Platform |
+|------|-------|-------------|----------|
+| [session-start-context.sh](hooks/session/session-start-context.sh) | `SessionStart` | Inject project summary, recent git log, and open TODOs at session start | 🌐 Both |
+| [precompact-backup.sh](hooks/session/precompact-backup.sh) | `PreCompact` | Snapshot the current transcript before compaction | 🌐 Both |
+| [context-threshold-guard.sh](hooks/session/context-threshold-guard.sh) | `PreToolUse` | Warn when context is getting long and suggest `/compact` | 🌐 Both |
+| [session-summary-on-stop.sh](hooks/session/session-summary-on-stop.sh) | `Stop` | Write a one-paragraph session summary to `~/.claude/session-summaries/` | 🌐 Both |
+| [inject-last-session.sh](hooks/session/inject-last-session.sh) | `SessionStart` | Inject the previous session summary for continuity across sessions | 🌐 Both |
+| [precompact-todo-extract.sh](hooks/session/precompact-todo-extract.sh) | `PreCompact` | Extract open TODO comments from context before compaction and re-inject after | 🌐 Both |
+
+---
+
+## DevOps
+
+Run as `PreToolUse` hooks on bash commands. They block or warn before infrastructure-modifying operations execute.
+
+| Hook | Event | Description | Platform |
+|------|-------|-------------|----------|
+| [terraform-destroy-guard.sh](hooks/devops/terraform-destroy-guard.sh) | `PreToolUse` | Block `terraform destroy` unless `ALLOW_DESTROY=1` is set | 🌐 Both |
+| [k8s-namespace-guard.sh](hooks/devops/k8s-namespace-guard.sh) | `PreToolUse` | Block `kubectl` commands targeting `production` namespace without explicit opt-in | 🌐 Both |
+| [aws-destructive-guard.sh](hooks/devops/aws-destructive-guard.sh) | `PreToolUse` | Block `aws` CLI calls that delete or terminate resources | 🌐 Both |
+| [db-migration-safety.sh](hooks/devops/db-migration-safety.sh) | `PreToolUse` | Warn before running DB migrations and require confirmation env var | 🌐 Both |
+| [docker-prune-guard.sh](hooks/devops/docker-prune-guard.sh) | `PreToolUse` | Block `docker system prune` and `docker volume prune` without opt-in | 🌐 Both |
+| [infra-audit-log.sh](hooks/devops/infra-audit-log.sh) | `PostToolUse` | Append all infrastructure commands and their outcomes to `~/.claude/infra-audit.log` | 🌐 Both |
+| [helm-dry-run.sh](hooks/devops/helm-dry-run.sh) | `PreToolUse` | Force `--dry-run` on `helm upgrade` and `helm install` unless opt-in flag is set | 🌐 Both |
+
+---
+
+## AI
+
+Run as `PostToolUse` hooks. They shell out to the Claude API (Haiku by default) for fast, cheap automated review.
+
+| Hook | Event | Description | Platform |
+|------|-------|-------------|----------|
+| [ai-code-review.sh](hooks/ai/ai-code-review.sh) | `PostToolUse` | Haiku-powered post-write review — flags bugs, anti-patterns, and obvious issues | 🌐 Both |
+| [ai-security-scan.sh](hooks/ai/ai-security-scan.sh) | `PostToolUse` | Haiku-powered security scan of written code looking for common vulnerabilities | 🌐 Both |
+| [ai-commit-message.sh](hooks/ai/ai-commit-message.sh) | `Stop` | Generate a conventional commit message from the session diff using Haiku | 🌐 Both |
+| [ai-test-suggestions.sh](hooks/ai/ai-test-suggestions.sh) | `PostToolUse` | Suggest missing test cases for the function Claude just wrote | 🌐 Both |
+| [ai-doc-check.sh](hooks/ai/ai-doc-check.sh) | `PostToolUse` | Flag exported functions missing docstrings or JSDoc comments | 🌐 Both |
+
+---
+
+## Prompt
+
+Run as `PreToolUse` hooks on permission and tool events. They shape what Claude is allowed to do automatically.
+
+| Hook | Event | Description | Platform |
+|------|-------|-------------|----------|
+| [auto-approve-readonly.sh](hooks/prompt/auto-approve-readonly.sh) | `PreToolUse` | Auto-approve Read, Glob, Grep, and LS tool calls — eliminates read-only permission prompts | 🌐 Both |
+| [rate-limiter.sh](hooks/prompt/rate-limiter.sh) | `PreToolUse` | Throttle tool calls per minute to avoid runaway loops | 🌐 Both |
+| [banned-words-gate.sh](hooks/prompt/banned-words-gate.sh) | `PostToolUse` | Block writes containing a configurable list of banned strings (profanity, deprecated APIs) | 🌐 Both |
+| [confirm-destructive-writes.sh](hooks/prompt/confirm-destructive-writes.sh) | `PreToolUse` | Require a confirmation env var before overwriting files larger than a threshold | 🌐 Both |
+| [tool-allowlist.sh](hooks/prompt/tool-allowlist.sh) | `PreToolUse` | Restrict Claude to an explicit set of allowed tools; block everything else | 🌐 Both |
+
+---
+
 ## Starter packs
 
 Pre-wired `settings.json` configurations for common stacks. Each pack includes a curated set of hooks from the categories above, a `settings.json` ready to drop into your project root, and a one-line install script.
@@ -222,6 +297,12 @@ Pre-wired `settings.json` configurations for common stacks. Each pack includes a
 | [python/](starter-packs/python/) | `ruff` lint gate, `black` auto-format, SQL injection scan, secret blocking, session timer |
 | [nestjs/](starter-packs/nestjs/) | ESLint gate, Prettier auto-fix, TypeScript error tracking, npm audit check, git protection |
 | [go/](starter-packs/go/) | `go vet` gate, `gofmt` auto-fix, secret blocking, git branch protection, session timer |
+| [rails/](starter-packs/rails/) | RuboCop gate, secret blocking, DB migration safety, git branch protection, session timer |
+| [rust/](starter-packs/rust/) | `cargo clippy` gate, `rustfmt` auto-fix, secret blocking, git branch protection, budget alert |
+| [laravel/](starter-packs/laravel/) | PHP-CS-Fixer auto-format, secret blocking, DB migration safety, git protection, Slack notify |
+| [android/](starter-packs/android/) | Kotlin lint gate, secret blocking, git branch protection, macOS/Linux notify, session timer |
+| [ios/](starter-packs/ios/) | SwiftLint gate, secret blocking, git branch protection, macOS notify, session timer |
+| [data-science/](starter-packs/data-science/) | `ruff` lint gate, `black` auto-format, SQL injection scan, secret blocking, budget alert |
 
 Install a starter pack:
 
@@ -254,6 +335,26 @@ Exit 0 = allowed. Exit 2 = blocked (PreToolUse only). Any stdout JSON with `"dec
 
 ---
 
+## Notable hooks
+
+Five standout hooks worth knowing about:
+
+- **[ai/ai-code-review.sh](hooks/ai/ai-code-review.sh)** — Haiku-powered post-write review. Flags bugs before you move on, zero manual steps.
+- **[devops/terraform-destroy-guard.sh](hooks/devops/terraform-destroy-guard.sh)** — Blocks `terraform destroy` unless you explicitly set `ALLOW_DESTROY=1`. One-line opt-in, hard stop by default.
+- **[session/context-threshold-guard.sh](hooks/session/context-threshold-guard.sh)** — Warns when context is getting long and suggests `/compact`. Keeps sessions from silently degrading.
+- **[security/block-secrets.sh](hooks/security/block-secrets.sh)** — Catches 7 credential patterns (OpenAI, AWS, GitHub, Slack, and more) before they hit git.
+- **[prompt/auto-approve-readonly.sh](hooks/prompt/auto-approve-readonly.sh)** — Eliminates permission prompts for Read, Glob, Grep, and LS. Safe to enable globally.
+
+---
+
+## Docs
+
+- [How to test a hook](#how-to-test-a-hook)
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [Claude Code hooks reference](https://docs.anthropic.com/claude-code/hooks)
+
+---
+
 ## Contributing
 
 Bug fixes, new hooks, and new starter packs are all welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the submission checklist — primarily: the script must be self-contained, work without external services by default, and include a comment block at the top describing the event, required env vars, and any optional configuration.
@@ -262,4 +363,4 @@ Bug fixes, new hooks, and new starter packs are all welcome. See [CONTRIBUTING.m
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+CC0 — public domain. Use freely, no attribution required.
