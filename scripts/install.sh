@@ -472,7 +472,7 @@ print_report() {
 
   local f
   for f in "${hooks[@]}"; do
-    local rel="${f#${REPO_DIR}/}"
+    local rel="${f#"${REPO_DIR}/"}"
     printf "  • %s\n" "$rel"
   done
 
