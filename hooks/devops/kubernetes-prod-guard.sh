@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# PreToolUse | Bash
-# Blocks kubectl commands targeting production clusters or namespaces.
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   kubernetes-prod-guard
+# Event:       PreToolUse (matcher: "Bash")
+# Description: Blocks kubectl commands targeting production clusters or namespaces.
+#
 
 set -euo pipefail
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   conflict-detector
 # Event:       PreToolUse (matcher: "Edit|Write|MultiEdit")
 # Description: Before Claude edits a file, checks it for unresolved merge

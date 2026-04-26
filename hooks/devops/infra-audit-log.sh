@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# PostToolUse | Bash
-# Silently logs infrastructure commands (terraform, kubectl, aws, gcloud, helm, docker)
-# to ~/.claude/infra-audit.log. Always exits 0.
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   infra-audit-log
+# Event:       PostToolUse (matcher: "Bash")
+# Description: Silently logs infrastructure commands (terraform, kubectl, aws, gcloud, helm, docker)
+#              to ~/.claude/infra-audit.log. Always exits 0.
+#
 
 set -euo pipefail
 

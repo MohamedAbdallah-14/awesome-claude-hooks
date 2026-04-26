@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   no-ask-human-blocker
 # Event:       UserPromptSubmit
 # Description: Detects when the user instructs Claude not to ask questions

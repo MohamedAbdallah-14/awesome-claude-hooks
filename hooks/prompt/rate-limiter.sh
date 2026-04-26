@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   rate-limiter
 # Event:       PreToolUse (no matcher — fires on every tool call)
 # Description: Tracks tool call frequency per session. If more than 50 calls

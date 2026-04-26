@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   validate-commit-message
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Validates git commit messages against Conventional Commits format.

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   session-start-context
+# Event:       SessionStart
+# Description: Injects useful project context at session start: current branch, recent commits, modified files, and any project notes.
+#
 set -euo pipefail
 
 INPUT=$(cat)

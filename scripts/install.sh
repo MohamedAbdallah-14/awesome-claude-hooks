@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # install.sh — Interactive installer for awesome-claude-hooks
 #
 # Usage:
@@ -19,8 +20,11 @@ HOOKS_DIR="${REPO_DIR}/hooks"
 GLOBAL_SETTINGS="${HOME}/.claude/settings.json"
 PROJECT_SETTINGS=".claude/settings.json"
 
-# All categories with hooks present in the repo (auto-populated at runtime below)
-ALL_CATEGORIES=(notifications security context quality automation git cost)
+# All categories with hooks present in the repo (auto-discovered).
+ALL_CATEGORIES=()
+while IFS= read -r dir; do
+  ALL_CATEGORIES+=("$(basename "$dir")")
+done < <(find "${HOOKS_DIR}" -mindepth 1 -maxdepth 1 -type d | sort)
 
 # ── argument parsing ──────────────────────────────────────────────────────────
 

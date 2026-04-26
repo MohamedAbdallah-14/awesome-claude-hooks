@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-push
 # Event:       Stop
 # Description: After a Claude session ends, pushes the current branch to its

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   ai-commit-message
 # Event:       Stop
 # Description: At session end, checks if the last commit message is generic

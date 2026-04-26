@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-prettier
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: Automatically runs prettier --write on JS/TS/CSS/JSON/MD files

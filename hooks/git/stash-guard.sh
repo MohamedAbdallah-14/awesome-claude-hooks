@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   stash-guard
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Warns (or blocks) when Claude is about to run commands that

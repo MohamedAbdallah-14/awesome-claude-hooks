@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   precompact-backup
+# Event:       PreCompact
+# Description: Backs up the full transcript to a timestamped file before Claude compacts it, so previous turns are recoverable.
+#
 set -euo pipefail
 
 INPUT=$(cat)

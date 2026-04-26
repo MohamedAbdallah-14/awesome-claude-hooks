@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   context-threshold-guard
+# Event:       UserPromptSubmit
+# Description: Warns when transcript size grows past a threshold so the user can /compact.
+#
 set -euo pipefail
 
 INPUT=$(cat)

@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# PreToolUse | Bash
-# Blocks terraform destroy unless CLAUDE_ALLOW_DESTROY=1 is set.
-# Warns (but allows) on terraform apply -destroy.
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   terraform-destroy-guard
+# Event:       PreToolUse (matcher: "Bash")
+# Description: Blocks terraform destroy unless CLAUDE_ALLOW_DESTROY=1 is set.
+#              Warns (but allows) on terraform apply -destroy.
+#
 
 set -euo pipefail
 

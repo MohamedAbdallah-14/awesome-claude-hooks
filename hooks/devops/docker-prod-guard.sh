@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# PreToolUse | Bash
-# Blocks docker rm/stop/kill/volume rm on containers or volumes whose name
-# contains prod, production, or live.
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   docker-prod-guard
+# Event:       PreToolUse (matcher: "Bash")
+# Description: Blocks docker rm/stop/kill/volume rm on containers or volumes whose name
+#              contains prod, production, or live.
+#
 
 set -euo pipefail
 

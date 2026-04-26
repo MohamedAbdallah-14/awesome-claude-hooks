@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   block-dangerous-bash
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Blocks (or warns on) shell commands that could cause

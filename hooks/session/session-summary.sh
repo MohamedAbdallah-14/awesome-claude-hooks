@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   session-summary
+# Event:       Stop
+# Description: Appends a one-line summary of the session (start time, cwd, tool call count) to a daily markdown log.
+#
 set -euo pipefail
 
 INPUT=$(cat)

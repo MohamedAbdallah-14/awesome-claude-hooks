@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-run-tests
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: After Claude writes a source file, finds the related test file

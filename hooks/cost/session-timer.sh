@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   session-timer
 # Event:       PreToolUse (start + count), Stop (log + cleanup)
 # Description: Tracks how long each Claude session runs and how many tool calls

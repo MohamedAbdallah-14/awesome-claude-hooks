@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   sound-error
 # Event:       PostToolUse
 # Description: Plays an error sound when a tool exits with a non-zero exit code

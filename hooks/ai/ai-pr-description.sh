@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   ai-pr-description
 # Event:       Stop
 # Description: At session end, checks for commits on the current branch that

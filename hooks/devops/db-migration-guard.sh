@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# PreToolUse | Bash
-# Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM,
-# and migration rollback commands.
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   db-migration-guard
+# Event:       PreToolUse (matcher: "Bash")
+# Description: Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM,
+#              and migration rollback commands.
+#
 
 set -euo pipefail
 

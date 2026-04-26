@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   linux-notify
 # Event:       Stop
 # Description: Sends a Linux desktop notification via notify-send when Claude

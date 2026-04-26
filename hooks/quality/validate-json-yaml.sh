@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   validate-json-yaml
 # Event:       PreToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: Before Claude writes a .json, .yaml, or .yml file, validates

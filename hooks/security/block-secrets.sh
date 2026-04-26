@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   block-secrets
 # Event:       PreToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: Scans file content about to be written for hardcoded secrets.

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   session-name-from-branch
+# Event:       SessionStart
+# Description: Names the session after the current git branch. Slugifies the branch name and adds it to the session context.
+#
 set -euo pipefail
 
 INPUT=$(cat)

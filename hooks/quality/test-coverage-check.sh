@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   test-coverage-check
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: After Claude writes a test file, detects the test framework and
@@ -96,7 +97,7 @@ case "$BASENAME" in
   *_test.go)
     FRAMEWORK="go"
     ;;
-  *_test.dart|*_widget_test.dart)
+  *_test.dart)
     FRAMEWORK="dart"
     ;;
   *)

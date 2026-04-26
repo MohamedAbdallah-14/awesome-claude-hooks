@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   log-bash-history
 # Event:       PostToolUse (matcher: "Bash")
 # Description: Appends every Bash command Claude runs to a persistent history

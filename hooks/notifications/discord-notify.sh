@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   discord-notify
 # Event:       Stop
 # Description: Posts a Discord embed message via a webhook when Claude Code

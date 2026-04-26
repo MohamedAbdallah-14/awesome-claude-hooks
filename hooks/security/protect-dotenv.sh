@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   protect-dotenv
 # Event:       PreToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: Blocks writes to .env files to prevent accidental overwriting
@@ -68,7 +69,9 @@ if [[ "$BASENAME" == ".env" ]]; then
 fi
 
 # .env.* variants: .env.local, .env.production, .env.development, .env.test, etc.
-if [[ "$BASENAME" =~ ^\.env\. ]]; then
+# Allowlist non-secret companions: .env.example, .env.sample, .env.template, .env.dist
+if [[ "$BASENAME" =~ ^\.env\. ]] \
+   && ! [[ "$BASENAME" =~ ^\.env\.(example|sample|template|dist)$ ]]; then
   IS_ENV_FILE=1
 fi
 

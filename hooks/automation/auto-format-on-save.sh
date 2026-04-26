@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-format-on-save
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: Universal formatter. Detects the file type and runs the

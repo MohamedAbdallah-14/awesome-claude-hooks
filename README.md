@@ -3,9 +3,11 @@
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 [![License: CC0](https://img.shields.io/badge/License-CC0-lightgrey.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Hooks](https://img.shields.io/badge/hooks-80%2B-blue.svg)](#hook-categories)
+[![Hooks](https://img.shields.io/badge/hooks-79-blue.svg)](#hook-categories)
+[![CI](https://github.com/mohamedabdallah/awesome-claude-hooks/actions/workflows/ci.yml/badge.svg)](https://github.com/mohamedabdallah/awesome-claude-hooks/actions/workflows/ci.yml)
+[![shellcheck](https://img.shields.io/badge/shellcheck-clean-brightgreen.svg)](#testing)
 
-A production-ready hook library for Claude Code — every entry is a working shell script you can drop in today. 80+ hooks across 12 categories.
+A hook library for Claude Code. Every entry is a working shell script you can drop in today. 79 hooks across 12 categories, all shellcheck-clean and bats-tested.
 
 ---
 
@@ -63,7 +65,7 @@ That's it. Claude Code picks up settings changes on the next session start.
 
 ## Hook categories
 
-- [notifications/](#notifications) (9 hooks) — Desktop, mobile, and chat alerts when Claude finishes
+- [notifications/](#notifications) (10 hooks) — Cross-platform desktop, mobile, and chat alerts when Claude finishes
 - [security/](#security) (8 hooks) — Block secrets, protect dotenv, SQL injection scanner, path guards
 - [quality/](#quality-gates) (8 hooks) — ESLint, Prettier, Ruff, Dart analyzer, TSC, JSON/YAML validator
 - [context/](#context-injection) (8 hooks) — Inject git state, recent commits, TS errors, test results
@@ -351,7 +353,25 @@ Five standout hooks worth knowing about:
 
 - [How to test a hook](#how-to-test-a-hook)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
+- [docs/hook-contract.md](docs/hook-contract.md) — what every hook must include
 - [Claude Code hooks reference](https://docs.anthropic.com/claude-code/hooks)
+
+---
+
+## Testing
+
+Every hook is shellcheck-clean. Hooks that can block (security, quality, git) have bats tests under `tests/<category>/`.
+
+```bash
+brew install shellcheck bats-core jq        # macOS
+sudo apt-get install shellcheck bats jq      # Debian/Ubuntu
+
+shellcheck -S warning hooks/**/*.sh scripts/*.sh
+bash scripts/lint-hooks.sh                   # enforces docs/hook-contract.md
+bats -r tests
+```
+
+CI runs all three on every push and on PRs against `main`, on Ubuntu and macOS.
 
 ---
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   session-stats
 # Event:       Stop
 # Description: Prints a compact session summary box in the terminal when

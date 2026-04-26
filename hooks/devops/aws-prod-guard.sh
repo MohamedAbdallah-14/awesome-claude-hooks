@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# PreToolUse | Bash
-# Blocks destructive AWS CLI commands targeting production profiles.
+# SPDX-License-Identifier: CC0-1.0
+# Hook name:   aws-prod-guard
+# Event:       PreToolUse (matcher: "Bash")
+# Description: Blocks destructive AWS CLI commands targeting production profiles.
+#
 
 set -euo pipefail
 

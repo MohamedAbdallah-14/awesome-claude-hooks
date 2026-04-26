@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   go-vet
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
 # Description: After Claude writes a .go file, runs `go vet ./...` in the

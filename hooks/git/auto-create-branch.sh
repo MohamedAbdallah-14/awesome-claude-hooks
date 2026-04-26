@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   auto-create-branch
 # Event:       Stop
 # Description: After each session, warns Claude when it has left uncommitted
@@ -28,7 +29,7 @@
 #             {
 #               "type": "command",
 #               "command": "/path/to/hooks/git/auto-create-branch.sh"
-                #             }
+#             }
 #           ]
 #         }
 #       ]

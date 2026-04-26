@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: CC0-1.0
 # Hook name:   terminal-title
 # Event:       PreToolUse AND Stop
 # Description: Updates the terminal window/tab title to reflect Claude Code's
