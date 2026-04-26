@@ -241,10 +241,10 @@ Run on `SessionStart`, `PreCompact`, and `Stop` hooks. They manage context healt
 |------|-------|-------------|----------|
 | [session-start-context.sh](hooks/session/session-start-context.sh) | `SessionStart` | Inject project summary, recent git log, and open TODOs at session start | 🌐 Both |
 | [precompact-backup.sh](hooks/session/precompact-backup.sh) | `PreCompact` | Snapshot the current transcript before compaction | 🌐 Both |
-| [context-threshold-guard.sh](hooks/session/context-threshold-guard.sh) | `PreToolUse` | Warn when context is getting long and suggest `/compact` | 🌐 Both |
-| [session-summary-on-stop.sh](hooks/session/session-summary-on-stop.sh) | `Stop` | Write a one-paragraph session summary to `~/.claude/session-summaries/` | 🌐 Both |
-| [inject-last-session.sh](hooks/session/inject-last-session.sh) | `SessionStart` | Inject the previous session summary for continuity across sessions | 🌐 Both |
-| [precompact-todo-extract.sh](hooks/session/precompact-todo-extract.sh) | `PreCompact` | Extract open TODO comments from context before compaction and re-inject after | 🌐 Both |
+| [context-threshold-guard.sh](hooks/session/context-threshold-guard.sh) | `UserPromptSubmit` | Warn when context is getting long and suggest `/compact` | 🌐 Both |
+| [session-summary.sh](hooks/session/session-summary.sh) | `Stop` | Append a one-line summary of the session to a daily markdown log | 🌐 Both |
+| [session-name-from-branch.sh](hooks/session/session-name-from-branch.sh) | `SessionStart` | Name the session after the current git branch | 🌐 Both |
+| [env-file-injector.sh](hooks/session/env-file-injector.sh) | `SessionStart` | Load `.claude.env` from the repo root and inject keys as session context | 🌐 Both |
 
 ---
 
@@ -254,13 +254,13 @@ Run as `PreToolUse` hooks on bash commands. They block or warn before infrastruc
 
 | Hook | Event | Description | Platform |
 |------|-------|-------------|----------|
-| [terraform-destroy-guard.sh](hooks/devops/terraform-destroy-guard.sh) | `PreToolUse` | Block `terraform destroy` unless `ALLOW_DESTROY=1` is set | 🌐 Both |
-| [k8s-namespace-guard.sh](hooks/devops/k8s-namespace-guard.sh) | `PreToolUse` | Block `kubectl` commands targeting `production` namespace without explicit opt-in | 🌐 Both |
-| [aws-destructive-guard.sh](hooks/devops/aws-destructive-guard.sh) | `PreToolUse` | Block `aws` CLI calls that delete or terminate resources | 🌐 Both |
-| [db-migration-safety.sh](hooks/devops/db-migration-safety.sh) | `PreToolUse` | Warn before running DB migrations and require confirmation env var | 🌐 Both |
-| [docker-prune-guard.sh](hooks/devops/docker-prune-guard.sh) | `PreToolUse` | Block `docker system prune` and `docker volume prune` without opt-in | 🌐 Both |
-| [infra-audit-log.sh](hooks/devops/infra-audit-log.sh) | `PostToolUse` | Append all infrastructure commands and their outcomes to `~/.claude/infra-audit.log` | 🌐 Both |
-| [helm-dry-run.sh](hooks/devops/helm-dry-run.sh) | `PreToolUse` | Force `--dry-run` on `helm upgrade` and `helm install` unless opt-in flag is set | 🌐 Both |
+| [terraform-destroy-guard.sh](hooks/devops/terraform-destroy-guard.sh) | `PreToolUse` | Block `terraform destroy` unless `CLAUDE_ALLOW_DESTROY=1` is set | 🌐 Both |
+| [kubernetes-prod-guard.sh](hooks/devops/kubernetes-prod-guard.sh) | `PreToolUse` | Block `kubectl` commands targeting production clusters or namespaces | 🌐 Both |
+| [aws-prod-guard.sh](hooks/devops/aws-prod-guard.sh) | `PreToolUse` | Block destructive `aws` CLI commands targeting production profiles | 🌐 Both |
+| [db-migration-guard.sh](hooks/devops/db-migration-guard.sh) | `PreToolUse` | Block irreversible DB operations (`DROP`, `TRUNCATE`, unsafe `DELETE`, rollbacks) | 🌐 Both |
+| [docker-prod-guard.sh](hooks/devops/docker-prod-guard.sh) | `PreToolUse` | Block `docker rm/stop/kill/volume rm` on prod-named containers and volumes | 🌐 Both |
+| [github-actions-validator.sh](hooks/devops/github-actions-validator.sh) | `PreToolUse` | Validate YAML syntax of workflow files before they are written | 🌐 Both |
+| [infra-audit-log.sh](hooks/devops/infra-audit-log.sh) | `PostToolUse` | Log infra commands (`terraform`, `kubectl`, `aws`, `gcloud`, `helm`, `docker`) to `~/.claude/infra-audit.log` | 🌐 Both |
 
 ---
 
@@ -273,8 +273,8 @@ Run as `PostToolUse` hooks. They shell out to the Claude API (Haiku by default) 
 | [ai-code-review.sh](hooks/ai/ai-code-review.sh) | `PostToolUse` | Haiku-powered post-write review — flags bugs, anti-patterns, and obvious issues | 🌐 Both |
 | [ai-security-scan.sh](hooks/ai/ai-security-scan.sh) | `PostToolUse` | Haiku-powered security scan of written code looking for common vulnerabilities | 🌐 Both |
 | [ai-commit-message.sh](hooks/ai/ai-commit-message.sh) | `Stop` | Generate a conventional commit message from the session diff using Haiku | 🌐 Both |
-| [ai-test-suggestions.sh](hooks/ai/ai-test-suggestions.sh) | `PostToolUse` | Suggest missing test cases for the function Claude just wrote | 🌐 Both |
-| [ai-doc-check.sh](hooks/ai/ai-doc-check.sh) | `PostToolUse` | Flag exported functions missing docstrings or JSDoc comments | 🌐 Both |
+| [ai-pr-description.sh](hooks/ai/ai-pr-description.sh) | `Stop` | Draft a PR description from the session's git diff using Haiku | 🌐 Both |
+| [ai-migration-safety.sh](hooks/ai/ai-migration-safety.sh) | `PreToolUse` | Haiku-powered migration safety review before destructive DB ops run | 🌐 Both |
 
 ---
 
@@ -286,9 +286,9 @@ Run as `PreToolUse` hooks on permission and tool events. They shape what Claude 
 |------|-------|-------------|----------|
 | [auto-approve-readonly.sh](hooks/prompt/auto-approve-readonly.sh) | `PreToolUse` | Auto-approve Read, Glob, Grep, and LS tool calls — eliminates read-only permission prompts | 🌐 Both |
 | [rate-limiter.sh](hooks/prompt/rate-limiter.sh) | `PreToolUse` | Throttle tool calls per minute to avoid runaway loops | 🌐 Both |
-| [banned-words-gate.sh](hooks/prompt/banned-words-gate.sh) | `PostToolUse` | Block writes containing a configurable list of banned strings (profanity, deprecated APIs) | 🌐 Both |
-| [confirm-destructive-writes.sh](hooks/prompt/confirm-destructive-writes.sh) | `PreToolUse` | Require a confirmation env var before overwriting files larger than a threshold | 🌐 Both |
-| [tool-allowlist.sh](hooks/prompt/tool-allowlist.sh) | `PreToolUse` | Restrict Claude to an explicit set of allowed tools; block everything else | 🌐 Both |
+| [banned-words-enforcer.sh](hooks/prompt/banned-words-enforcer.sh) | `PreToolUse` | Block writes containing a configurable list of banned strings | 🌐 Both |
+| [no-ask-human-blocker.sh](hooks/prompt/no-ask-human-blocker.sh) | `UserPromptSubmit` | Detect "ask the user" / "wait for confirmation" in prompts and reroute Claude to act autonomously | 🌐 Both |
+| [session-context-injector.sh](hooks/prompt/session-context-injector.sh) | `UserPromptSubmit` | Inject session-wide context tags into every user prompt | 🌐 Both |
 
 ---
 

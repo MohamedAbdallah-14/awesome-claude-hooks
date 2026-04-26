@@ -20,7 +20,7 @@ cp hooks/notifications/sound-complete.sh ~/.claude/hooks/
 chmod +x ~/.claude/hooks/sound-complete.sh
 ```
 
-Then add the hook to your settings (see [Basic settings.json structure](#basic-settingsjson-structure) below).
+Then add the hook to your settings (see [Basic settings.json hook structure](#basic-settingsjson-hook-structure) below).
 
 ### Method B: Clone the repo (recommended for multiple hooks)
 
