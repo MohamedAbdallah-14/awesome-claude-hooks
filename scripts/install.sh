@@ -3,12 +3,31 @@
 # install.sh — Interactive installer for awesome-claude-hooks
 #
 # Usage:
-#   bash scripts/install.sh                      # interactive mode
-#   bash scripts/install.sh --all                # install all hooks
-#   bash scripts/install.sh --category=security  # install one category non-interactively
-#   bash scripts/install.sh --dry-run            # show what would be installed, no changes
-#   bash scripts/install.sh --all --global       # install all, target global settings
-#   bash scripts/install.sh --all --project      # install all, target project settings
+#   bash scripts/install.sh                          # interactive mode
+#   bash scripts/install.sh --all                    # install all hooks
+#   bash scripts/install.sh --category=security      # one category non-interactively
+#   bash scripts/install.sh --profile=safe-default   # install a curated profile
+#   bash scripts/install.sh --list-profiles          # show available profiles
+#   bash scripts/install.sh --dry-run                # show what would happen, no changes
+#   bash scripts/install.sh --all --global           # install all to global settings
+#   bash scripts/install.sh --all --project          # install all to project settings
+#
+# Profiles (from hooks.registry.yaml):
+#   safe-default   audit + summary + context guard + desktop notification
+#   security       block-secrets, protect-dotenv, dangerous-bash, system-paths,
+#                  sql-injection, npm-audit, audit-bash, audit-writes
+#   quality        eslint, prettier, tsc, json/yaml validator, python-lint,
+#                  dart-analyze, go-vet, test-coverage
+#   team           protect-main, validate-commit-msg, audit, summary,
+#                  conflict-detector, stash-guard
+#   devops         terraform, kubernetes, aws, db-migration, docker, gh-actions,
+#                  infra-audit-log
+#   solo-dev       auto-format-on-save, ai-commit-message, session-name, notify,
+#                  session-start-context
+#   notifications  desktop, macos, linux, slack, telegram, discord, pushover,
+#                  sound-complete, sound-error, terminal-title
+#   ai-assisted    ai-code-review, ai-security-scan, ai-commit-message,
+#                  ai-pr-description, ai-migration-safety
 
 set -euo pipefail
 
@@ -36,17 +55,23 @@ fi
 OPT_ALL=0
 OPT_DRY_RUN=0
 OPT_CATEGORY=""
+OPT_PROFILE=""
+OPT_LIST_PROFILES=0
 OPT_TARGET=""   # "global" | "project" | "" (ask interactively)
+
+REGISTRY_JSON="${REPO_DIR}/hooks.registry.json"
 
 for arg in "$@"; do
   case "$arg" in
-    --all)           OPT_ALL=1 ;;
-    --dry-run)       OPT_DRY_RUN=1 ;;
-    --global)        OPT_TARGET="global" ;;
-    --project)       OPT_TARGET="project" ;;
-    --category=*)    OPT_CATEGORY="${arg#--category=}" ;;
+    --all)             OPT_ALL=1 ;;
+    --dry-run)         OPT_DRY_RUN=1 ;;
+    --global)          OPT_TARGET="global" ;;
+    --project)         OPT_TARGET="project" ;;
+    --category=*)      OPT_CATEGORY="${arg#--category=}" ;;
+    --profile=*)       OPT_PROFILE="${arg#--profile=}" ;;
+    --list-profiles)   OPT_LIST_PROFILES=1 ;;
     -h|--help)
-      grep '^#' "$0" | head -10 | sed 's/^# //'
+      grep '^#' "$0" | head -36 | sed 's/^# //'
       exit 0
       ;;
     *)
@@ -56,6 +81,54 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+# ── profile discovery ─────────────────────────────────────────────────────────
+
+if [[ "$OPT_LIST_PROFILES" == "1" ]]; then
+  if [[ ! -f "$REGISTRY_JSON" ]]; then
+    echo "$REGISTRY_JSON not found — run 'python3 scripts/build-registry.py'" >&2
+    exit 1
+  fi
+  if ! command -v jq >/dev/null 2>&1; then
+    echo "jq required for --list-profiles" >&2
+    exit 1
+  fi
+  jq -r '.profiles | to_entries[] | "\(.key) (\(.value | length) hooks)\n  \(.value | join(", "))\n"' \
+    "$REGISTRY_JSON"
+  exit 0
+fi
+
+# Resolve profile to a list of hook paths.
+resolve_profile() {
+  local profile="$1"
+  if [[ ! -f "$REGISTRY_JSON" ]]; then
+    echo "$REGISTRY_JSON not found — run 'python3 scripts/build-registry.py'" >&2
+    exit 1
+  fi
+  if ! command -v jq >/dev/null 2>&1; then
+    echo "jq required to resolve --profile" >&2
+    exit 1
+  fi
+  local ids
+  ids=$(jq -er --arg p "$profile" '
+    (.profiles[$p] // empty)
+    | if . == null then halt_error(2) else .[] end
+  ' "$REGISTRY_JSON" 2>/dev/null) || {
+    echo "Unknown profile: $profile" >&2
+    echo "Run with --list-profiles to see available profiles." >&2
+    exit 1
+  }
+  # Each id resolves to its registry path.
+  local id path
+  while IFS= read -r id; do
+    path=$(jq -r --arg id "$id" '.hooks[] | select(.id==$id) | .path' "$REGISTRY_JSON")
+    if [[ -z "$path" ]]; then
+      echo "Profile references unknown hook id: $id" >&2
+      exit 1
+    fi
+    printf '%s/%s\n' "$REPO_DIR" "$path"
+  done <<< "$ids"
+}
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -231,27 +304,34 @@ select_hooks_in_category() {
 
 # ── build settings.json snippet ───────────────────────────────────────────────
 
-# Reads hook metadata from file header, emits a jq-compatible object:
-#   { "event": "Stop", "matcher": "", "command": "/abs/path/hook.sh" }
+# Full set of Claude Code hook events. Keep in sync with
+# scripts/lint-hooks.sh:VALID_EVENTS and docs/hook-contract.md.
+# Source: https://code.claude.com/docs/en/hooks
+HOOK_EVENT_NAMES='SessionStart|UserPromptSubmit|UserPromptExpansion|PreToolUse|PermissionRequest|PermissionDenied|PostToolUse|PostToolUseFailure|PostToolBatch|Notification|SubagentStart|SubagentStop|TaskCreated|TaskCompleted|Stop|StopFailure|TeammateIdle|InstructionsLoaded|ConfigChange|CwdChanged|FileChanged|WorktreeCreate|WorktreeRemove|PreCompact|PostCompact|Elicitation|ElicitationResult|SessionEnd'
+
+# Reads hook metadata from file header, emits one TSV row:
+#   <event>\t<matcher>\t<absolute_path>
+# Fails loudly when the header is missing or names an unknown event.
+# Silent fallback to Stop is gone — bad metadata should not install hooks
+# under the wrong event.
 get_hook_meta() {
   local fpath="$1"
   local event_line
-  event_line=$(grep -m1 '^# Event:' "$fpath" 2>/dev/null | sed 's/^# Event:[[:space:]]*//' | xargs || echo "Stop")
+  event_line=$(grep -m1 '^# Event:' "$fpath" 2>/dev/null | sed 's/^# Event:[[:space:]]*//' | xargs || true)
 
-  # Extract primary event name and optional matcher
+  if [[ -z "$event_line" ]]; then
+    err "Missing '# Event:' header in $fpath"
+    exit 1
+  fi
+
   local event matcher=""
-  if [[ "$event_line" =~ ^(PreToolUse|PostToolUse|Stop|SubagentStop|PreCompact)([[:space:]]+\(matcher:[[:space:]]*\"([^\"]+)\"\))? ]]; then
+  if [[ "$event_line" =~ ^($HOOK_EVENT_NAMES)([[:space:]]+\(matcher:[[:space:]]*\"([^\"]+)\"\))?[[:space:]]*$ ]]; then
     event="${BASH_REMATCH[1]}"
     matcher="${BASH_REMATCH[3]:-}"
-  elif [[ "$event_line" =~ (PreToolUse|PostToolUse|Stop|SubagentStop|PreCompact) ]]; then
-    event="${BASH_REMATCH[1]}"
-    # Try extracting matcher from parentheses
-    if [[ "$event_line" =~ matcher:[[:space:]]*\"([^\"]+)\" ]]; then
-      matcher="${BASH_REMATCH[1]}"
-    fi
   else
-    # Default to Stop if we can't parse
-    event="Stop"
+    err "Unknown hook event in $fpath: '$event_line'"
+    err "Valid events: $(printf '%s' "$HOOK_EVENT_NAMES" | tr '|' ' ')"
+    exit 1
   fi
 
   printf '%s\t%s\t%s\n' "$event" "$matcher" "$fpath"
@@ -496,7 +576,22 @@ main() {
   SELECTED_HOOKS=()
   SELECTED_CATEGORIES=()
 
-  if [[ -n "$OPT_CATEGORY" ]]; then
+  if [[ -n "$OPT_PROFILE" ]]; then
+    # Non-interactive: profile resolved via the registry.
+    while IFS= read -r fpath; do
+      [[ -n "$fpath" ]] || continue
+      if [[ ! -f "$fpath" ]]; then
+        err "Profile points at a missing hook: $fpath"
+        exit 1
+      fi
+      SELECTED_HOOKS+=("$fpath")
+      cat=$(basename "$(dirname "$fpath")")
+      if [[ ! " ${SELECTED_CATEGORIES[*]:-} " == *" $cat "* ]]; then
+        SELECTED_CATEGORIES+=("$cat")
+      fi
+    done < <(resolve_profile "$OPT_PROFILE")
+
+  elif [[ -n "$OPT_CATEGORY" ]]; then
     # Non-interactive: single category
     if [[ ! -d "${HOOKS_DIR}/${OPT_CATEGORY}" ]]; then
       err "Category '${OPT_CATEGORY}' not found. Available: ${ALL_CATEGORIES[*]}"

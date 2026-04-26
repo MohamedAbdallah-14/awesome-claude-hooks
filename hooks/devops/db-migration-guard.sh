@@ -51,8 +51,14 @@ fi
 
 block() {
   local operation="$1"
-  printf '{"decision":"block","reason":"Irreversible DB operation detected: %s. This operation cannot be undone. Aborting."}' "$operation"
-  exit 2
+  jq -n --arg op "$operation" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: ("Irreversible DB operation detected: " + $op + ". This operation cannot be undone. Aborting.")
+    }
+  }'
+  exit 0
 }
 
 UPPER_CMD=$(echo "$COMMAND" | tr '[:lower:]' '[:upper:]')

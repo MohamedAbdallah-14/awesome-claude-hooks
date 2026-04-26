@@ -1,0 +1,1962 @@
+{
+  "version": 1,
+  "hook_count": 79,
+  "profiles": {
+    "safe-default": [
+      "audit-bash-commands",
+      "audit-file-writes",
+      "session-summary",
+      "context-threshold-guard",
+      "desktop-notify"
+    ],
+    "security": [
+      "block-secrets",
+      "protect-dotenv",
+      "block-dangerous-bash",
+      "block-system-paths",
+      "scan-sql-injection",
+      "check-npm-audit",
+      "audit-bash-commands",
+      "audit-file-writes"
+    ],
+    "quality": [
+      "eslint-gate",
+      "prettier-gate",
+      "tsc-check",
+      "validate-json-yaml",
+      "python-lint",
+      "dart-analyze",
+      "go-vet",
+      "test-coverage-check"
+    ],
+    "team": [
+      "protect-main-branch",
+      "validate-commit-message",
+      "audit-file-writes",
+      "session-summary",
+      "conflict-detector",
+      "stash-guard"
+    ],
+    "devops": [
+      "terraform-destroy-guard",
+      "kubernetes-prod-guard",
+      "aws-prod-guard",
+      "db-migration-guard",
+      "docker-prod-guard",
+      "github-actions-validator",
+      "infra-audit-log"
+    ],
+    "solo-dev": [
+      "auto-format-on-save",
+      "ai-commit-message",
+      "session-name-from-branch",
+      "desktop-notify",
+      "session-start-context"
+    ],
+    "notifications": [
+      "desktop-notify",
+      "macos-notify",
+      "linux-notify",
+      "slack-notify",
+      "telegram-notify",
+      "discord-notify",
+      "pushover-notify",
+      "sound-complete",
+      "sound-error",
+      "terminal-title"
+    ],
+    "ai-assisted": [
+      "ai-code-review",
+      "ai-security-scan",
+      "ai-commit-message",
+      "ai-pr-description",
+      "ai-migration-safety"
+    ]
+  },
+  "hooks": [
+    {
+      "id": "ai-code-review",
+      "name": "Ai Code Review",
+      "category": "ai",
+      "path": "hooks/ai/ai-code-review.sh",
+      "event": "PostToolUse",
+      "matcher": "",
+      "description": "After each file write, sends the content to Claude Haiku (~$0.001) for a 2-sentence code review. Flags only security vulnerabilities, off-by-one errors, or obvious bugs. Skips files >100 lines and non-code file types. If clean, Haiku replies \"LGTM\" and the hook stays silent.",
+      "risk_level": "networked",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": false,
+      "network_access": true,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "ai-assisted"
+      ]
+    },
+    {
+      "id": "ai-commit-message",
+      "name": "Ai Commit Message",
+      "category": "ai",
+      "path": "hooks/ai/ai-commit-message.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "At session end, checks if the last commit message is generic (\u226415 chars or matches common lazy patterns). If so, calls Haiku with the diff stat to suggest a conventional commit message. Purely advisory \u2014 outputs additionalContext, never blocks.",
+      "risk_level": "networked",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": false,
+      "network_access": true,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "solo-dev",
+        "ai-assisted"
+      ]
+    },
+    {
+      "id": "ai-migration-safety",
+      "name": "Ai Migration Safety",
+      "category": "ai",
+      "path": "hooks/ai/ai-migration-safety.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "Intercepts bash commands that look like database migrations. Asks Haiku whether the migration is REVERSIBLE, IRREVERSIBLE, or UNKNOWN. Blocks with exit 2 only if IRREVERSIBLE. Passes through if REVERSIBLE, UNKNOWN, or if the API key is absent.",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": false,
+      "network_access": true,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "ai-assisted"
+      ]
+    },
+    {
+      "id": "ai-pr-description",
+      "name": "Ai Pr Description",
+      "category": "ai",
+      "path": "hooks/ai/ai-pr-description.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "At session end, checks for commits on the current branch that aren't in main. If \u22652 new commits exist, calls Haiku to draft a PR description and writes it to /tmp/claude-pr-draft.md. Outputs the file path as additionalContext. Non-blocking.",
+      "risk_level": "networked",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": false,
+      "network_access": true,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "ai-assisted"
+      ]
+    },
+    {
+      "id": "ai-security-scan",
+      "name": "Ai Security Scan",
+      "category": "ai",
+      "path": "hooks/ai/ai-security-scan.sh",
+      "event": "PostToolUse",
+      "matcher": "",
+      "description": "After each file write to .py/.js/.ts/.go files, asks Haiku to scan for OWASP Top 10 vulnerabilities. Injects findings as context only when issues are found. Scans first 50 lines max.",
+      "risk_level": "networked",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": false,
+      "network_access": true,
+      "bypass_env": [
+        "CLAUDE_SKIP_AI_SECURITY"
+      ],
+      "tests": null,
+      "profiles": [
+        "ai-assisted"
+      ]
+    },
+    {
+      "id": "auto-changelog",
+      "name": "Auto Changelog",
+      "category": "automation",
+      "path": "hooks/automation/auto-changelog.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Appends a dated entry to CHANGELOG.md when Claude finishes a session that produced file changes. The entry summary is taken from the last user message in the transcript (what Claude was asked to do). # Entry format: ## YYYY-MM-DD - {summary_from_transcript} # If CHANGELOG.md does not exist it is created with a header. Skips silently if no file changes were made during the session.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUTO_CHANGELOG",
+        "CLAUDE_CHANGELOG_FILE"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "auto-format-on-save",
+      "name": "Auto Format On Save",
+      "category": "automation",
+      "path": "hooks/automation/auto-format-on-save.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "Universal formatter. Detects the file type and runs the appropriate formatter. Falls back gracefully if the formatter is not installed \u2014 never blocks Claude. # Formatter selection by extension: .js .jsx .ts .tsx \u2192 prettier (then eslint --fix as fallback) .py \u2192 black (then autopep8, then ruff format) .go \u2192 gofmt -w .dart \u2192 dart format .rs \u2192 rustfmt .sh .bash \u2192 shfmt -w",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUTOFORMAT_ENABLED",
+        "CLAUDE_AUTOFORMAT_SKIP_TYPES"
+      ],
+      "tests": null,
+      "profiles": [
+        "solo-dev"
+      ]
+    },
+    {
+      "id": "auto-git-commit",
+      "name": "Auto Git Commit",
+      "category": "automation",
+      "path": "hooks/automation/auto-git-commit.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "When Claude's session ends, stages all modified tracked files and commits them. Commit message is derived from Claude's last response in the transcript, prefixed with \"claude:\". # Safety guards: - Off by default (must set CLAUDE_AUTO_COMMIT=1) - Skips if no changes are present - Never commits on protected branches (main, master by default) - Never commits if git is not available or cwd is not a repo",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUTO_COMMIT",
+        "CLAUDE_AUTO_COMMIT_BRANCH_PROTECTION"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "auto-prettier",
+      "name": "Auto Prettier",
+      "category": "automation",
+      "path": "hooks/automation/auto-prettier.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "Automatically runs prettier --write on JS/TS/CSS/JSON/MD files after Claude writes or edits them. Keeps code consistently formatted without a separate formatting pass. # Matches: .js .jsx .ts .tsx .css .scss .json .md .mdx .yaml .yml",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_PRETTIER_SKIP_PATTERNS"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "auto-push",
+      "name": "Auto Push",
+      "category": "automation",
+      "path": "hooks/automation/auto-push.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "After a Claude session ends, pushes the current branch to its upstream remote \u2014 but only if the last commit was made by Claude (identified by a \"claude:\" message prefix). This makes auto-push safe to pair with auto-git-commit without accidentally pushing manual commits. # Safety guards: - Off by default (must set CLAUDE_AUTO_PUSH=1) - Never pushes to main/master (configurable) - Only pushes if HEAD commit message starts with \"claude:\" - Skips if no upstream is configured - Never force-pushes",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUTO_PUSH",
+        "CLAUDE_AUTO_PUSH_PROTECTED"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "auto-run-tests",
+      "name": "Auto Run Tests",
+      "category": "automation",
+      "path": "hooks/automation/auto-run-tests.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a source file, finds the related test file by convention and runs it. Supports Jest (TS/JS), pytest (Python), Go test, and Dart/Flutter test. # Test discovery conventions: foo.ts \u2192 foo.test.ts or __tests__/foo.test.ts foo.py \u2192 test_foo.py or foo_test.py or tests/test_foo.py foo.go \u2192 foo_test.go (same directory) foo.dart \u2192 foo_test.dart or test/foo_test.dart # Only runs if the related test file actually exists. Does NOT run tests for test files themselves (avoids double runs).",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUTO_TEST_ENABLED",
+        "CLAUDE_AUTO_TEST_TIMEOUT"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "auto-update-readme",
+      "name": "Auto Update Readme",
+      "category": "automation",
+      "path": "hooks/automation/auto-update-readme.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "When Claude updates a manifest file (package.json, pubspec.yaml, pyproject.toml, Cargo.toml), extracts the new version and updates matching version references in README.md: # - Shields.io / img.shields.io version badges [![version](https://img.shields.io/badge/version-x.y.z-...)] - Plain \"version: x.y.z\" or \"version = \"x.y.z\"\" lines # Only triggers for the four manifest file names listed above. Skips silently if README.md is absent or contains no version refs.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUTO_UPDATE_README"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "inject-docker-status",
+      "name": "Inject Docker Status",
+      "category": "context",
+      "path": "hooks/context/inject-docker-status.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "When Claude is about to run a command that involves Docker, inject the current state of running containers so Claude knows what's already up before issuing docker run / up / exec. # Triggers on commands containing: docker, docker-compose, docker compose. # Gracefully no-ops if Docker is not installed or the daemon is not running (returns approve with no context rather than blocking or erroring).",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "inject-env-summary",
+      "name": "Inject Env Summary",
+      "category": "context",
+      "path": "hooks/context/inject-env-summary.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "After each response, writes a safe environment snapshot to ~/.claude/context/env-summary.md covering tool versions, OS details, Docker state, and git remote. # Security note: this hook NEVER reads or emits env var VALUES. It only lists the names of non-empty env vars in the shell environment, so secrets stay out of Claude's context.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ENV_SUMMARY_INCLUDE_VERSIONS"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "inject-file-history",
+      "name": "Inject File History",
+      "category": "context",
+      "path": "hooks/context/inject-file-history.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "When Claude reads a file, inject: - Who last modified it and when (git blame last committer) - How many commits touched it in the last 30 days - Whether the file contains open TODO or FIXME markers # Only runs for files tracked in git. Silently approves for untracked files, binaries, or directories.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "inject-git-context",
+      "name": "Inject Git Context",
+      "category": "context",
+      "path": "hooks/context/inject-git-context.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "After each response, writes a git context summary to ~/.claude/context/git-status.md so Claude has up-to-date repo state at the start of the next turn. Captures: current branch, short status, last 3 commits, and any merge conflict markers.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_GIT_CONTEXT_MAX_FILES"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "inject-package-info",
+      "name": "Inject Package Info",
+      "category": "context",
+      "path": "hooks/context/inject-package-info.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "When Claude is about to edit a dependency manifest (package.json, pubspec.yaml, requirements.txt, go.mod), inject a human-readable summary of the current package state so Claude understands what's already declared before adding or modifying dependencies. # Supported formats: package.json \u2192 name, version, top 10 deps + devDeps pubspec.yaml \u2192 name, version, dependencies block requirements.txt \u2192 line count + first 20 entries go.mod \u2192 module name, go version, first 10 require entries",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "inject-recent-commits",
+      "name": "Inject Recent Commits",
+      "category": "context",
+      "path": "hooks/context/inject-recent-commits.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "Before Claude edits a file, injects that file's recent git log as context so Claude knows what changed and why before modifying. Outputs JSON with decision + context fields. Silently approves if file is untracked or git is unavailable.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_GIT_LOG_COUNT"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "inject-test-results",
+      "name": "Inject Test Results",
+      "category": "context",
+      "path": "hooks/context/inject-test-results.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "After each response, scans for recent test output and writes a summary to ~/.claude/context/test-results.md so Claude knows the current pass/fail state before suggesting the next step. # Detection order (first match wins): 1. $CLAUDE_TEST_RESULTS_FILE \u2014 explicit path to any test output 2. jest --json output at common locations (jest-results.json, test-results.json, coverage/test-results.json) 3. pytest --tb=no -q output cached at /tmp/claude-pytest-*.txt 4. Generic last-run file at /tmp/claude-test-output.txt",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_TEST_RESULTS_FILE"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "inject-typescript-errors",
+      "name": "Inject Typescript Errors",
+      "category": "context",
+      "path": "hooks/context/inject-typescript-errors.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "Before Claude edits a .ts or .tsx file, runs tsc --noEmit and injects the current error count + first 20 diagnostics as context. Results are cached for 30 seconds to avoid hammering tsc on every keystroke when multiple files are being edited. # Non-blocking heuristic: if tsc takes longer than CLAUDE_TSC_TIMEOUT seconds, the hook approves immediately with a timeout note.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_TSC_TIMEOUT"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "budget-alert",
+      "name": "Budget Alert",
+      "category": "cost",
+      "path": "hooks/cost/budget-alert.sh",
+      "event": "PostToolUse",
+      "matcher": "",
+      "description": "Tracks a per-session operation count as a proxy for cost. There is no direct API cost data in hook payloads, so operation count is the best available signal. # At soft threshold (default 50): sends a desktop notification. At hard threshold (default 200): notifies AND emits a JSON context block asking Claude to pause and review. # Counter file: /tmp/claude-ops-{session_id}.count Notification thresholds: 50, 100, 200",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_BUDGET_HARD_LIMIT",
+        "CLAUDE_BUDGET_SOFT_LIMIT"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "daily-usage-report",
+      "name": "Daily Usage Report",
+      "category": "cost",
+      "path": "hooks/cost/daily-usage-report.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Generates a brief Markdown summary of today's Claude usage once per calendar day. Reads ~/.claude/usage.csv (from log-tool-usage) and ~/.claude/sessions.log (from session-timer) to produce: # - Total sessions today - Total tool calls today - Top 5 most-used tools - Total time spent (sum of session durations) - Files most often edited (top 5 Write/Edit paths) # Output: ~/.claude/reports/YYYY-MM-DD.md Guard: /tmp/claude-daily-report-YYYY-MM-DD.done (one run/day)",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_DAILY_REPORT_PATH",
+        "CLAUDE_SESSION_LOG",
+        "CLAUDE_USAGE_LOG"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "log-bash-history",
+      "name": "Log Bash History",
+      "category": "cost",
+      "path": "hooks/cost/log-bash-history.sh",
+      "event": "PostToolUse",
+      "matcher": "Bash",
+      "description": "Appends every Bash command Claude runs to a persistent history log. Useful for auditing, debugging, and reproducing sessions. # Log format (pipe-delimited): ISO_TIMESTAMP | session_id | COMMAND | EXIT_CODE # Exit code detection: if tool_response.stderr is non-empty and stdout doesn't end with a zero-exit indicator, marks as FAIL. This is heuristic \u2014 the hook payload doesn't carry a raw exit code, so we infer from stderr presence. # Example: 2026-04-26T02:15:03+00:00 | abc123 | git status | 0 2026-04-26T02:15:04+00:00 | abc123 | rm -rf /oops | ERR",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_BASH_HISTORY_LOG"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "log-tool-usage",
+      "name": "Log Tool Usage",
+      "category": "cost",
+      "path": "hooks/cost/log-tool-usage.sh",
+      "event": "PostToolUse",
+      "matcher": "",
+      "description": "Appends a structured CSV entry for every tool call Claude makes. Gives you a full audit trail of everything Claude touched across all sessions. Rotate-safe: moves to usage.csv.1 when >5 MB. # CSV columns: ISO_TIMESTAMP, session_id, tool_name, file_path_or_command # - file_path: tool_input.file_path if present - command: first 80 chars of tool_input.command for Bash calls - empty string for tools with neither # Note: duration_ms is not available from the hook payload. Log each call with its timestamp; diff adjacent lines offline to compute elapsed time between calls.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_USAGE_LOG"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "session-timer",
+      "name": "Session Timer",
+      "category": "cost",
+      "path": "hooks/cost/session-timer.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "Tracks how long each Claude session runs and how many tool calls it makes. Writes a log line to ~/.claude/sessions.log when the session ends. # Log format (pipe-delimited): ISO_DATE | session_id | duration_seconds | tool_call_count # Example: 2026-04-26 | abc123 | 742 | 87 # Mechanism: PreToolUse \u2014 on first call, writes epoch to /tmp/claude-session-{id}.start increments /tmp/claude-session-{id}.count Stop \u2014 reads both tmp files, computes elapsed, logs, then removes tmp files.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_SESSION_LOG"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "aws-prod-guard",
+      "name": "Aws Prod Guard",
+      "category": "devops",
+      "path": "hooks/devops/aws-prod-guard.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Blocks destructive AWS CLI commands targeting production profiles. #",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ALLOW_AWS_PROD"
+      ],
+      "tests": null,
+      "profiles": [
+        "devops"
+      ]
+    },
+    {
+      "id": "db-migration-guard",
+      "name": "Db Migration Guard",
+      "category": "devops",
+      "path": "hooks/devops/db-migration-guard.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM, and migration rollback commands. #",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "devops"
+      ]
+    },
+    {
+      "id": "docker-prod-guard",
+      "name": "Docker Prod Guard",
+      "category": "devops",
+      "path": "hooks/devops/docker-prod-guard.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Blocks docker rm/stop/kill/volume rm on containers or volumes whose name contains prod, production, or live. #",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ALLOW_DOCKER_PROD"
+      ],
+      "tests": null,
+      "profiles": [
+        "devops"
+      ]
+    },
+    {
+      "id": "github-actions-validator",
+      "name": "Github Actions Validator",
+      "category": "devops",
+      "path": "hooks/devops/github-actions-validator.sh",
+      "event": "PreToolUse",
+      "matcher": "Write",
+      "description": "Validates YAML syntax of GitHub Actions workflow files before they are written. Fires on Write tool calls; payload has tool_input.path and tool_input.content. #",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "devops"
+      ]
+    },
+    {
+      "id": "infra-audit-log",
+      "name": "Infra Audit Log",
+      "category": "devops",
+      "path": "hooks/devops/infra-audit-log.sh",
+      "event": "PostToolUse",
+      "matcher": "Bash",
+      "description": "Silently logs infrastructure commands (terraform, kubectl, aws, gcloud, helm, docker) to ~/.claude/infra-audit.log. Always exits 0. #",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "devops"
+      ]
+    },
+    {
+      "id": "kubernetes-prod-guard",
+      "name": "Kubernetes Prod Guard",
+      "category": "devops",
+      "path": "hooks/devops/kubernetes-prod-guard.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Blocks kubectl commands targeting production clusters or namespaces. #",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ALLOW_K8S_PROD"
+      ],
+      "tests": null,
+      "profiles": [
+        "devops"
+      ]
+    },
+    {
+      "id": "terraform-destroy-guard",
+      "name": "Terraform Destroy Guard",
+      "category": "devops",
+      "path": "hooks/devops/terraform-destroy-guard.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Blocks terraform destroy unless CLAUDE_ALLOW_DESTROY=1 is set. Warns (but allows) on terraform apply -destroy. #",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ALLOW_DESTROY"
+      ],
+      "tests": null,
+      "profiles": [
+        "devops"
+      ]
+    },
+    {
+      "id": "ascii-confetti",
+      "name": "Ascii Confetti",
+      "category": "fun",
+      "path": "hooks/fun/ascii-confetti.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Prints a small colorful ASCII celebration to the terminal when Claude finishes a session. Opt-in (disabled by default). # Art varies by time of day: Morning (05:00-11:59): sunrise theme Afternoon (12:00-17:59): sunny theme Evening (18:00-04:59): stars theme # Color support: checks TERM and COLORTERM before emitting ANSI codes. Falls back to plain ASCII if the terminal can't handle it.",
+      "risk_level": "passive",
+      "platforms": [
+        "linux"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_CONFETTI"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "break-reminder",
+      "name": "Break Reminder",
+      "category": "fun",
+      "path": "hooks/fun/break-reminder.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Watches your cumulative Claude session time for the day. When you've been working with Claude for over 90 minutes total, it sends a desktop notification to take a break. # Rate-limited to once per 30 minutes so it doesn't nag. # Reads ~/.claude/sessions.log (written by session-timer.sh) to sum today's session durations. # Notification methods tried in order: 1. osascript (macOS) 2. notify-send (Linux/GNOME) 3. stderr fallback",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_BREAK_REMINDER_INTERVAL",
+        "CLAUDE_SESSION_LOG"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "motivational-quote",
+      "name": "Motivational Quote",
+      "category": "fun",
+      "path": "hooks/fun/motivational-quote.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Prints a random programmer quote in a simple ASCII box when Claude finishes a session. Skips silently if stdout is not a tty (CI, pipes, etc.). # Quotes sourced from Knuth, Dijkstra, Torvalds, Carmack, Hoare, Kernighan, Pike, Spolsky, and others.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_MOTIVATIONAL"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "session-stats",
+      "name": "Session Stats",
+      "category": "fun",
+      "path": "hooks/fun/session-stats.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Prints a compact session summary box in the terminal when Claude finishes. Reads from the tmp files written by session-timer.sh. Falls back gracefully if those files don't exist (e.g., session-timer isn't installed). # Output: \u250c\u2500 Session Summary \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510 \u2502 Duration: 12 min \u2502 Tools used: 23 \u2502 \u2502 Files edited: 4 \u2502 Bash commands: 8 \u2502 \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518 # \"Files edited\" counts unique file paths from usage.csv. \"Bash commands\" counts Bash rows in usage.csv for this session. Both require log-tool-usage.sh to be installed; otherwise shows 0.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_SESSION_LOG",
+        "CLAUDE_SHOW_SESSION_STATS",
+        "CLAUDE_USAGE_LOG"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "auto-create-branch",
+      "name": "Auto Create Branch",
+      "category": "git",
+      "path": "hooks/git/auto-create-branch.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "After each session, warns Claude when it has left uncommitted changes (or made commits) directly on a protected branch. Outputs context suggesting a feature branch name derived from recent commit messages or changed file paths. # Triggers when ALL of the following are true: 1. Inside a git repository 2. Current branch is a protected branch (main/master/develop) 3. There are uncommitted changes OR commits made this session (detected via a session-scoped reflog check)",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUTO_BRANCH_SUGGEST",
+        "CLAUDE_PROTECTED_BRANCHES"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "conflict-detector",
+      "name": "Conflict Detector",
+      "category": "git",
+      "path": "hooks/git/conflict-detector.sh",
+      "event": "PreToolUse",
+      "matcher": "Edit|Write|MultiEdit",
+      "description": "Before Claude edits a file, checks it for unresolved merge conflict markers. Warns Claude so it doesn't blindly overwrite a file that still needs manual conflict resolution. # Detects the standard git conflict marker set: <<<<<<< (ours / HEAD) ======= (separator) >>>>>>> (theirs / incoming) # Also detects diff3-style base marker: ||||||| (base section)",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_BLOCK_CONFLICT_EDITS",
+        "CLAUDE_CONFLICT_SKIP"
+      ],
+      "tests": null,
+      "profiles": [
+        "team"
+      ]
+    },
+    {
+      "id": "pr-description-gen",
+      "name": "Pr Description Gen",
+      "category": "git",
+      "path": "hooks/git/pr-description-gen.sh",
+      "event": "PostToolUse",
+      "matcher": "Bash",
+      "description": "After a gh pr create or git push command, collects the commit list and diff summary for commits on this branch vs the base branch. Outputs the data as context so Claude has everything it needs to write or improve a PR description. # Triggers when the tool response stdout contains a GitHub PR URL (github.com/.../pull/) OR when the command is gh pr create. # Gathers: git log <base>..HEAD --oneline \u2014 one line per commit git diff <base>...HEAD --stat \u2014 files changed summary gh pr view --json url,title,body \u2014 current PR metadata",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_PR_AUTO_DESCRIBE",
+        "CLAUDE_PR_BASE_BRANCH"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "protect-main-branch",
+      "name": "Protect Main Branch",
+      "category": "git",
+      "path": "hooks/git/protect-main-branch.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Blocks destructive git operations targeting protected branches. # Catches: git push --force / -f \u2192 main, master, or any protected branch git push -f \u2192 same git reset --hard \u2192 when current branch is protected git branch -D \u2192 targeting a protected branch git checkout -B \u2192 recreating a protected branch",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ALLOW_FORCE_PUSH",
+        "CLAUDE_PROTECTED_BRANCHES"
+      ],
+      "tests": null,
+      "profiles": [
+        "team"
+      ]
+    },
+    {
+      "id": "stash-guard",
+      "name": "Stash Guard",
+      "category": "git",
+      "path": "hooks/git/stash-guard.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Warns (or blocks) when Claude is about to run commands that could silently discard or conflict with uncommitted changes. # Monitored commands: git checkout <branch> \u2014 switching branches with dirty tree git switch <branch> \u2014 same git stash pop \u2014 can create merge conflicts git stash apply \u2014 same git pull --rebase \u2014 rebasing onto a dirty tree git pull \u2014 merge into dirty tree git reset --hard \u2014 explicitly destructive git merge <branch> \u2014 merging into dirty tree # Default behaviour: approve with a context warning (exit 0). With CLAUDE_STASH_GUARD_BLOCK=1: block (exit 2) instead.",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_STASH_GUARD_BLOCK",
+        "CLAUDE_STASH_GUARD_SKIP"
+      ],
+      "tests": null,
+      "profiles": [
+        "team"
+      ]
+    },
+    {
+      "id": "validate-commit-message",
+      "name": "Validate Commit Message",
+      "category": "git",
+      "path": "hooks/git/validate-commit-message.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Validates git commit messages against Conventional Commits format. # Expected format: type(scope): description Valid types: feat fix docs style refactor test chore perf ci build revert # Examples: feat(auth): add OAuth2 login flow fix: correct null pointer in payment handler chore(deps): bump lodash to 4.17.21 # Skips validation for: git commit --amend --no-edit git commit --no-edit",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_COMMIT_REGEX",
+        "CLAUDE_SKIP_COMMIT_VALIDATION"
+      ],
+      "tests": null,
+      "profiles": [
+        "team"
+      ]
+    },
+    {
+      "id": "desktop-notify",
+      "name": "Desktop Notify",
+      "category": "notifications",
+      "path": "hooks/notifications/desktop-notify.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Cross-platform desktop notification when Claude Code finishes a task. macOS: osascript banner. Linux: notify-send. WSL: PowerShell toast. Exits 0 silently on unsupported platforms.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_NOTIFY_BODY",
+        "CLAUDE_NOTIFY_BODY_PS",
+        "CLAUDE_NOTIFY_TITLE",
+        "CLAUDE_NOTIFY_TITLE_PS",
+        "CLAUDE_OS"
+      ],
+      "tests": null,
+      "profiles": [
+        "safe-default",
+        "solo-dev",
+        "notifications"
+      ]
+    },
+    {
+      "id": "discord-notify",
+      "name": "Discord Notify",
+      "category": "notifications",
+      "path": "hooks/notifications/discord-notify.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Posts a Discord embed message via a webhook when Claude Code finishes a task. Message includes session ID, timestamp, and working directory.",
+      "risk_level": "networked",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": true,
+      "bypass_env": [
+        "CLAUDE_DISCORD_WEBHOOK"
+      ],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "linux-notify",
+      "name": "Linux Notify",
+      "category": "notifications",
+      "path": "hooks/notifications/linux-notify.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Sends a Linux desktop notification via notify-send when Claude Code finishes a task. Falls back gracefully on macOS / systems without notify-send.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_NOTIFY_URGENCY"
+      ],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "macos-notify",
+      "name": "Macos Notify",
+      "category": "notifications",
+      "path": "hooks/notifications/macos-notify.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Shows a macOS notification banner when Claude Code finishes a task. Falls back gracefully on non-macOS systems (exits 0 silently).",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_NOTIFY_SOUND"
+      ],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "pushover-notify",
+      "name": "Pushover Notify",
+      "category": "notifications",
+      "path": "hooks/notifications/pushover-notify.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Sends a push notification to iOS or Android via the Pushover API when Claude Code finishes a task.",
+      "risk_level": "networked",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": true,
+      "bypass_env": [
+        "CLAUDE_PUSHOVER_PRIORITY",
+        "CLAUDE_PUSHOVER_TOKEN",
+        "CLAUDE_PUSHOVER_USER"
+      ],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "slack-notify",
+      "name": "Slack Notify",
+      "category": "notifications",
+      "path": "hooks/notifications/slack-notify.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Posts a Slack message via an Incoming Webhook when Claude Code finishes a task. Message includes session ID, timestamp, and working directory.",
+      "risk_level": "networked",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": true,
+      "bypass_env": [
+        "CLAUDE_SLACK_CHANNEL",
+        "CLAUDE_SLACK_USERNAME",
+        "CLAUDE_SLACK_WEBHOOK"
+      ],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "sound-complete",
+      "name": "Sound Complete",
+      "category": "notifications",
+      "path": "hooks/notifications/sound-complete.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Plays an audio completion chime when Claude Code finishes a task. macOS: uses afplay with Glass.aiff. Linux: tries paplay (PulseAudio) then aplay (ALSA) with a system sound.",
+      "risk_level": "passive",
+      "platforms": [
+        "macos",
+        "linux"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_SOUND_COMPLETE"
+      ],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "sound-error",
+      "name": "Sound Error",
+      "category": "notifications",
+      "path": "hooks/notifications/sound-error.sh",
+      "event": "PostToolUse",
+      "matcher": "",
+      "description": "Plays an error sound when a tool exits with a non-zero exit code or when the tool response stderr contains the word \"Error\". macOS: uses afplay with Basso.aiff. Linux: tries paplay then aplay with a system alert sound.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_SOUND_ERROR"
+      ],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "telegram-notify",
+      "name": "Telegram Notify",
+      "category": "notifications",
+      "path": "hooks/notifications/telegram-notify.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Sends a Telegram message via the Bot API when Claude Code finishes a task.",
+      "risk_level": "networked",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": true,
+      "bypass_env": [
+        "CLAUDE_TELEGRAM_BOT_TOKEN",
+        "CLAUDE_TELEGRAM_CHAT_ID"
+      ],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "terminal-title",
+      "name": "Terminal Title",
+      "category": "notifications",
+      "path": "hooks/notifications/terminal-title.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "Updates the terminal window/tab title to reflect Claude Code's current status in real time. PreToolUse \u2192 \"\u2699 Claude: running <tool_name>...\" Stop \u2192 \"\u2705 Claude: done\" # Works with: iTerm2, Terminal.app, tmux, xterm, and most other terminals that support the ANSI OSC 0 escape sequence. In tmux, updates the *window* title via tmux rename-window.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "notifications"
+      ]
+    },
+    {
+      "id": "auto-approve-readonly",
+      "name": "Auto Approve Readonly",
+      "category": "prompt",
+      "path": "hooks/prompt/auto-approve-readonly.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "Auto-approves read-only tool requests so Claude can explore freely without interrupting the user. For any non-read-only tool, outputs nothing and lets Claude Code apply its normal permission logic. # Read-only tools approved: Read, Glob, Grep, LS, WebSearch, WebFetch, TodoRead",
+      "risk_level": "passive",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "banned-words-enforcer",
+      "name": "Banned Words Enforcer",
+      "category": "prompt",
+      "path": "hooks/prompt/banned-words-enforcer.sh",
+      "event": "UserPromptSubmit",
+      "matcher": "",
+      "description": "Reads banned words/phrases from ~/.claude/banned-words.txt (one entry per line, case-insensitive). If any appear in the user's prompt, appends a reminder to Claude to avoid them in its response. Additive \u2014 never modifies the original request. If the file does not exist, the hook exits silently. # banned-words.txt format (one word or phrase per line, for comments): leverage synergy utilize circle back # this line is a comment and will be ignored",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "no-ask-human-blocker",
+      "name": "No Ask Human Blocker",
+      "category": "prompt",
+      "path": "hooks/prompt/no-ask-human-blocker.sh",
+      "event": "UserPromptSubmit",
+      "matcher": "",
+      "description": "Detects when the user instructs Claude not to ask questions (\"don't ask\", \"no questions\", \"just do it\", \"without asking\", \"autonomously\") and reinforces that intent by appending an explicit instruction to the prompt. This ensures Claude honours the user's preference even if it would normally pause to clarify.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "rate-limiter",
+      "name": "Rate Limiter",
+      "category": "prompt",
+      "path": "hooks/prompt/rate-limiter.sh",
+      "event": "PreToolUse",
+      "matcher": "",
+      "description": "Tracks tool call frequency per session. If more than 50 calls are made within 60 seconds, injects a warning via additionalContext to prompt Claude to reassess whether it's stuck in a loop. Never blocks \u2014 advisory only. # State files: /tmp/claude-rate-<session_id>.txt \u2014 running call count /tmp/claude-rate-<session_id>.ts \u2014 window start timestamp",
+      "risk_level": "contextual",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "session-context-injector",
+      "name": "Session Context Injector",
+      "category": "prompt",
+      "path": "hooks/prompt/session-context-injector.sh",
+      "event": "UserPromptSubmit",
+      "matcher": "",
+      "description": "Prepends a compact one-line context header to every user prompt. Header includes current git branch and whether a CLAUDE.md exists in the working directory. Keeps the prefix under 100 chars. # Examples: [branch:main | CLAUDE.md:yes] fix the auth bug [branch:feature/login] add unit tests [CLAUDE.md:yes] what does this file do?",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_MD"
+      ],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "dart-analyze",
+      "name": "Dart Analyze",
+      "category": "quality",
+      "path": "hooks/quality/dart-analyze.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .dart file, runs static analysis and reports errors and warnings separately so Claude can prioritize fixes. Uses `flutter analyze` when available (or forced), falls back to `dart analyze`. # Matches: .dart",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_DART_USE_FLUTTER"
+      ],
+      "tests": null,
+      "profiles": [
+        "quality"
+      ]
+    },
+    {
+      "id": "eslint-gate",
+      "name": "Eslint Gate",
+      "category": "quality",
+      "path": "hooks/quality/eslint-gate.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a JS/TS file, runs ESLint and reports any errors or warnings so Claude can immediately see and fix them. Does NOT block \u2014 reports results as informational output. # Matches: .js .jsx .ts .tsx",
+      "risk_level": "passive",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ESLINT_CONFIG",
+        "CLAUDE_ESLINT_MAX_WARNINGS"
+      ],
+      "tests": null,
+      "profiles": [
+        "quality"
+      ]
+    },
+    {
+      "id": "go-vet",
+      "name": "Go Vet",
+      "category": "quality",
+      "path": "hooks/quality/go-vet.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .go file, runs `go vet ./...` in the package directory to catch common correctness issues, and runs `gofmt -l` to check formatting. Optionally also runs the test suite for the affected package. # Matches: .go",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_GO_TEST_ON_CHANGE"
+      ],
+      "tests": null,
+      "profiles": [
+        "quality"
+      ]
+    },
+    {
+      "id": "prettier-gate",
+      "name": "Prettier Gate",
+      "category": "quality",
+      "path": "hooks/quality/prettier-gate.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a supported file, checks formatting with Prettier. By default reports the diff so Claude can see what needs to change. With CLAUDE_PRETTIER_AUTO_FIX=1, silently applies prettier --write instead. # Matches: .js .jsx .ts .tsx .css .json .md",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_PRETTIER_AUTO_FIX"
+      ],
+      "tests": null,
+      "profiles": [
+        "quality"
+      ]
+    },
+    {
+      "id": "python-lint",
+      "name": "Python Lint",
+      "category": "quality",
+      "path": "hooks/quality/python-lint.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .py file, runs the best available Python linter/formatter and reports any issues. Tool preference order: ruff (fast, modern) \u2192 flake8 (classic) \u2192 black --check (format). Reports issues clearly so Claude can fix them. # Matches: .py",
+      "risk_level": "passive",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_PYTHON_LINTER"
+      ],
+      "tests": null,
+      "profiles": [
+        "quality"
+      ]
+    },
+    {
+      "id": "test-coverage-check",
+      "name": "Test Coverage Check",
+      "category": "quality",
+      "path": "hooks/quality/test-coverage-check.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a test file, detects the test framework and runs the specific test file so results are immediately visible. Default: OFF (requires CLAUDE_RUN_TESTS_ON_SAVE=1) since test runs can be slow. # Recognises test files by pattern: *.test.ts *.spec.ts *.test.tsx *.spec.tsx \u2192 jest *.test.js *.spec.js \u2192 jest test_*.py *_test.py \u2192 pytest *_test.go \u2192 go test *_test.dart *_widget_test.dart \u2192 dart test",
+      "risk_level": "passive",
+      "platforms": [
+        "macos"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_RUN_TESTS_ON_SAVE",
+        "CLAUDE_TEST_TIMEOUT"
+      ],
+      "tests": null,
+      "profiles": [
+        "quality"
+      ]
+    },
+    {
+      "id": "tsc-check",
+      "name": "Tsc Check",
+      "category": "quality",
+      "path": "hooks/quality/tsc-check.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .ts/.tsx file, runs `tsc --noEmit` in the project root and compares the error count against the previously cached count. If errors INCREASED, warns Claude about a regression. If errors decreased or stayed the same, reports the improvement (or clean state). # Cache file: /tmp/claude-tsc-{cwd-hash}.prev The cache stores the integer error count from the last run. # Matches: .ts .tsx",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_TSC_ARGS"
+      ],
+      "tests": null,
+      "profiles": [
+        "quality"
+      ]
+    },
+    {
+      "id": "validate-json-yaml",
+      "name": "Validate Json Yaml",
+      "category": "quality",
+      "path": "hooks/quality/validate-json-yaml.sh",
+      "event": "PreToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "Before Claude writes a .json, .yaml, or .yml file, validates that the content being written is syntactically valid. Blocks the write and returns the parse error so Claude can fix the content before it hits disk. # Prevents broken config files (package.json, docker-compose.yml, GitHub Actions workflows, etc.) from ever being saved. # JSON validation: python3 -m json.tool YAML validation: python3 -c \"import yaml; yaml.safe_load(...)\" Falls back to checking 'pyyaml' install hint if the yaml module is missing. # Matches: .json .yaml .yml",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": "tests/quality/validate-json-yaml.bats",
+      "profiles": [
+        "quality"
+      ]
+    },
+    {
+      "id": "audit-bash-commands",
+      "name": "Audit Bash Commands",
+      "category": "security",
+      "path": "hooks/security/audit-bash-commands.sh",
+      "event": "PostToolUse",
+      "matcher": "Bash",
+      "description": "Logs every bash command Claude executes to an audit log. Useful for reviewing what the agent did in a session and for incident analysis. # Log format (pipe-delimited): ISO_TIMESTAMP | SESSION_ID | CMD | <first 200 chars of command> | exit_code # Example: 2026-04-26T02:17:44+00:00 | abc123 | CMD | npm install express | 0 # Log is rotated (moved to bash-audit.log.1) when it exceeds 10 MB.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_BASH_AUDIT_LOG"
+      ],
+      "tests": null,
+      "profiles": [
+        "safe-default",
+        "security"
+      ]
+    },
+    {
+      "id": "audit-file-writes",
+      "name": "Audit File Writes",
+      "category": "security",
+      "path": "hooks/security/audit-file-writes.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "Appends a structured log entry for every file write Claude performs. Useful for reviewing what changed in a session and for compliance/audit trails. # Log format (pipe-delimited): ISO_TIMESTAMP | SESSION_ID | WRITE | file_path | bytes_written # Example: 2026-04-26T02:15:03+00:00 | abc123 | WRITE | /src/app.ts | 1842 # Log is rotated (moved to audit.log.1) when it exceeds 10 MB.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUDIT_LOG"
+      ],
+      "tests": null,
+      "profiles": [
+        "safe-default",
+        "security",
+        "team"
+      ]
+    },
+    {
+      "id": "block-dangerous-bash",
+      "name": "Block Dangerous Bash",
+      "category": "security",
+      "path": "hooks/security/block-dangerous-bash.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Blocks (or warns on) shell commands that could cause catastrophic, irreversible damage to the system. # Patterns blocked: - rm -rf / variants (rm -rf /, rm -rf /*, rm -rf ~) - Fork bomb: :(){ :|:& };: - Disk wipe: dd if=/dev/zero of=/dev/sd*|/dev/hd*|/dev/nvme* - Filesystem format: mkfs.* - Piped remote execution: curl|wget ... | bash/sh",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": true,
+      "bypass_env": [
+        "CLAUDE_DANGEROUS_BASH_WARN_ONLY"
+      ],
+      "tests": "tests/security/block-dangerous-bash.bats",
+      "profiles": [
+        "security"
+      ]
+    },
+    {
+      "id": "block-secrets",
+      "name": "Block Secrets",
+      "category": "security",
+      "path": "hooks/security/block-secrets.sh",
+      "event": "PreToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "Scans file content about to be written for hardcoded secrets. Matches common API key, token, and credential patterns. Blocks the write if any pattern is found. # Patterns detected: - OpenAI API key sk-[a-zA-Z0-9]{48} - AWS Access Key ID AKIA[0-9A-Z]{16} - GitHub personal token ghp_[a-zA-Z0-9]{36} - Slack bot token xoxb-[0-9-a-zA-Z]{51} - password assignment password = \"...\" - secret assignment secret = \"...\" - api_key assignment api_key = \"...\"",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ALLOW_SECRETS"
+      ],
+      "tests": "tests/security/block-secrets.bats",
+      "profiles": [
+        "security"
+      ]
+    },
+    {
+      "id": "block-system-paths",
+      "name": "Block System Paths",
+      "category": "security",
+      "path": "hooks/security/block-system-paths.sh",
+      "event": "PreToolUse",
+      "matcher": "Write|Edit|Bash",
+      "description": "Blocks writes to OS system paths and dangerous shell commands that target system directories. # For Write/Edit tools: rejects file_path under /etc, /usr, /bin, /sbin, /boot, /sys, /proc, /lib, /lib64. # For Bash: rejects commands containing: - redirect into /etc/ (e.g. echo x > /etc/hosts) - rm -rf / variants - chmod 777 / (world-writable root)",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ALLOWED_SYSTEM_PATHS"
+      ],
+      "tests": "tests/security/block-system-paths.bats",
+      "profiles": [
+        "security"
+      ]
+    },
+    {
+      "id": "check-npm-audit",
+      "name": "Check Npm Audit",
+      "category": "security",
+      "path": "hooks/security/check-npm-audit.sh",
+      "event": "PreToolUse",
+      "matcher": "Bash",
+      "description": "Intercepts npm install / yarn add / pnpm add commands and reminds you to audit dependencies. In warn-only mode (default) it prints the package name and the audit reminder to stdout and allows the install to proceed. With CLAUDE_NPM_AUDIT_BLOCK=1 it runs `npm audit` on the project before install and blocks if critical vulnerabilities are found. # Recognized commands: npm install <pkg> npm i <pkg> yarn add <pkg> pnpm add <pkg>",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_NPM_AUDIT_BLOCK"
+      ],
+      "tests": null,
+      "profiles": [
+        "security"
+      ]
+    },
+    {
+      "id": "protect-dotenv",
+      "name": "Protect Dotenv",
+      "category": "security",
+      "path": "hooks/security/protect-dotenv.sh",
+      "event": "PreToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "Blocks writes to .env files to prevent accidental overwriting of environment variable files that typically hold secrets. # Matches filenames like: .env .env.local .env.production .env.development .env.test .env.staging any path ending in *.env e.g. config/database.env",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_ALLOW_ENV_WRITES"
+      ],
+      "tests": "tests/security/protect-dotenv.bats",
+      "profiles": [
+        "security"
+      ]
+    },
+    {
+      "id": "scan-sql-injection",
+      "name": "Scan Sql Injection",
+      "category": "security",
+      "path": "hooks/security/scan-sql-injection.sh",
+      "event": "PreToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "Scans source files for SQL injection anti-patterns before they are written. Only runs on .py, .js, .ts, .php, .rb, .java, .go files. Emits a warning to stderr but allows the write (exit 0) by default. Set CLAUDE_SQL_BLOCK=1 to make it blocking. # Patterns detected (string concatenation into SQL): - Python f-string: f\"SELECT ... {var}\" - Python %format: \"SELECT ...\" % var - Python +: \"SELECT ...\" + var - JS/TS template: `SELECT ... ${var}` - JS/TS +: \"SELECT ...\" + var - PHP concatenation: \"SELECT ...\" . $var - execute/query calls with direct concatenation",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_SQL_BLOCK"
+      ],
+      "tests": null,
+      "profiles": [
+        "security"
+      ]
+    },
+    {
+      "id": "context-threshold-guard",
+      "name": "Context Threshold Guard",
+      "category": "session",
+      "path": "hooks/session/context-threshold-guard.sh",
+      "event": "UserPromptSubmit",
+      "matcher": "",
+      "description": "Warns when transcript size grows past a threshold so the user can /compact. #",
+      "risk_level": "contextual",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "safe-default"
+      ]
+    },
+    {
+      "id": "env-file-injector",
+      "name": "Env File Injector",
+      "category": "session",
+      "path": "hooks/session/env-file-injector.sh",
+      "event": "SessionStart",
+      "matcher": "",
+      "description": "Loads .claude.env from the repo root and injects key=value pairs as session context. Redacts values that look like real secrets. #",
+      "risk_level": "contextual",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "precompact-backup",
+      "name": "Precompact Backup",
+      "category": "session",
+      "path": "hooks/session/precompact-backup.sh",
+      "event": "PreCompact",
+      "matcher": "",
+      "description": "Backs up the full transcript to a timestamped file before Claude compacts it, so previous turns are recoverable. #",
+      "risk_level": "passive",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "session-name-from-branch",
+      "name": "Session Name From Branch",
+      "category": "session",
+      "path": "hooks/session/session-name-from-branch.sh",
+      "event": "SessionStart",
+      "matcher": "",
+      "description": "Names the session after the current git branch. Slugifies the branch name and adds it to the session context. #",
+      "risk_level": "contextual",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "solo-dev"
+      ]
+    },
+    {
+      "id": "session-start-context",
+      "name": "Session Start Context",
+      "category": "session",
+      "path": "hooks/session/session-start-context.sh",
+      "event": "SessionStart",
+      "matcher": "",
+      "description": "Injects useful project context at session start: current branch, recent commits, modified files, and any project notes. #",
+      "risk_level": "contextual",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "solo-dev"
+      ]
+    },
+    {
+      "id": "session-summary",
+      "name": "Session Summary",
+      "category": "session",
+      "path": "hooks/session/session-summary.sh",
+      "event": "Stop",
+      "matcher": "",
+      "description": "Appends a one-line summary of the session (start time, cwd, tool call count) to a daily markdown log. #",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [],
+      "tests": null,
+      "profiles": [
+        "safe-default",
+        "team"
+      ]
+    }
+  ]
+}

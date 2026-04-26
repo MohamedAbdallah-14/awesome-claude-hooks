@@ -164,8 +164,16 @@ Set CLAUDE_STASH_GUARD_SKIP=1 to silence this warning."
 
 if [[ "${CLAUDE_STASH_GUARD_BLOCK:-0}" == "1" ]]; then
   BLOCK_REASON="Blocked: ${RISKY_COMMAND} attempted with uncommitted changes. ${RISK_DETAIL} Stash your changes first, or set CLAUDE_STASH_GUARD_SKIP=1 to bypass."
-  jq -n --arg reason "$BLOCK_REASON" '{"decision":"block","reason":$reason}'
-  exit 2
+  jq -n --arg reason "$BLOCK_REASON" '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+  exit 0
 fi
 
 jq -n --arg ctx "$CONTEXT" '{"decision":"approve","context":$ctx}'

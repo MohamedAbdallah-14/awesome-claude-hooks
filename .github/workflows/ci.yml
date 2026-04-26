@@ -54,6 +54,29 @@ jobs:
       - name: Run hook contract linter
         run: bash scripts/lint-hooks.sh
 
+  registry-drift:
+    name: registry + docs drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Rebuild registry + docs
+        run: |
+          python3 scripts/build-registry.py
+          python3 scripts/render-docs.py
+
+      - name: Fail if anything drifted
+        run: |
+          if ! git diff --quiet -- hooks.registry.yaml hooks.registry.json docs/hooks.md docs/events.md docs/compatibility.md; then
+            echo "::error::hooks.registry.* or generated docs are out of sync. Run 'make all' locally." >&2
+            git --no-pager diff -- hooks.registry.yaml hooks.registry.json docs/hooks.md docs/events.md docs/compatibility.md | head -200
+            exit 1
+          fi
+
   bats:
     name: bats (${{ matrix.os }})
     strategy:
@@ -84,7 +107,7 @@ jobs:
   required-checks:
     # Aggregator job so branch protection only needs one required check.
     name: required checks
-    needs: [shellcheck, lint-hooks, bats]
+    needs: [shellcheck, lint-hooks, registry-drift, bats]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -92,12 +115,14 @@ jobs:
         env:
           SHELLCHECK: ${{ needs.shellcheck.result }}
           LINT_HOOKS: ${{ needs.lint-hooks.result }}
+          REGISTRY: ${{ needs.registry-drift.result }}
           BATS: ${{ needs.bats.result }}
         run: |
           echo "shellcheck=$SHELLCHECK"
           echo "lint-hooks=$LINT_HOOKS"
+          echo "registry-drift=$REGISTRY"
           echo "bats=$BATS"
-          if [ "$SHELLCHECK" != "success" ] || [ "$LINT_HOOKS" != "success" ] || [ "$BATS" != "success" ]; then
+          if [ "$SHELLCHECK" != "success" ] || [ "$LINT_HOOKS" != "success" ] || [ "$REGISTRY" != "success" ] || [ "$BATS" != "success" ]; then
             echo "One or more required checks failed." >&2
             exit 1
           fi

@@ -41,3 +41,23 @@ run_hook() {
   run bash -c "bash '$hook' < '$tmp'"
   rm -f "$tmp"
 }
+
+# Assert: hook returned a deny decision via PreToolUse hookSpecificOutput.
+# Per the official Claude Code hooks contract: exit 0, with stdout JSON
+# `{ hookSpecificOutput: { hookEventName, permissionDecision: "deny", ... } }`.
+# Usage inside a @test: assert_blocked
+assert_blocked() {
+  [ "$status" -eq 0 ] || { echo "expected exit 0 (got $status). output: $output" >&2; return 1; }
+  if ! printf '%s' "$output" | jq -e '
+        .hookSpecificOutput.permissionDecision == "deny" and
+        (.hookSpecificOutput.hookEventName == "PreToolUse")
+      ' >/dev/null; then
+    echo "expected hookSpecificOutput.permissionDecision=deny. output: $output" >&2
+    return 1
+  fi
+}
+
+# Assert: hook allowed the action (no decision JSON, exit 0, no stdout body).
+assert_allowed() {
+  [ "$status" -eq 0 ] || { echo "expected exit 0 (got $status). output: $output" >&2; return 1; }
+}

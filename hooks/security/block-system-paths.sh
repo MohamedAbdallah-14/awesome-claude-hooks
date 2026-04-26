@@ -71,8 +71,16 @@ is_allowed_exception() {
 }
 
 block_with_reason() {
-  jq -n --arg reason "$1" '{"decision":"block","reason":$reason}'
-  exit 2
+  jq -n --arg reason "$1" '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+  exit 0
 }
 
 # ── file-write path check (Write / Edit / MultiEdit) ─────────────────────────

@@ -8,37 +8,37 @@ HOOK="${HOOKS_DIR}/security/protect-dotenv.sh"
 @test "blocks Write to .env" {
   payload=$(pretool_payload Write /home/me/proj/.env "FOO=bar")
   run_hook "$HOOK" "$payload"
-  [ "$status" -eq 2 ]
+  assert_blocked
 }
 
 @test "blocks Write to .env.production" {
   payload=$(pretool_payload Write /tmp/.env.production "FOO=bar")
   run_hook "$HOOK" "$payload"
-  [ "$status" -eq 2 ]
+  assert_blocked
 }
 
 @test "blocks Edit on .env.local" {
   payload=$(pretool_payload Edit /tmp/.env.local "FOO=bar")
   run_hook "$HOOK" "$payload"
-  [ "$status" -eq 2 ]
+  assert_blocked
 }
 
 @test "blocks path ending in .env" {
   payload=$(pretool_payload Write /tmp/config/database.env "DB=x")
   run_hook "$HOOK" "$payload"
-  [ "$status" -eq 2 ]
+  assert_blocked
 }
 
 @test "allows .env.example" {
   payload=$(pretool_payload Write /tmp/.env.example "FOO=placeholder")
   run_hook "$HOOK" "$payload"
-  [ "$status" -eq 0 ]
+  assert_allowed
 }
 
 @test "allows regular .py file" {
   payload=$(pretool_payload Write /tmp/main.py "print('hi')")
   run_hook "$HOOK" "$payload"
-  [ "$status" -eq 0 ]
+  assert_allowed
 }
 
 @test "bypass via CLAUDE_ALLOW_ENV_WRITES=1" {
@@ -46,5 +46,5 @@ HOOK="${HOOKS_DIR}/security/protect-dotenv.sh"
   tmp=$(mktemp); printf '%s' "$payload" > "$tmp"
   run env CLAUDE_ALLOW_ENV_WRITES=1 bash -c "bash '$HOOK' < '$tmp'"
   rm -f "$tmp"
-  [ "$status" -eq 0 ]
+  assert_allowed
 }

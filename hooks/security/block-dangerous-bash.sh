@@ -140,8 +140,16 @@ if [[ -n "$MATCHED_LABEL" ]]; then
     exit 0
   else
     jq -n --arg reason "$REASON Set CLAUDE_DANGEROUS_BASH_WARN_ONLY=1 to downgrade to a warning." \
-      '{"decision":"block","reason":$reason}'
-    exit 2
+      '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+    exit 0
   fi
 fi
 

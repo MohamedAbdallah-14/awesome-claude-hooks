@@ -145,5 +145,13 @@ Examples of valid messages:
 
 Set CLAUDE_SKIP_COMMIT_VALIDATION=1 to bypass, or set CLAUDE_COMMIT_REGEX to use a custom pattern."
 
-jq -n --arg reason "$REASON" '{"decision":"block","reason":$reason}'
-exit 2
+jq -n --arg reason "$REASON" '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+exit 0

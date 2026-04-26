@@ -43,8 +43,15 @@ if ! echo "$COMMAND" | grep -qE '(^|[[:space:]])kubectl[[:space:]]'; then
 fi
 
 block() {
-  printf '{"decision":"block","reason":"kubectl command targets production cluster. Set CLAUDE_ALLOW_K8S_PROD=1 to allow."}'
-  exit 2
+  local reason="${1:-kubectl command targets production cluster. Set CLAUDE_ALLOW_K8S_PROD=1 to allow.}"
+  jq -n --arg reason "$reason" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: $reason
+    }
+  }'
+  exit 0
 }
 
 if [[ "${CLAUDE_ALLOW_K8S_PROD:-}" == "1" ]]; then
@@ -76,8 +83,7 @@ fi
 if echo "$COMMAND" | grep -qE '(^|[[:space:]])kubectl[[:space:]]+(.*[[:space:]])?delete[[:space:]]'; then
   if ! echo "$COMMAND" | grep -qE '(\-\-namespace|\-n[[:space:]])'; then
     # Only block if no namespace scoping is present — risky command
-    printf '{"decision":"block","reason":"kubectl delete without explicit --namespace flag. Set CLAUDE_ALLOW_K8S_PROD=1 to allow, or add -n <namespace> to scope the command."}'
-    exit 2
+    block "kubectl delete without explicit --namespace flag. Set CLAUDE_ALLOW_K8S_PROD=1 to allow, or add -n <namespace> to scope the command."
   fi
 fi
 

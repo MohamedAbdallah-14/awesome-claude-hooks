@@ -67,8 +67,14 @@ if [[ "$VERDICT" == "IRREVERSIBLE" ]]; then
   if [[ -n "$REASON" ]]; then
     BLOCK_MSG="$BLOCK_MSG $REASON"
   fi
-  jq -n --arg r "$BLOCK_MSG" '{"decision":"block","reason":$r}'
-  exit 2
+  jq -n --arg r "$BLOCK_MSG" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: $r
+    }
+  }'
+  exit 0
 fi
 
 # REVERSIBLE or UNKNOWN: allow through

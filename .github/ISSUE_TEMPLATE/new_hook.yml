@@ -36,16 +36,36 @@ body:
     id: event
     attributes:
       label: Hook event
+      description: See https://code.claude.com/docs/en/hooks for semantics.
       options:
-        - PreToolUse
-        - PostToolUse
-        - Stop
-        - SubagentStop
-        - PreCompact
         - SessionStart
-        - SessionEnd
-        - Notification
         - UserPromptSubmit
+        - UserPromptExpansion
+        - PreToolUse
+        - PermissionRequest
+        - PermissionDenied
+        - PostToolUse
+        - PostToolUseFailure
+        - PostToolBatch
+        - Notification
+        - SubagentStart
+        - SubagentStop
+        - TaskCreated
+        - TaskCompleted
+        - Stop
+        - StopFailure
+        - TeammateIdle
+        - InstructionsLoaded
+        - ConfigChange
+        - CwdChanged
+        - FileChanged
+        - WorktreeCreate
+        - WorktreeRemove
+        - PreCompact
+        - PostCompact
+        - Elicitation
+        - ElicitationResult
+        - SessionEnd
     validations:
       required: true
 

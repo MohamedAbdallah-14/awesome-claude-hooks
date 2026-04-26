@@ -1,13 +1,15 @@
-.PHONY: help lint shellcheck contract test all install-deps
+.PHONY: help lint shellcheck contract test docs registry all install-deps
 
 help:
 	@echo "Targets:"
-	@echo "  make install-deps   Install shellcheck, bats-core, jq (macOS via brew)"
+	@echo "  make install-deps   Install shellcheck, bats-core, jq, pyyaml"
 	@echo "  make shellcheck     Run shellcheck -S warning across the repo"
 	@echo "  make contract       Run scripts/lint-hooks.sh"
+	@echo "  make registry       Rebuild hooks.registry.{yaml,json} from headers"
+	@echo "  make docs           Rebuild docs/{hooks,events,compatibility}.md from registry"
 	@echo "  make lint           shellcheck + contract"
 	@echo "  make test           bats -r tests"
-	@echo "  make all            lint + test"
+	@echo "  make all            registry + docs + lint + test"
 
 install-deps:
 	@if command -v brew >/dev/null 2>&1; then \
@@ -26,9 +28,15 @@ shellcheck:
 contract:
 	@bash scripts/lint-hooks.sh
 
+registry:
+	@python3 scripts/build-registry.py
+
+docs: registry
+	@python3 scripts/render-docs.py
+
 lint: shellcheck contract
 
 test:
 	@bats -r tests
 
-all: lint test
+all: registry docs lint test

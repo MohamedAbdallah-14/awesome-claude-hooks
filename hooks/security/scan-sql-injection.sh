@@ -136,8 +136,16 @@ Reference: https://owasp.org/www-community/attacks/SQL_Injection"
   if [[ "${CLAUDE_SQL_BLOCK:-0}" == "1" ]]; then
     jq -n \
       --arg reason "Blocked: SQL injection risk detected in ${FILE_PATH}. Patterns matched: ${MATCHED_LABELS[*]}. Use parameterized queries. Set CLAUDE_SQL_BLOCK=0 to downgrade to warning." \
-      '{"decision":"block","reason":$reason}'
-    exit 2
+      '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+    exit 0
   else
     printf '%s\n' "$MESSAGE" >&2
   fi

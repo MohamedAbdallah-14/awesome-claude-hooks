@@ -49,8 +49,14 @@ if echo "$COMMAND" | grep -qE 'terraform[[:space:]]+(.*[[:space:]])?destroy'; th
   if [[ "${CLAUDE_ALLOW_DESTROY:-}" == "1" ]]; then
     exit 0
   fi
-  printf '{"decision":"block","reason":"terraform destroy blocked. Set CLAUDE_ALLOW_DESTROY=1 to allow destructive infra changes."}'
-  exit 2
+  jq -n '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: "terraform destroy blocked. Set CLAUDE_ALLOW_DESTROY=1 to allow destructive infra changes."
+    }
+  }'
+  exit 0
 fi
 
 # Warn (but allow): terraform apply -destroy
@@ -59,9 +65,9 @@ if echo "$COMMAND" | grep -qE 'terraform[[:space:]]+(.*[[:space:]])?apply' && \
   if [[ "${CLAUDE_ALLOW_DESTROY:-}" == "1" ]]; then
     exit 0
   fi
-  # Log the warning to stderr; still allow by exiting 0
-  printf '{"decision":"block","reason":"terraform apply -destroy blocked. Set CLAUDE_ALLOW_DESTROY=1 to allow destructive infra changes."}' >&2
-  # Allow — warn only
+  # Plain stderr warning — exit 0 means stderr is logged, not surfaced as
+  # a decision. The action proceeds.
+  echo "[terraform-destroy-guard] WARNING: terraform apply -destroy detected. Set CLAUDE_ALLOW_DESTROY=1 to silence." >&2
   exit 0
 fi
 

@@ -130,8 +130,16 @@ if [[ "${CLAUDE_NPM_AUDIT_BLOCK:-0}" == "1" ]]; then
         --arg pkg "${PACKAGE_NAME:-unknown}" \
         --arg count "$CRITICAL_COUNT" \
         --arg reason "Blocked: npm audit found ${CRITICAL_COUNT} critical vulnerability/vulnerabilities in the current project before adding '${PACKAGE_NAME:-unknown}'. Run 'npm audit' and resolve critical issues before installing new packages. Unset CLAUDE_NPM_AUDIT_BLOCK to downgrade to a warning." \
-        '{"decision":"block","reason":$reason}'
-      exit 2
+        '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+      exit 0
     fi
   fi
 

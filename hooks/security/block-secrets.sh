@@ -109,8 +109,16 @@ done
 if [[ -n "$MATCHED_LABEL" ]]; then
   jq -n \
     --arg reason "Blocked: potential hardcoded secret detected (matched pattern: ${MATCHED_LABEL}). Move credentials to environment variables or a secrets manager. Set CLAUDE_ALLOW_SECRETS=1 to override for test fixtures." \
-    '{"decision":"block","reason":$reason}'
-  exit 2
+    '
+    {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": $reason
+      }
+    }
+    '
+  exit 0
 fi
 
 exit 0
