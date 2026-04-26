@@ -77,7 +77,9 @@ jobs:
           python3 -m pip install --user --break-system-packages pyyaml
 
       - name: Run tests
-        run: bats -r --pretty tests
+        # CI has no TTY; --pretty calls tput which then barfs on broken pipes.
+        # The default TAP formatter is what we want here anyway.
+        run: bats -r tests
 
   required-checks:
     # Aggregator job so branch protection only needs one required check.

@@ -49,7 +49,8 @@ fi
 
 case "$TOOL_NAME" in
   Read|Glob|Grep|LS|WebSearch|WebFetch|TodoRead)
-    jq -n '{"hookSpecificOutput":{"permissionDecision":"allow","updatedInput":{}}}'
+    # PreToolUse contract: hookSpecificOutput must include hookEventName.
+    jq -n '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow"}}'
     ;;
   *)
     # Emit nothing — let Claude Code decide via its normal permission flow.

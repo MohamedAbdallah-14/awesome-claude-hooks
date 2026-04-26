@@ -313,33 +313,29 @@ merge_settings() {
     existing=$(cat "$existing_file")
   fi
 
-  # Merge strategy: for each event in new_hooks, append matchers not already
-  # present (match by matcher string + command path).
+  # Merge strategy: for each event, drop any new commands that are already
+  # registered for that event, then append the remaining ones. Dedupe is
+  # per-command, not per-group — otherwise a partially-overlapping group
+  # (one new command alongside one already-registered command) would be
+  # appended whole and produce duplicate entries.
   jq -n \
     --argjson existing "$existing" \
     --argjson new_hooks "$new_hooks_json" '
-    # Start from existing settings
-    $existing |
-
-    # For each event in new_hooks.hooks, merge into existing .hooks
-    . as $base |
+    $existing as $base |
     ($new_hooks.hooks // {}) |
     to_entries |
     reduce .[] as $event_entry (
       $base;
-      .hooks[$event_entry.key] //= [] |
-      .hooks[$event_entry.key] += (
-        $event_entry.value |
-        map(
-          . as $new_group |
-          # Only add groups whose commands are not already registered
-          select(
-            $base.hooks[$event_entry.key] // [] |
-            map(.hooks // [] | map(.command)) | flatten |
-            contains($new_group.hooks | map(.command)) | not
-          )
+      ([ (.hooks[$event_entry.key] // [])[]
+         | (.hooks // [])[] | .command ]) as $existing_cmds
+      | .hooks[$event_entry.key] //= []
+      | .hooks[$event_entry.key] += (
+          $event_entry.value
+          | map(
+              .hooks |= map(select(.command as $c | $existing_cmds | index($c) | not))
+            )
+          | map(select((.hooks // []) | length > 0))
         )
-      )
     )
   '
 }
