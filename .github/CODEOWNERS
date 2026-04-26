@@ -1,0 +1,7 @@
+# Default owner reviews everything that doesn't have a more specific owner.
+*       @MohamedAbdallah-14
+
+# CI and release plumbing — extra care.
+/.github/                       @MohamedAbdallah-14
+/scripts/lint-hooks.sh          @MohamedAbdallah-14
+/docs/hook-contract.md          @MohamedAbdallah-14

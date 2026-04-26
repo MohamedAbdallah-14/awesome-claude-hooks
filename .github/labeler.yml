@@ -1,0 +1,98 @@
+# Auto-applied to PRs by .github/workflows/labeler.yml.
+
+"area:security":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/security/**'
+          - 'tests/security/**'
+
+"area:quality":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/quality/**'
+          - 'tests/quality/**'
+
+"area:git":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/git/**'
+
+"area:devops":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/devops/**'
+
+"area:notifications":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/notifications/**'
+
+"area:context":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/context/**'
+
+"area:automation":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/automation/**'
+
+"area:session":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/session/**'
+
+"area:ai":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/ai/**'
+
+"area:cost":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/cost/**'
+
+"area:prompt":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/prompt/**'
+
+"area:fun":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'hooks/fun/**'
+
+"area:starter-pack":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'starter-packs/**'
+
+"area:ci":
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/**'
+          - '.github/matchers/**'
+          - 'scripts/lint-hooks.sh'
+          - '.shellcheckrc'
+          - '.pre-commit-config.yaml'
+
+"area:docs":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**'
+          - 'README.md'
+          - 'CONTRIBUTING.md'
+          - 'CHANGELOG.md'
+          - 'CODE_OF_CONDUCT.md'
+          - 'SECURITY.md'
+
+"area:installer":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'scripts/install.sh'
+          - 'scripts/uninstall.sh'
+
+"area:tests":
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'tests/**'

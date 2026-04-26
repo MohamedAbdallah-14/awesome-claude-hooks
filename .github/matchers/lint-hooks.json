@@ -1,0 +1,14 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "lint-hooks",
+      "pattern": [
+        {
+          "regexp": "^([^:]+):\\s+(.+)$",
+          "file": 1,
+          "message": 2
+        }
+      ]
+    }
+  ]
+}

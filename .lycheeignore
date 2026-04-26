@@ -1,0 +1,7 @@
+# URLs that lychee should skip. One regex per line.
+
+# example.com is intentionally a placeholder in security-hook documentation.
+^https?://example\.com
+
+# CI badge for path-to-9.5 branch will 404 until the branch is merged or pushed.
+# Add specific known-flaky patterns here as needed.

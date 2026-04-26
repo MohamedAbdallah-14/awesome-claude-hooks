@@ -1,0 +1,7 @@
+# Force LF on shell scripts so Windows checkouts don't break the shebang.
+*.sh   text eol=lf
+*.bash text eol=lf
+*.bats text eol=lf
+
+# Treat the rest as auto.
+* text=auto

@@ -1,0 +1,42 @@
+name: Link check
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+      - '.github/workflows/links.yml'
+      - '.lycheeignore'
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run lychee
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --include-fragments
+            --accept '100..=103,200..=299'
+            --exclude-mail
+            './**/*.md'
+          fail: true
+          format: markdown
+
+      - name: Open issue on scheduled failure
+        if: failure() && github.event_name == 'schedule'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Broken links detected by scheduled lychee run"
+          content-filepath: ./lychee/out.md
+          labels: bug,docs,area:docs

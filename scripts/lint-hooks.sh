@@ -15,10 +15,25 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 1
 fi
 
+# When running in GitHub Actions, also emit ::error annotations so failures
+# show up inline on the PR diff.
+emit_annotation() {
+  if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+    printf '::error file=%s::%s\n' "$1" "$2"
+  fi
+}
+
 VALID_EVENTS='^(PreToolUse|PostToolUse|Stop|SubagentStop|PreCompact|SessionStart|Notification|UserPromptSubmit)( |$)'
 
 errors=0
 checked=0
+
+fail() {
+  local rel="$1" msg="$2"
+  echo "$rel: $msg" >&2
+  emit_annotation "$rel" "$msg"
+  errors=$((errors + 1))
+}
 
 while IFS= read -r f; do
   checked=$((checked + 1))
@@ -29,47 +44,39 @@ while IFS= read -r f; do
 
   # 1. Shebang on line 1.
   if ! head -n 1 "$f" | grep -q '^#!/usr/bin/env bash$'; then
-    echo "$rel: missing or wrong shebang on line 1 (want '#!/usr/bin/env bash')" >&2
-    errors=$((errors + 1))
+    fail "$rel" "missing or wrong shebang on line 1 (want '#!/usr/bin/env bash')"
   fi
 
   # 2. SPDX line.
   if ! grep -q '^# SPDX-License-Identifier: CC0-1.0$' <<<"$header"; then
-    echo "$rel: missing SPDX header line" >&2
-    errors=$((errors + 1))
+    fail "$rel" "missing SPDX header line"
   fi
 
   # 3. Hook name matches filename.
   expected_name="$(basename "$f" .sh)"
   hook_name=$(grep -m1 '^# Hook name:' <<<"$header" | sed 's/^# Hook name:[[:space:]]*//' | xargs || true)
   if [[ -z "$hook_name" ]]; then
-    echo "$rel: missing '# Hook name:' header" >&2
-    errors=$((errors + 1))
+    fail "$rel" "missing '# Hook name:' header"
   elif [[ "$hook_name" != "$expected_name" ]]; then
-    echo "$rel: hook name '$hook_name' does not match filename '$expected_name'" >&2
-    errors=$((errors + 1))
+    fail "$rel" "hook name '$hook_name' does not match filename '$expected_name'"
   fi
 
   # 4. Event header with valid event.
   event_line=$(grep -m1 '^# Event:' <<<"$header" | sed 's/^# Event:[[:space:]]*//' | xargs || true)
   if [[ -z "$event_line" ]]; then
-    echo "$rel: missing '# Event:' header" >&2
-    errors=$((errors + 1))
+    fail "$rel" "missing '# Event:' header"
   elif ! [[ "$event_line" =~ $VALID_EVENTS ]]; then
-    echo "$rel: '# Event: $event_line' is not a recognised Claude Code event" >&2
-    errors=$((errors + 1))
+    fail "$rel" "'# Event: $event_line' is not a recognised Claude Code event"
   fi
 
   # 5. Description present.
   if ! grep -q '^# Description:' <<<"$header"; then
-    echo "$rel: missing '# Description:' header" >&2
-    errors=$((errors + 1))
+    fail "$rel" "missing '# Description:' header"
   fi
 
   # 6. set -euo pipefail.
   if ! grep -q '^set -euo pipefail' "$f"; then
-    echo "$rel: missing 'set -euo pipefail'" >&2
-    errors=$((errors + 1))
+    fail "$rel" "missing 'set -euo pipefail'"
   fi
 
   # 7. Install JSON snippet must parse. Extract the JSON-ish block from the
@@ -90,8 +97,7 @@ while IFS= read -r f; do
 
   if [[ -n "$install_block" ]]; then
     if ! printf '%s\n' "$install_block" | jq empty >/dev/null 2>&1; then
-      echo "$rel: install snippet in header is not valid JSON" >&2
-      errors=$((errors + 1))
+      fail "$rel" "install snippet in header is not valid JSON"
     fi
   fi
 done < <(find "$HOOKS_DIR" -mindepth 2 -name '*.sh' -type f -not -path '*/_lib/*' | sort)
