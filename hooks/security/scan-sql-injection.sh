@@ -101,8 +101,10 @@ declare -a PATTERNS=(
   "Python %-format SQL concatenation@@(SELECT|INSERT|UPDATE|DELETE|DROP|UNION)[^\"']*%[[:space:]]"
   # Python/Java/Go string + var concatenation after SQL keyword
   "SQL string concatenation (+)@@\"(SELECT|INSERT|UPDATE|DELETE|DROP|UNION)[^\"]*\"[[:space:]]*\+"
-  # JavaScript template literal with SQL keyword
-  "JS template literal SQL interpolation@@\`(SELECT|INSERT|UPDATE|DELETE|DROP|UNION)[^\`]*\$\{"
+  # JavaScript template literal with SQL keyword.
+  # Use [$] to match a literal $ — \$\{ inside a double-quoted string
+  # collapses to $\{, where ERE reads $ as the end-of-line anchor.
+  "JS template literal SQL interpolation@@\`(SELECT|INSERT|UPDATE|DELETE|DROP|UNION)[^\`]*[$]\{"
   # PHP string concatenation (dot operator)
   "PHP SQL concatenation@@\"(SELECT|INSERT|UPDATE|DELETE|DROP|UNION)[^\"]*\"[[:space:]]*\."
   # execute/query with concatenation — language agnostic

@@ -26,6 +26,7 @@ emit_annotation() {
 VALID_EVENTS='^(SessionStart|UserPromptSubmit|UserPromptExpansion|PreToolUse|PermissionRequest|PermissionDenied|PostToolUse|PostToolUseFailure|PostToolBatch|Notification|SubagentStart|SubagentStop|TaskCreated|TaskCompleted|Stop|StopFailure|TeammateIdle|InstructionsLoaded|ConfigChange|CwdChanged|FileChanged|WorktreeCreate|WorktreeRemove|PreCompact|PostCompact|Elicitation|ElicitationResult|SessionEnd)( |$)'
 
 errors=0
+warnings=0
 checked=0
 
 fail() {
@@ -33,6 +34,43 @@ fail() {
   echo "$rel: $msg" >&2
   emit_annotation "$rel" "$msg"
   errors=$((errors + 1))
+}
+
+# Bash 4+ construct guard. macOS still ships bash 3.2 as /bin/bash, and many
+# minimal containers do too. Warn (don't error) so contributors know their hook
+# will only run on hosts with bash 4+ on PATH. Future hooks may legitimately
+# need 4+; this is informational.
+emit_warning_annotation() {
+  if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+    printf '::warning file=%s::%s\n' "$1" "$2"
+  fi
+}
+
+warn() {
+  local rel="$1" msg="$2"
+  echo "$rel: warning: $msg" >&2
+  emit_warning_annotation "$rel" "$msg"
+  warnings=$((warnings + 1))
+}
+
+check_bash4_constructs() {
+  local file="$1" rel="$2"
+  # Strip comments before scanning so doc strings / examples don't trip us.
+  local body
+  body=$(sed -E 's/[[:space:]]*#.*$//' "$file")
+
+  if grep -Eq '(^|[^[:alnum:]_])declare[[:space:]]+-[a-zA-Z]*A' <<<"$body"; then
+    warn "$rel" "uses 'declare -A' (associative arrays); requires bash 4+, will not run on macOS /bin/bash"
+  fi
+  if grep -Eq '\$\{[A-Za-z_][A-Za-z0-9_]*(\[[^]]*\])?(,,?|\^\^?)[^}]*\}' <<<"$body"; then
+    warn "$rel" "uses \${var,,} or \${var^^} case modification; requires bash 4+"
+  fi
+  if grep -Eq '(^|[^[:alnum:]_])(mapfile|readarray)([[:space:]]|$)' <<<"$body"; then
+    warn "$rel" "uses 'mapfile'/'readarray'; requires bash 4+"
+  fi
+  if grep -Eq '(^|[^[:alnum:]_])coproc([[:space:]]|$)' <<<"$body"; then
+    warn "$rel" "uses 'coproc'; requires bash 4+"
+  fi
 }
 
 while IFS= read -r f; do
@@ -105,12 +143,19 @@ while IFS= read -r f; do
   elif ! printf '%s\n' "$install_block" | jq empty >/dev/null 2>&1; then
     fail "$rel" "install snippet in header is not valid JSON"
   fi
+
+  # 8. Soft check for bash 4+ constructs.
+  check_bash4_constructs "$f" "$rel"
 done < <(find "$HOOKS_DIR" -mindepth 2 -name '*.sh' -type f -not -path '*/_lib/*' | sort)
 
 if (( errors > 0 )); then
   echo "" >&2
-  echo "lint-hooks: $errors error(s) across $checked hooks" >&2
+  echo "lint-hooks: $errors error(s), $warnings warning(s) across $checked hooks" >&2
   exit 1
 fi
 
-echo "lint-hooks: $checked hooks passed"
+if (( warnings > 0 )); then
+  echo "lint-hooks: $checked hooks passed ($warnings bash-4 warning(s))"
+else
+  echo "lint-hooks: $checked hooks passed"
+fi

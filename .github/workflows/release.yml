@@ -20,7 +20,7 @@ jobs:
         env:
           GIT_TAG: ${{ github.ref_name }}
         run: |
-          file_version="$(cat VERSION | tr -d '[:space:]')"
+          file_version="$(tr -d '[:space:]' < VERSION)"
           tag_version="${GIT_TAG#v}"
           if [ "$file_version" != "$tag_version" ]; then
             echo "VERSION ($file_version) does not match tag ($tag_version)" >&2

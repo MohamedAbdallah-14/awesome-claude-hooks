@@ -58,16 +58,21 @@ if [[ "${CLAUDE_ALLOW_AWS_PROD:-}" == "1" ]]; then
   exit 0
 fi
 
-# Readonly subcommands — always allow regardless of profile
-READONLY_PATTERN='(describe|list|get|ls|head|lookup|scan|query|search|show|check|test|validate|preview|estimate|forecast|explain)'
-if echo "$COMMAND" | grep -qE "[[:space:]]${READONLY_PATTERN}[-_[:alnum:]]*([[:space:]]|$)"; then
+# Readonly subcommand verbs. Must come right after `aws <service>` to count
+# as readonly — otherwise a trailing token like `--user-name test` could be
+# misread as a readonly verb. Dropped `test`/`validate`/`preview`/`estimate`/
+# `forecast`/`explain` from the list because those names also appear as
+# non-readonly trailing arg values.
+READONLY_VERBS='(describe|list|get|ls|head|lookup|scan|query|search|show)'
+if echo "$COMMAND" | grep -qE "(^|[[:space:]])aws[[:space:]]+[[:alnum:]_-]+[[:space:]]+${READONLY_VERBS}([-_[:alnum:]]+)?([[:space:]]|$)"; then
   exit 0
 fi
 
-# Detect production profile: --profile prod*, AWS_PROFILE=prod*, AWS_DEFAULT_PROFILE=prod*
+# Detect production profile: --profile prod*, AWS_PROFILE=prod*, AWS_DEFAULT_PROFILE=prod*.
+# Character class places `-` last so BSD grep doesn't read it as a range.
 TARGETS_PROD=0
 
-if echo "$COMMAND" | grep -qE '\-\-profile[[:space:]]+prod[[:alnum:]-_]*'; then
+if echo "$COMMAND" | grep -qE '\-\-profile[[:space:]]+prod[[:alnum:]_-]*'; then
   TARGETS_PROD=1
 fi
 

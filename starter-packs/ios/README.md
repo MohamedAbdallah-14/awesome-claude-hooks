@@ -1,27 +1,46 @@
 # iOS Starter Pack
 
-Pre-configured Claude Code hooks and project instructions for iOS (Swift) apps.
+Drop-in `settings.json` for iOS / macOS Swift projects. Layers `safe-default` with secret/dotenv blocks, JSON/YAML validation (Fastlane, GitHub Actions, `Info.plist`-adjacent configs), and `main`-branch protection.
 
-## What's included
+## Hooks included
 
-**settings.json hooks**
-- Pre-Bash: blocks secrets and `.env` mutations, blocks dangerous shell commands, prevents direct pushes to the main branch.
-- Pre-Write: audits file writes for sensitive paths, validates any JSON or YAML files before they land.
-- Post-Write: runs both an AI code review pass and an AI security scan on every written file — two passes because iOS handles sensitive data (keychain, biometrics, location) where security issues are high-impact.
-- On stop: macOS desktop notification, git context summary, session timer.
+**Pre-Bash**
+- `security/block-secrets`, `security/protect-dotenv`, `security/block-dangerous-bash`, `security/audit-bash-commands`.
+- `git/protect-main-branch`.
 
-**CLAUDE.md rules**
-- `xcodebuild` / `swift build` enforced — no direct compiler invocations.
-- `@Observable` (iOS 17+) preferred over `@ObservedObject` for new code.
-- Swift Concurrency (`async/await`, `MainActor`) over `DispatchQueue` for all new async work.
-- Retain cycle prevention: `[weak self]` required in closures that could outlive their owner.
-- All permissions declared in `Info.plist` before the API call is written.
-- No `.p12`, `.mobileprovision`, or API keys in source control.
-- All user-facing strings through `NSLocalizedString`.
+**Pre-Edit/Write**
+- `security/block-secrets`, `quality/validate-json-yaml`.
 
-## Setup
+**Post-Edit/Write**
+- `security/audit-file-writes`.
 
-1. Copy `settings.json` to `.claude/settings.json` in your Xcode project root (the folder containing `.xcodeproj` or `Package.swift`).
-2. Copy `CLAUDE.md` to the same project root.
-3. Hooks use `~/.claude/hooks/hooks` as the base path — the default clone location. If you cloned the hooks repo elsewhere, replace that prefix with your actual path.
-4. Replace `<YourScheme>` in the test command inside `CLAUDE.md` with your actual Xcode scheme name.
+**Post-Bash**
+- `context/inject-recent-commits`.
+
+**SessionStart**
+- `session/context-threshold-guard`.
+
+**Stop**
+- `notifications/desktop-notify`, `session/session-summary`, `context/inject-git-context`, `cost/log-tool-usage`.
+
+## Missing: Swift-specific gates
+
+There is no dedicated Swift quality hook (no `swiftlint-gate`, no `swift-format-gate`, no `xcodebuild-test-gate`). **Follow-up:** add `quality/swiftlint-gate.sh` (wrap `swiftlint --strict`) and `quality/swift-format-gate.sh`. The pack is security + workflow only on the Swift side until then.
+
+## Install
+
+```bash
+cp ~/.claude/awesome-hooks/starter-packs/ios/settings.json .claude/settings.json
+cp ~/.claude/awesome-hooks/starter-packs/ios/CLAUDE.md ./CLAUDE.md
+```
+
+Closest matching profile:
+
+```bash
+bash scripts/install.sh --profile=safe-default --global
+```
+
+## Notes
+
+- Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
+- Replace `<YourScheme>` in `CLAUDE.md` with your actual Xcode scheme name before relying on the test command.

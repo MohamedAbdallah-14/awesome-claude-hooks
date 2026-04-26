@@ -37,11 +37,6 @@ ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
 if [[ -z "$ANTHROPIC_API_KEY" ]]; then exit 0; fi
 
 # ── call Haiku ─────────────────────────────────────────────────────────────────
-PROMPT=$(jq -Rs --arg cmd "$COMMAND" \
-  '"Is this database migration command reversible? Reply with exactly one of: REVERSIBLE, IRREVERSIBLE, or UNKNOWN on the first line. Then one sentence explaining why.\n\nCommand: " + $cmd' \
-  <<< "")
-
-# Use the command itself as the analysis target (stdin placeholder above is empty)
 PROMPT=$(jq -n --arg cmd "$COMMAND" \
   '"Is this database migration command reversible? Reply with exactly one of: REVERSIBLE, IRREVERSIBLE, or UNKNOWN on the first line. Then one sentence explaining why.\n\nCommand: " + $cmd')
 

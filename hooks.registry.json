@@ -139,7 +139,7 @@
       "writes_files": false,
       "network_access": true,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/ai/ai-migration-safety.bats",
       "profiles": [
         "ai-assisted"
       ]
@@ -672,7 +672,7 @@
       "bypass_env": [
         "CLAUDE_ALLOW_AWS_PROD"
       ],
-      "tests": null,
+      "tests": "tests/devops/aws-prod-guard.bats",
       "profiles": [
         "devops"
       ]
@@ -684,7 +684,7 @@
       "path": "hooks/devops/db-migration-guard.sh",
       "event": "PreToolUse",
       "matcher": "Bash",
-      "description": "Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM, and migration rollback commands. #",
+      "description": "Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM, and migration rollback commands.",
       "risk_level": "blocking",
       "platforms": [
         "macos"
@@ -692,8 +692,10 @@
       "blocks_actions": true,
       "writes_files": true,
       "network_access": false,
-      "bypass_env": [],
-      "tests": null,
+      "bypass_env": [
+        "CLAUDE_ALLOW_DB_DESTRUCTIVE"
+      ],
+      "tests": "tests/devops/db-migration-guard.bats",
       "profiles": [
         "devops"
       ]
@@ -718,7 +720,7 @@
       "bypass_env": [
         "CLAUDE_ALLOW_DOCKER_PROD"
       ],
-      "tests": null,
+      "tests": "tests/devops/docker-prod-guard.bats",
       "profiles": [
         "devops"
       ]
@@ -741,7 +743,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/devops/github-actions-validator.bats",
       "profiles": [
         "devops"
       ]
@@ -764,7 +766,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/devops/infra-audit-log.bats",
       "profiles": [
         "devops"
       ]
@@ -789,7 +791,7 @@
       "bypass_env": [
         "CLAUDE_ALLOW_K8S_PROD"
       ],
-      "tests": null,
+      "tests": "tests/devops/kubernetes-prod-guard.bats",
       "profiles": [
         "devops"
       ]
@@ -814,7 +816,7 @@
       "bypass_env": [
         "CLAUDE_ALLOW_DESTROY"
       ],
-      "tests": null,
+      "tests": "tests/devops/terraform-destroy-guard.bats",
       "profiles": [
         "devops"
       ]
@@ -956,7 +958,7 @@
         "CLAUDE_BLOCK_CONFLICT_EDITS",
         "CLAUDE_CONFLICT_SKIP"
       ],
-      "tests": null,
+      "tests": "tests/git/conflict-detector.bats",
       "profiles": [
         "team"
       ]
@@ -1006,7 +1008,7 @@
         "CLAUDE_ALLOW_FORCE_PUSH",
         "CLAUDE_PROTECTED_BRANCHES"
       ],
-      "tests": null,
+      "tests": "tests/git/protect-main-branch.bats",
       "profiles": [
         "team"
       ]
@@ -1032,7 +1034,7 @@
         "CLAUDE_STASH_GUARD_BLOCK",
         "CLAUDE_STASH_GUARD_SKIP"
       ],
-      "tests": null,
+      "tests": "tests/git/stash-guard.bats",
       "profiles": [
         "team"
       ]
@@ -1058,7 +1060,7 @@
         "CLAUDE_COMMIT_REGEX",
         "CLAUDE_SKIP_COMMIT_VALIDATION"
       ],
-      "tests": null,
+      "tests": "tests/git/validate-commit-message.bats",
       "profiles": [
         "team"
       ]
@@ -1324,7 +1326,7 @@
       "path": "hooks/prompt/auto-approve-readonly.sh",
       "event": "PreToolUse",
       "matcher": "",
-      "description": "Auto-approves read-only tool requests so Claude can explore freely without interrupting the user. For any non-read-only tool, outputs nothing and lets Claude Code apply its normal permission logic. # Read-only tools approved: Read, Glob, Grep, LS, WebSearch, WebFetch, TodoRead",
+      "description": "Auto-approves read-only tool requests so Claude can explore freely without interrupting the user. For any non-read-only tool, outputs nothing and lets Claude Code apply its normal permission logic. # Read-only tools approved: Read, Glob, Grep, LS, WebSearch, WebFetch",
       "risk_level": "passive",
       "platforms": [
         "macos",
@@ -1642,7 +1644,7 @@
       "bypass_env": [
         "CLAUDE_BASH_AUDIT_LOG"
       ],
-      "tests": null,
+      "tests": "tests/security/audit-bash-commands.bats",
       "profiles": [
         "safe-default",
         "security"
@@ -1666,7 +1668,7 @@
       "bypass_env": [
         "CLAUDE_AUDIT_LOG"
       ],
-      "tests": null,
+      "tests": "tests/security/audit-file-writes.bats",
       "profiles": [
         "safe-default",
         "security",
@@ -1768,7 +1770,7 @@
       "bypass_env": [
         "CLAUDE_NPM_AUDIT_BLOCK"
       ],
-      "tests": null,
+      "tests": "tests/security/check-npm-audit.bats",
       "profiles": [
         "security"
       ]
@@ -1818,7 +1820,7 @@
       "bypass_env": [
         "CLAUDE_SQL_BLOCK"
       ],
-      "tests": null,
+      "tests": "tests/security/scan-sql-injection.bats",
       "profiles": [
         "security"
       ]

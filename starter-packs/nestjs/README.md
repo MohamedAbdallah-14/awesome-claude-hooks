@@ -1,28 +1,50 @@
 # NestJS Starter Pack
 
-Pre-configured Claude Code hooks and project instructions for NestJS backends.
+Drop-in `settings.json` for NestJS backends. Layers `safe-default` with the full JS/TS gate set (ESLint, Prettier, `tsc`), backend-relevant security (SQL injection scan, secret blocks), and team controls (main-branch protect, conflict detector, commit-message validator).
 
-## What's included
+## Hooks included
 
-**settings.json hooks**
-- Pre-Bash: blocks secrets and `.env` mutations, dangerous shell commands, merge conflicts, and direct commits to main.
-- Pre-edit/write: blocks secrets, scans for SQL injection patterns, validates JSON/YAML config files, protects the main branch.
-- Post-edit: runs ESLint, TypeScript type-check, Prettier, and an audit of file write operations on every change.
-- Post-Bash: injects recent git commits into context.
-- On stop: desktop notification, git context summary, session stats, commit message validation.
+**Pre-Bash**
+- `security/block-secrets`, `security/protect-dotenv`, `security/block-dangerous-bash`, `security/audit-bash-commands` — standard security stack.
+- `git/protect-main-branch` — no direct pushes to `main`/`master`.
+- `git/conflict-detector` — flags unresolved merge markers before commands run.
 
-**CLAUDE.md rules**
-- Controllers orchestrate only — all logic in services.
-- DTOs with class-validator for every request input; ValidationPipe with `whitelist: true` globally.
-- ConfigService for all env vars; no raw `process.env` in app code.
-- Constructor injection only; no manual `new` for dependencies.
-- TypeORM repositories for DB access; no string-concatenated SQL.
-- `kebab-case` file naming throughout.
-- Ordered workflow for new features: module → service → controller → DTOs.
+**Pre-Edit/Write**
+- `security/block-secrets` — file-write path.
+- `security/scan-sql-injection` — flags string-concatenated SQL in services/repositories.
+- `quality/validate-json-yaml` — parse-check JSON/YAML before save.
 
-## Setup
+**Post-Edit/Write**
+- `quality/eslint-gate`, `quality/prettier-gate`, `quality/tsc-check` — full TS gate after each write.
+- `security/audit-file-writes` — write log.
 
-1. Copy `settings.json` to `.claude/settings.json` in your project root.
-2. Copy `CLAUDE.md` to your project root.
-3. Hooks in `settings.json` are pre-configured to use `~/.claude/hooks/hooks` — the default clone path from the quick-start. If you cloned the repo elsewhere, do a find-and-replace of `~/.claude/hooks/hooks` with your actual path.
-4. Verify the ORM section matches your setup (TypeORM vs Prisma) and update accordingly.
+**Post-Bash**
+- `context/inject-recent-commits`.
+
+**SessionStart**
+- `session/context-threshold-guard`.
+
+**Stop**
+- `notifications/desktop-notify`, `session/session-summary`, `context/inject-git-context`.
+- `git/validate-commit-message` — checks last commit follows Conventional Commits before the session ends.
+
+## Install
+
+```bash
+cp ~/.claude/awesome-hooks/starter-packs/nestjs/settings.json .claude/settings.json
+cp ~/.claude/awesome-hooks/starter-packs/nestjs/CLAUDE.md ./CLAUDE.md
+```
+
+Closest matching profile:
+
+```bash
+bash scripts/install.sh --profile=quality --global
+# or, for main-branch + commit-message guards:
+bash scripts/install.sh --profile=team --project
+```
+
+## Notes
+
+- Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
+- `tsc-check.sh` requires `typescript` installed in the project.
+- ORM-specific advice in `CLAUDE.md` is TypeORM by default — swap for Prisma if you use it.

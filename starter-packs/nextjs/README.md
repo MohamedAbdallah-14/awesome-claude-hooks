@@ -1,23 +1,54 @@
 # Next.js Starter Pack
 
-Pre-configured Claude Code hooks and project instructions for Next.js 14+ with App Router.
+Drop-in `settings.json` for Next.js 14+ App Router projects. Layers `safe-default` (audit + summary + context guard + desktop notify) with the JS/TS quality stack: ESLint, Prettier, `tsc --noEmit`, plus secret/dotenv guards and `main`-branch protection.
 
-## What's included
+## Hooks included
 
-**settings.json hooks**
-- Pre-edit: blocks secrets and `.env` mutations, validates JSON/YAML, detects merge conflicts, protects `main`/`master` from direct commits.
-- Post-edit: runs ESLint, TypeScript type-check, and Prettier on every file you touch. Injects recent git commits into context after Bash calls.
-- On stop: desktop notification, updates terminal title, prints git context and session stats.
+**Pre-Bash**
+- `security/block-secrets` — blocks shell commands echoing/piping secret-shaped strings.
+- `security/protect-dotenv` — refuses writes targeting `.env*`.
+- `security/block-dangerous-bash` — kills destructive shell patterns.
+- `security/audit-bash-commands` — appends every Bash call to `~/.claude/audit/bash.log`.
+- `git/protect-main-branch` — blocks direct commits/pushes to `main`/`master`.
 
-**CLAUDE.md rules**
-- Server Components by default; `'use client'` only where strictly needed.
-- No `any`, no `console.log` in production, named exports only.
-- Zod for all external data validation; Tailwind for all styling.
-- Check `components/` for existing components before creating new ones.
+**Pre-Edit/Write**
+- `security/block-secrets` — file-write path for the same matcher.
+- `quality/validate-json-yaml` — parses JSON/YAML before they hit disk.
 
-## Setup
+**Post-Edit/Write**
+- `quality/eslint-gate` — runs `eslint --fix` on the touched file.
+- `quality/prettier-gate` — runs `prettier --write` on the touched file.
+- `quality/tsc-check` — type-checks the touched file with the project `tsconfig.json`.
+- `security/audit-file-writes` — logs every write target.
 
-1. Copy `settings.json` to `.claude/settings.json` in your project root.
-2. Copy `CLAUDE.md` to your project root.
-3. Hooks in `settings.json` are pre-configured to use `~/.claude/hooks/hooks` — the default clone path from the quick-start. If you cloned the repo elsewhere, do a find-and-replace of `~/.claude/hooks/hooks` with your actual path.
-4. Adjust the CLAUDE.md sections that say "adjust as needed" to match your actual project structure.
+**Post-Bash**
+- `context/inject-recent-commits` — recent commits back into context.
+
+**SessionStart**
+- `session/context-threshold-guard` — warns near context limit.
+
+**Stop**
+- `notifications/desktop-notify` — cross-platform desktop banner.
+- `notifications/terminal-title` — sets terminal tab title with session state.
+- `session/session-summary` — one-line session summary.
+- `context/inject-git-context` — branch + dirty files for the next turn.
+
+## Install
+
+```bash
+# Project-scoped
+cp ~/.claude/awesome-hooks/starter-packs/nextjs/settings.json .claude/settings.json
+cp ~/.claude/awesome-hooks/starter-packs/nextjs/CLAUDE.md ./CLAUDE.md
+```
+
+Or install the closest profile globally and copy this `CLAUDE.md`:
+
+```bash
+bash scripts/install.sh --profile=quality --global
+```
+
+## Notes
+
+- Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
+- `tsc-check.sh` requires `typescript` available locally (`npm install -D typescript`).
+- The `CLAUDE.md` rules assume Tailwind, Zod, named exports — strip what doesn't apply.

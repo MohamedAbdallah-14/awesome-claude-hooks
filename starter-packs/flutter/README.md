@@ -1,25 +1,46 @@
 # Flutter Starter Pack
 
-Pre-configured Claude Code hooks and project instructions for Flutter cross-platform apps.
+Drop-in `settings.json` for Flutter / Dart projects. Layers `safe-default` with `dart analyze`, `dart format`, and a post-bash test-coverage check.
 
-## What's included
+## Hooks included
 
-**settings.json hooks**
-- Pre-edit/Bash: blocks secrets and `.env` mutations, blocks dangerous shell commands, detects merge conflicts before they compound.
-- Post-edit on `.dart` files: runs `dart analyze` immediately after each file edit, auto-formats with `dart format`.
-- Post-Bash: checks test coverage after test runs, injects recent git commits for context.
-- On stop: macOS desktop notification, git context summary, session stats, motivational quote.
+**Pre-Bash**
+- `security/block-secrets`, `security/protect-dotenv`, `security/block-dangerous-bash`, `security/audit-bash-commands`.
+- `git/conflict-detector` — flags unresolved merge markers.
 
-**CLAUDE.md rules**
-- `const` constructors wherever they compile — enforced as a hard rule, not a suggestion.
-- `debugPrint`/logger only, never `print()`.
-- Named parameters required for anything with more than 3 args.
-- Feature-first folder structure with clear boundaries between features.
-- Platform code changes must compile on all target platforms before marking done.
+**Pre-Edit/Write**
+- `security/block-secrets`, `quality/validate-json-yaml`.
 
-## Setup
+**Post-Edit/Write**
+- `quality/dart-analyze` — runs `dart analyze` on the touched file.
+- `automation/auto-format-on-save` — `dart format` on save.
+- `security/audit-file-writes` — write log.
 
-1. Copy `settings.json` to `.claude/settings.json` in your Flutter project root.
-2. Copy `CLAUDE.md` to your project root.
-3. Hooks in `settings.json` are pre-configured to use `~/.claude/hooks/hooks` — the default clone path from the quick-start. If you cloned the repo elsewhere, do a find-and-replace of `~/.claude/hooks/hooks` with your actual path.
-4. Update the state management note in `CLAUDE.md` to match your actual package (`flutter_bloc` or `flutter_riverpod`).
+**Post-Bash**
+- `context/inject-recent-commits`.
+- `quality/test-coverage-check` — surfaces coverage gaps after `flutter test` runs.
+
+**SessionStart**
+- `session/context-threshold-guard`.
+
+**Stop**
+- `notifications/desktop-notify`, `session/session-summary`, `context/inject-git-context`.
+
+## Install
+
+```bash
+cp ~/.claude/awesome-hooks/starter-packs/flutter/settings.json .claude/settings.json
+cp ~/.claude/awesome-hooks/starter-packs/flutter/CLAUDE.md ./CLAUDE.md
+```
+
+Closest matching profile:
+
+```bash
+bash scripts/install.sh --profile=quality --global
+```
+
+## Notes
+
+- Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
+- `dart-analyze.sh` and `auto-format-on-save.sh` need the Dart SDK on `PATH`.
+- Update the state-management note in `CLAUDE.md` to match your actual package (`flutter_bloc` or `flutter_riverpod`).

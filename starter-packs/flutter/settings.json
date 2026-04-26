@@ -6,41 +6,36 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/protect-dotenv.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-dangerous-bash.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-dangerous-bash.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/git/conflict-detector.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/audit-bash-commands.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/git/conflict-detector.sh"
           }
         ]
       },
       {
-        "matcher": "Write",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/quality/validate-json-yaml.sh"
           }
         ]
       }
@@ -51,11 +46,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/quality/dart-analyze.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/quality/dart-analyze.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/automation/auto-format-on-save.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/automation/auto-format-on-save.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/audit-file-writes.sh"
           }
         ]
       },
@@ -64,11 +63,21 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/quality/test-coverage-check.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/context/inject-recent-commits.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/context/inject-recent-commits.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/quality/test-coverage-check.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/session/context-threshold-guard.sh"
           }
         ]
       }
@@ -78,19 +87,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/notifications/macos-notify.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/notifications/desktop-notify.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/context/inject-git-context.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/session/session-summary.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/fun/session-stats.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/fun/motivational-quote.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/context/inject-git-context.sh"
           }
         ]
       }

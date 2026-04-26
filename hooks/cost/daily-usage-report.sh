@@ -77,32 +77,20 @@ format_duration() {
 }
 
 # ── parse usage.csv ───────────────────────────────────────────────────────────
+# bash 3.2 compatible — defers per-key counting to awk so we don't need
+# associative arrays.
 
 TOTAL_CALLS=0
-declare -A TOOL_COUNTS
-declare -A FILE_COUNTS
 
 if [[ -f "$USAGE_LOG" ]]; then
-  while IFS=',' read -r ts sid tool ctx; do
-    # Strip surrounding quotes
-    ts=$(printf '%s' "$ts"   | tr -d '"')
-    tool=$(printf '%s' "$tool" | tr -d '"')
-    ctx=$(printf '%s' "$ctx"   | tr -d '"')
-
-    # Skip header line
-    [[ "$ts" == "timestamp" ]] && continue
-
-    # Filter to today
-    [[ "$ts" != "${TODAY}"* ]] && continue
-
-    TOTAL_CALLS=$(( TOTAL_CALLS + 1 ))
-    TOOL_COUNTS["$tool"]=$(( ${TOOL_COUNTS["$tool"]:-0} + 1 ))
-
-    # Track edited files (ctx is a file path when it starts with /)
-    if [[ "$ctx" == /* ]]; then
-      FILE_COUNTS["$ctx"]=$(( ${FILE_COUNTS["$ctx"]:-0} + 1 ))
-    fi
-  done < "$USAGE_LOG"
+  TOTAL_CALLS=$(awk -F, -v today="$TODAY" '
+    NR==1 { next }                              # header
+    {
+      ts=$1; gsub(/"/,"",ts)
+      if (index(ts, today) == 1) c++
+    }
+    END { print c+0 }
+  ' "$USAGE_LOG")
 fi
 
 # ── parse sessions.log ────────────────────────────────────────────────────────
@@ -120,26 +108,30 @@ if [[ -f "$SESSION_LOG" ]]; then
   done < "$SESSION_LOG"
 fi
 
-# ── build top-5 tools ─────────────────────────────────────────────────────────
+# ── build top-5 tools / files ─────────────────────────────────────────────────
+# bash 3.2 compatible — awk does the counting then sort + head + format.
 
 TOP_TOOLS=""
-if [[ ${#TOOL_COUNTS[@]} -gt 0 ]]; then
-  TOP_TOOLS=$(
-    for tool in "${!TOOL_COUNTS[@]}"; do
-      printf '%d %s\n' "${TOOL_COUNTS[$tool]}" "$tool"
-    done | sort -rn | head -5 | awk '{printf "| %-20s | %5d |\n", $2, $1}'
-  )
-fi
-
-# ── build top-5 files ─────────────────────────────────────────────────────────
-
 TOP_FILES=""
-if [[ ${#FILE_COUNTS[@]} -gt 0 ]]; then
-  TOP_FILES=$(
-    for f in "${!FILE_COUNTS[@]}"; do
-      printf '%d %s\n' "${FILE_COUNTS[$f]}" "$f"
-    done | sort -rn | head -5 | awk '{printf "| %-50s | %5d |\n", $2, $1}'
-  )
+
+if [[ -f "$USAGE_LOG" ]]; then
+  TOP_TOOLS=$(awk -F, -v today="$TODAY" '
+    NR==1 { next }
+    {
+      ts=$1; tool=$3; gsub(/"/,"",ts); gsub(/"/,"",tool)
+      if (index(ts, today) == 1 && tool != "") tools[tool]++
+    }
+    END { for (t in tools) printf "%d %s\n", tools[t], t }
+  ' "$USAGE_LOG" | sort -rn | head -5 | awk '{printf "| %-20s | %5d |\n", $2, $1}')
+
+  TOP_FILES=$(awk -F, -v today="$TODAY" '
+    NR==1 { next }
+    {
+      ts=$1; ctx=$4; gsub(/"/,"",ts); gsub(/"/,"",ctx)
+      if (index(ts, today) == 1 && substr(ctx, 1, 1) == "/") files[ctx]++
+    }
+    END { for (f in files) printf "%d %s\n", files[f], f }
+  ' "$USAGE_LOG" | sort -rn | head -5 | awk '{printf "| %-50s | %5d |\n", $2, $1}')
 fi
 
 # ── write report ──────────────────────────────────────────────────────────────

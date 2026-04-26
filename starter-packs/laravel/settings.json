@@ -6,51 +6,74 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/protect-dotenv.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-dangerous-bash.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-dangerous-bash.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/devops/db-migration-guard.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/audit-bash-commands.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/git/protect-main-branch.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/devops/db-migration-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/git/protect-main-branch.sh"
           }
         ]
       },
       {
-        "matcher": "Write",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/audit-file-writes.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/quality/validate-json-yaml.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/scan-sql-injection.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/scan-sql-injection.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/quality/validate-json-yaml.sh"
           }
         ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Write",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/ai/ai-code-review.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/audit-file-writes.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/context/inject-recent-commits.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/session/context-threshold-guard.sh"
           }
         ]
       }
@@ -60,23 +83,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/notifications/macos-notify.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/notifications/desktop-notify.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/context/inject-git-context.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/session/session-summary.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/automation/auto-changelog.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/context/inject-git-context.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/cost/session-timer.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/cost/budget-alert.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/cost/log-tool-usage.sh"
           }
         ]
       }

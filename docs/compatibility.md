@@ -6,7 +6,7 @@ Operational metadata for every hook. Generated from `hooks.registry.yaml`.
 |------|-------|---------|----------|----------------|-----------|-------|
 | [`ai-code-review`](../hooks/ai/ai-code-review.sh) | `PostToolUse` | — | ✅ | — | macos, linux, wsl | — |
 | [`ai-commit-message`](../hooks/ai/ai-commit-message.sh) | `Stop` | — | ✅ | — | macos, linux, wsl | — |
-| [`ai-migration-safety`](../hooks/ai/ai-migration-safety.sh) | `PreToolUse` | ✅ | ✅ | — | macos, linux, wsl | — |
+| [`ai-migration-safety`](../hooks/ai/ai-migration-safety.sh) | `PreToolUse` | ✅ | ✅ | — | macos, linux, wsl | ✅ |
 | [`ai-pr-description`](../hooks/ai/ai-pr-description.sh) | `Stop` | — | ✅ | — | macos, linux, wsl | — |
 | [`ai-security-scan`](../hooks/ai/ai-security-scan.sh) | `PostToolUse` | — | ✅ | — | macos, linux, wsl | — |
 | [`auto-changelog`](../hooks/automation/auto-changelog.sh) | `Stop` | — | — | ✅ | macos, linux, wsl | — |
@@ -29,23 +29,23 @@ Operational metadata for every hook. Generated from `hooks.registry.yaml`.
 | [`log-bash-history`](../hooks/cost/log-bash-history.sh) | `PostToolUse` (`Bash`) | — | — | ✅ | macos, linux, wsl | — |
 | [`log-tool-usage`](../hooks/cost/log-tool-usage.sh) | `PostToolUse` | — | — | ✅ | macos, linux, wsl | — |
 | [`session-timer`](../hooks/cost/session-timer.sh) | `PreToolUse` | — | — | ✅ | macos, linux, wsl | — |
-| [`aws-prod-guard`](../hooks/devops/aws-prod-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | — |
-| [`db-migration-guard`](../hooks/devops/db-migration-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos | — |
-| [`docker-prod-guard`](../hooks/devops/docker-prod-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | — |
-| [`github-actions-validator`](../hooks/devops/github-actions-validator.sh) | `PreToolUse` (`Write`) | ✅ | — | ✅ | macos, linux, wsl | — |
-| [`infra-audit-log`](../hooks/devops/infra-audit-log.sh) | `PostToolUse` (`Bash`) | — | — | ✅ | macos, linux, wsl | — |
-| [`kubernetes-prod-guard`](../hooks/devops/kubernetes-prod-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | — |
-| [`terraform-destroy-guard`](../hooks/devops/terraform-destroy-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | — |
+| [`aws-prod-guard`](../hooks/devops/aws-prod-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
+| [`db-migration-guard`](../hooks/devops/db-migration-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos | ✅ |
+| [`docker-prod-guard`](../hooks/devops/docker-prod-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
+| [`github-actions-validator`](../hooks/devops/github-actions-validator.sh) | `PreToolUse` (`Write`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
+| [`infra-audit-log`](../hooks/devops/infra-audit-log.sh) | `PostToolUse` (`Bash`) | — | — | ✅ | macos, linux, wsl | ✅ |
+| [`kubernetes-prod-guard`](../hooks/devops/kubernetes-prod-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
+| [`terraform-destroy-guard`](../hooks/devops/terraform-destroy-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
 | [`ascii-confetti`](../hooks/fun/ascii-confetti.sh) | `Stop` | — | — | ✅ | linux | — |
 | [`break-reminder`](../hooks/fun/break-reminder.sh) | `Stop` | — | — | ✅ | macos, linux | — |
 | [`motivational-quote`](../hooks/fun/motivational-quote.sh) | `Stop` | — | — | ✅ | macos, linux, wsl | — |
 | [`session-stats`](../hooks/fun/session-stats.sh) | `Stop` | — | — | ✅ | macos, linux, wsl | — |
 | [`auto-create-branch`](../hooks/git/auto-create-branch.sh) | `Stop` | — | — | ✅ | macos, linux, wsl | — |
-| [`conflict-detector`](../hooks/git/conflict-detector.sh) | `PreToolUse` (`Edit|Write|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | — |
+| [`conflict-detector`](../hooks/git/conflict-detector.sh) | `PreToolUse` (`Edit|Write|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
 | [`pr-description-gen`](../hooks/git/pr-description-gen.sh) | `PostToolUse` (`Bash`) | — | — | ✅ | macos, linux, wsl | — |
-| [`protect-main-branch`](../hooks/git/protect-main-branch.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | — |
-| [`stash-guard`](../hooks/git/stash-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | — |
-| [`validate-commit-message`](../hooks/git/validate-commit-message.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | — |
+| [`protect-main-branch`](../hooks/git/protect-main-branch.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
+| [`stash-guard`](../hooks/git/stash-guard.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
+| [`validate-commit-message`](../hooks/git/validate-commit-message.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
 | [`desktop-notify`](../hooks/notifications/desktop-notify.sh) | `Stop` | — | — | ✅ | macos, linux, wsl | — |
 | [`discord-notify`](../hooks/notifications/discord-notify.sh) | `Stop` | — | ✅ | ✅ | macos, linux, wsl | — |
 | [`linux-notify`](../hooks/notifications/linux-notify.sh) | `Stop` | — | — | ✅ | macos, linux | — |
@@ -69,14 +69,14 @@ Operational metadata for every hook. Generated from `hooks.registry.yaml`.
 | [`test-coverage-check`](../hooks/quality/test-coverage-check.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | — | — | ✅ | macos | — |
 | [`tsc-check`](../hooks/quality/tsc-check.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | — | — | ✅ | macos, linux, wsl | — |
 | [`validate-json-yaml`](../hooks/quality/validate-json-yaml.sh) | `PreToolUse` (`Write|Edit|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
-| [`audit-bash-commands`](../hooks/security/audit-bash-commands.sh) | `PostToolUse` (`Bash`) | — | — | ✅ | macos, linux, wsl | — |
-| [`audit-file-writes`](../hooks/security/audit-file-writes.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | — | — | ✅ | macos | — |
+| [`audit-bash-commands`](../hooks/security/audit-bash-commands.sh) | `PostToolUse` (`Bash`) | — | — | ✅ | macos, linux, wsl | ✅ |
+| [`audit-file-writes`](../hooks/security/audit-file-writes.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | — | — | ✅ | macos | ✅ |
 | [`block-dangerous-bash`](../hooks/security/block-dangerous-bash.sh) | `PreToolUse` (`Bash`) | ✅ | ✅ | ✅ | macos, linux, wsl | ✅ |
 | [`block-secrets`](../hooks/security/block-secrets.sh) | `PreToolUse` (`Write|Edit|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
 | [`block-system-paths`](../hooks/security/block-system-paths.sh) | `PreToolUse` (`Write|Edit|Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
-| [`check-npm-audit`](../hooks/security/check-npm-audit.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | — |
+| [`check-npm-audit`](../hooks/security/check-npm-audit.sh) | `PreToolUse` (`Bash`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
 | [`protect-dotenv`](../hooks/security/protect-dotenv.sh) | `PreToolUse` (`Write|Edit|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
-| [`scan-sql-injection`](../hooks/security/scan-sql-injection.sh) | `PreToolUse` (`Write|Edit|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | — |
+| [`scan-sql-injection`](../hooks/security/scan-sql-injection.sh) | `PreToolUse` (`Write|Edit|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
 | [`context-threshold-guard`](../hooks/session/context-threshold-guard.sh) | `UserPromptSubmit` | — | — | ✅ | macos, linux, wsl | — |
 | [`env-file-injector`](../hooks/session/env-file-injector.sh) | `SessionStart` | — | — | ✅ | macos, linux, wsl | — |
 | [`precompact-backup`](../hooks/session/precompact-backup.sh) | `PreCompact` | — | — | ✅ | macos, linux, wsl | — |

@@ -1,28 +1,43 @@
 # Go Starter Pack
 
-Pre-configured Claude Code hooks and project instructions for Go applications and services.
+Drop-in `settings.json` for Go services and binaries. Layers `safe-default` with `go vet` after every Go file edit, plus secret/dotenv/dangerous-bash blocks.
 
-## What's included
+## Hooks included
 
-**settings.json hooks**
-- Pre-Bash: blocks secrets and `.env` mutations, blocks dangerous shell commands.
-- Pre-edit/write: blocks secrets in any file being touched.
-- Post-edit on `.go` files: runs `go vet` after every file change to catch common mistakes immediately.
-- Post-Bash: injects recent git commits into context, audits bash commands run during the session.
-- On stop: desktop notification (Linux primary, macOS fallback), git context summary, session stats.
+**Pre-Bash**
+- `security/block-secrets`, `security/protect-dotenv`, `security/block-dangerous-bash`, `security/audit-bash-commands`.
 
-**CLAUDE.md rules**
-- No `_` for error returns — handle every error.
-- `context.Context` as first param for all I/O and long-running operations.
-- `defer` for all cleanup.
-- Interfaces defined at the consumption site, kept small (1-2 methods).
-- No global mutable state, no `init()` except for registration patterns.
-- Tests with `-race` flag — data races are bugs that block merging.
-- Table-driven tests as the default pattern.
+**Pre-Edit/Write**
+- `security/block-secrets` — file-write path.
+- `quality/validate-json-yaml` — parse-check JSON/YAML (`.golangci.yml`, k8s manifests, etc.).
 
-## Setup
+**Post-Edit/Write**
+- `quality/go-vet` — runs `go vet ./...` after Go file changes; also flags unformatted files via `gofmt -l`.
+- `security/audit-file-writes` — write log.
 
-1. Copy `settings.json` to `.claude/settings.json` in your project root.
-2. Copy `CLAUDE.md` to your project root.
-3. Hooks in `settings.json` are pre-configured to use `~/.claude/hooks/hooks` — the default clone path from the quick-start. If you cloned the repo elsewhere, do a find-and-replace of `~/.claude/hooks/hooks` with your actual path.
-4. Verify `go-vet.sh` and `audit-bash-commands.sh` paths match your hooks directory structure.
+**Post-Bash**
+- `context/inject-recent-commits`.
+
+**SessionStart**
+- `session/context-threshold-guard`.
+
+**Stop**
+- `notifications/desktop-notify`, `session/session-summary`, `context/inject-git-context`, `cost/log-tool-usage`.
+
+## Install
+
+```bash
+cp ~/.claude/awesome-hooks/starter-packs/go/settings.json .claude/settings.json
+cp ~/.claude/awesome-hooks/starter-packs/go/CLAUDE.md ./CLAUDE.md
+```
+
+Closest matching profile:
+
+```bash
+bash scripts/install.sh --profile=quality --global
+```
+
+## Notes
+
+- Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
+- `go-vet.sh` needs the Go toolchain on `PATH`. There is no dedicated `golangci-lint` hook — run it from CI or pre-commit if you want stricter linting.

@@ -128,7 +128,7 @@ hooks:
     bypass_env:[]
     profiles:
       - ai-assisted
-    tests: null
+    tests: tests/ai/ai-migration-safety.bats
 
   - id: ai-pr-description
     category: ai
@@ -569,24 +569,25 @@ hooks:
       - CLAUDE_ALLOW_AWS_PROD
     profiles:
       - devops
-    tests: null
+    tests: tests/devops/aws-prod-guard.bats
 
   - id: db-migration-guard
     category: devops
     path: hooks/devops/db-migration-guard.sh
     event: PreToolUse
     matcher: Bash
-    description: "Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM, and migration rollback commands. #"
+    description: "Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM, and migration rollback commands."
     risk_level: blocking
     platforms:
       - macos
     blocks_actions: true
     writes_files: true
     network_access: false
-    bypass_env:[]
+    bypass_env:
+      - CLAUDE_ALLOW_DB_DESTRUCTIVE
     profiles:
       - devops
-    tests: null
+    tests: tests/devops/db-migration-guard.bats
 
   - id: docker-prod-guard
     category: devops
@@ -606,7 +607,7 @@ hooks:
       - CLAUDE_ALLOW_DOCKER_PROD
     profiles:
       - devops
-    tests: null
+    tests: tests/devops/docker-prod-guard.bats
 
   - id: github-actions-validator
     category: devops
@@ -625,7 +626,7 @@ hooks:
     bypass_env:[]
     profiles:
       - devops
-    tests: null
+    tests: tests/devops/github-actions-validator.bats
 
   - id: infra-audit-log
     category: devops
@@ -644,7 +645,7 @@ hooks:
     bypass_env:[]
     profiles:
       - devops
-    tests: null
+    tests: tests/devops/infra-audit-log.bats
 
   - id: kubernetes-prod-guard
     category: devops
@@ -664,7 +665,7 @@ hooks:
       - CLAUDE_ALLOW_K8S_PROD
     profiles:
       - devops
-    tests: null
+    tests: tests/devops/kubernetes-prod-guard.bats
 
   - id: terraform-destroy-guard
     category: devops
@@ -684,7 +685,7 @@ hooks:
       - CLAUDE_ALLOW_DESTROY
     profiles:
       - devops
-    tests: null
+    tests: tests/devops/terraform-destroy-guard.bats
 
   - id: ascii-confetti
     category: fun
@@ -801,7 +802,7 @@ hooks:
       - CLAUDE_CONFLICT_SKIP
     profiles:
       - team
-    tests: null
+    tests: tests/git/conflict-detector.bats
 
   - id: pr-description-gen
     category: git
@@ -842,7 +843,7 @@ hooks:
       - CLAUDE_PROTECTED_BRANCHES
     profiles:
       - team
-    tests: null
+    tests: tests/git/protect-main-branch.bats
 
   - id: stash-guard
     category: git
@@ -863,7 +864,7 @@ hooks:
       - CLAUDE_STASH_GUARD_SKIP
     profiles:
       - team
-    tests: null
+    tests: tests/git/stash-guard.bats
 
   - id: validate-commit-message
     category: git
@@ -884,7 +885,7 @@ hooks:
       - CLAUDE_SKIP_COMMIT_VALIDATION
     profiles:
       - team
-    tests: null
+    tests: tests/git/validate-commit-message.bats
 
   - id: desktop-notify
     category: notifications
@@ -1096,7 +1097,7 @@ hooks:
     path: hooks/prompt/auto-approve-readonly.sh
     event: PreToolUse
     matcher: ""
-    description: "Auto-approves read-only tool requests so Claude can explore freely without interrupting the user. For any non-read-only tool, outputs nothing and lets Claude Code apply its normal permission logic. # Read-only tools approved: Read, Glob, Grep, LS, WebSearch, WebFetch, TodoRead"
+    description: "Auto-approves read-only tool requests so Claude can explore freely without interrupting the user. For any non-read-only tool, outputs nothing and lets Claude Code apply its normal permission logic. # Read-only tools approved: Read, Glob, Grep, LS, WebSearch, WebFetch"
     risk_level: passive
     platforms:
       - macos
@@ -1360,7 +1361,7 @@ hooks:
     profiles:
       - safe-default
       - security
-    tests: null
+    tests: tests/security/audit-bash-commands.bats
 
   - id: audit-file-writes
     category: security
@@ -1380,7 +1381,7 @@ hooks:
       - safe-default
       - security
       - team
-    tests: null
+    tests: tests/security/audit-file-writes.bats
 
   - id: block-dangerous-bash
     category: security
@@ -1460,7 +1461,7 @@ hooks:
       - CLAUDE_NPM_AUDIT_BLOCK
     profiles:
       - security
-    tests: null
+    tests: tests/security/check-npm-audit.bats
 
   - id: protect-dotenv
     category: security
@@ -1500,7 +1501,7 @@ hooks:
       - CLAUDE_SQL_BLOCK
     profiles:
       - security
-    tests: null
+    tests: tests/security/scan-sql-injection.bats
 
   - id: context-threshold-guard
     category: session

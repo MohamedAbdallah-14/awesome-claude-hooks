@@ -6,19 +6,27 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/protect-dotenv.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/protect-dotenv.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-dangerous-bash.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-dangerous-bash.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/git/conflict-detector.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/audit-bash-commands.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/git/protect-main-branch.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/git/conflict-detector.sh"
           }
         ]
       },
@@ -27,19 +35,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/block-secrets.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/block-secrets.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/scan-sql-injection.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/scan-sql-injection.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/quality/validate-json-yaml.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/git/protect-main-branch.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/quality/validate-json-yaml.sh"
           }
         ]
       }
@@ -50,19 +54,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/quality/eslint-gate.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/quality/eslint-gate.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/quality/tsc-check.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/quality/prettier-gate.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/quality/prettier-gate.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/quality/tsc-check.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/security/audit-file-writes.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/audit-file-writes.sh"
           }
         ]
       },
@@ -71,7 +75,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/context/inject-recent-commits.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/context/inject-recent-commits.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/session/context-threshold-guard.sh"
           }
         ]
       }
@@ -81,19 +95,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/notifications/macos-notify.sh || bash ~/.claude/hooks/hooks/notifications/linux-notify.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/notifications/desktop-notify.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/context/inject-git-context.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/session/session-summary.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/fun/session-stats.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/context/inject-git-context.sh"
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/hooks/hooks/git/validate-commit-message.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/git/validate-commit-message.sh"
           }
         ]
       }

@@ -1,28 +1,47 @@
 # Data Science Starter Pack
 
-Pre-configured Claude Code hooks and project instructions for Python data science and ML projects.
+Drop-in `settings.json` for Python data-science / ML projects. Layers `safe-default` with `ruff` lint, SQL injection scan, db-migration guard (for analytical pipelines that talk to warehouses), secret/dotenv blocks, and a budget alert (useful when running LLM-assisted analysis).
 
-## What's included
+## Hooks included
 
-**settings.json hooks**
-- Pre-Bash: blocks secrets and `.env` mutations, blocks dangerous shell commands, prevents direct pushes to the main branch, guards against accidental database migrations running mid-session.
-- Pre-Write: audits file writes for sensitive paths, scans any written SQL for injection patterns.
-- Post-Write: runs Python linting (`python-lint.sh`) and an AI security scan on every written file — both matter here because data pipelines often handle credentials and PII.
-- On stop: macOS desktop notification, git context summary, session timer, budget alert (useful when running LLM-assisted analysis), and test results injected into context.
+**Pre-Bash**
+- `security/block-secrets`, `security/protect-dotenv`, `security/block-dangerous-bash`, `security/audit-bash-commands`.
+- `devops/db-migration-guard` — guards against destructive warehouse / Alembic migration commands run mid-session.
 
-**CLAUDE.md rules**
-- Virtual environment / conda activation required before any script runs.
-- Exact version pinning in `requirements.txt` via `pip freeze`.
-- Raw datasets excluded from git (`*.csv`, `*.parquet`, `*.pkl`, and data directories).
-- Jupyter notebook outputs cleared before every commit.
-- Random seeds set in every experiment script for reproducibility.
-- Model checkpoints saved with version + timestamp — never overwrite.
-- PII column check before logging any DataFrame.
-- All credentials via environment variables, never hardcoded.
+**Pre-Edit/Write**
+- `security/block-secrets`, `security/scan-sql-injection`, `quality/validate-json-yaml`.
 
-## Setup
+**Post-Edit/Write**
+- `quality/python-lint` — runs `ruff` (or `flake8`/`black --check`) on the touched file.
+- `security/audit-file-writes`.
 
-1. Copy `settings.json` to `.claude/settings.json` in your project root.
-2. Copy `CLAUDE.md` to your project root.
-3. Hooks use `~/.claude/hooks/hooks` as the base path — the default clone location. If you cloned the hooks repo elsewhere, replace that prefix with your actual path.
-4. Add data file patterns from the `CLAUDE.md` Data section to your `.gitignore` if they aren't there already.
+**Post-Bash**
+- `context/inject-recent-commits`.
+
+**SessionStart**
+- `session/context-threshold-guard`.
+
+**Stop**
+- `notifications/desktop-notify`, `session/session-summary`, `context/inject-git-context`.
+- `cost/budget-alert` — alerts when the session crosses the configured cost threshold.
+- `cost/log-tool-usage` — tool-call counts for the session.
+
+## Install
+
+```bash
+cp ~/.claude/awesome-hooks/starter-packs/data-science/settings.json .claude/settings.json
+cp ~/.claude/awesome-hooks/starter-packs/data-science/CLAUDE.md ./CLAUDE.md
+```
+
+Closest matching profile:
+
+```bash
+bash scripts/install.sh --profile=quality --global
+```
+
+## Notes
+
+- Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
+- Set `BUDGET_ALERT_THRESHOLD` in your environment to tune `cost/budget-alert.sh`.
+- Add the `*.csv` / `*.parquet` / `data/` patterns from `CLAUDE.md` to `.gitignore` before committing anything.
+- There is no notebook-output-clear hook yet. Add one to your pre-commit or run `jupyter nbconvert --clear-output --inplace` manually.
