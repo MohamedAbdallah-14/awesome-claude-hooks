@@ -1,10 +1,14 @@
 # awesome-claude-hooks
 
+<p align="center">
+  <img src="assets/hero.png" alt="awesome-claude-hooks" width="100%">
+</p>
+
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 [![License: CC0](https://img.shields.io/badge/License-CC0-lightgrey.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Hooks](https://img.shields.io/badge/hooks-79-blue.svg)](#hook-categories)
-[![CI](https://github.com/mohamedabdallah/awesome-claude-hooks/actions/workflows/ci.yml/badge.svg)](https://github.com/mohamedabdallah/awesome-claude-hooks/actions/workflows/ci.yml)
+[![CI](https://github.com/MohamedAbdallah-14/awesome-claude-hooks/actions/workflows/ci.yml/badge.svg)](https://github.com/MohamedAbdallah-14/awesome-claude-hooks/actions/workflows/ci.yml)
 [![shellcheck](https://img.shields.io/badge/shellcheck-clean-brightgreen.svg)](#testing)
 
 A hook library for Claude Code. Every entry is a working shell script you can drop in today. 79 hooks across 12 categories, all shellcheck-clean and bats-tested.
@@ -32,7 +36,7 @@ Claude Code hooks are shell scripts that run automatically at defined points in 
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/mohamedabdallah/awesome-claude-hooks.git ~/.claude/hooks
+git clone https://github.com/MohamedAbdallah-14/awesome-claude-hooks.git ~/.claude/hooks
 
 # 2. Make hooks executable
 chmod +x ~/.claude/hooks/hooks/**/*.sh
