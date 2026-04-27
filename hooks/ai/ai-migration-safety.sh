@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: CC0-1.0
 # Hook name:   ai-migration-safety
-# Event:       PreToolUse  (BLOCKING)
-# Matcher:     Bash
+# Event:       PreToolUse (matcher: "Bash")
+# Mode:        BLOCKING (exit 2 on IRREVERSIBLE migrations)
 # Description: Intercepts bash commands that look like database migrations.
 #              Asks Haiku whether the migration is REVERSIBLE, IRREVERSIBLE, or
 #              UNKNOWN. Blocks with exit 2 only if IRREVERSIBLE. Passes through
@@ -37,11 +37,6 @@ ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
 if [[ -z "$ANTHROPIC_API_KEY" ]]; then exit 0; fi
 
 # ── call Haiku ─────────────────────────────────────────────────────────────────
-PROMPT=$(jq -Rs --arg cmd "$COMMAND" \
-  '"Is this database migration command reversible? Reply with exactly one of: REVERSIBLE, IRREVERSIBLE, or UNKNOWN on the first line. Then one sentence explaining why.\n\nCommand: " + $cmd' \
-  <<< "")
-
-# Use the command itself as the analysis target (stdin placeholder above is empty)
 PROMPT=$(jq -n --arg cmd "$COMMAND" \
   '"Is this database migration command reversible? Reply with exactly one of: REVERSIBLE, IRREVERSIBLE, or UNKNOWN on the first line. Then one sentence explaining why.\n\nCommand: " + $cmd')
 

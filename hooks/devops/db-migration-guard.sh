@@ -5,6 +5,10 @@
 # Description: Blocks irreversible DB operations: DROP TABLE/DATABASE, TRUNCATE, unsafe DELETE FROM,
 #              and migration rollback commands.
 #
+# Config (env vars):
+#   CLAUDE_ALLOW_DB_DESTRUCTIVE=1   Bypass for sandbox / one-shot teardown.
+#                                   Unset it again the moment you're done.
+#
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):
 #
@@ -35,6 +39,11 @@ fi
 COMMAND=$(jq -r '.tool_input.command // empty' <<< "$INPUT")
 
 if [[ -z "$COMMAND" ]]; then
+  exit 0
+fi
+
+# Bypass: contributors testing destructive flows in a sandbox set this.
+if [[ "${CLAUDE_ALLOW_DB_DESTRUCTIVE:-}" == "1" ]]; then
   exit 0
 fi
 

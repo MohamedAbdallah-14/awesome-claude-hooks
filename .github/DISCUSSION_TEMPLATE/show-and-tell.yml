@@ -1,0 +1,37 @@
+title: "[show-and-tell] "
+labels: [show-and-tell]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Built a custom hook on top of this repo? Drop it here. Bonus points for
+        a screenshot, a payload example, or a war story about what broke before
+        you wrote it.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What did you build?
+      description: |
+        Free-form. What problem does it solve, what event does it hook into,
+        and what's clever about it?
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Repo or gist link
+      description: Where can people read the source?
+      placeholder: https://github.com/you/your-hook  or  https://gist.github.com/...
+    validations:
+      required: false
+
+  - type: textarea
+    id: payload
+    attributes:
+      label: Example payload or output (optional)
+      description: A snippet of the input/output makes it much easier for others to copy.
+      render: shell
+    validations:
+      required: false

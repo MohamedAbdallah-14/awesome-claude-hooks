@@ -87,7 +87,27 @@ body:
     id: why
     attributes:
       label: Why it belongs in this collection
-      description: What problem does it solve that existing hooks don't?
+      description: |
+        Which hook already in the registry doesn't cover this? If something
+        close exists, why does this need to be separate (different event,
+        different matcher, different blocking semantics, different env)?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: risk_level
+    attributes:
+      label: Risk level
+      description: |
+        Match the categories defined in SECURITY_MODEL.md. Pick the highest
+        applicable level.
+      options:
+        - passive (read-only, no side effects)
+        - contextual (injects additionalContext, no system side effects)
+        - modifying (writes local files / logs / formatted code)
+        - blocking (returns permissionDecision deny)
+        - networked (calls Slack, webhooks, third-party APIs)
+        - privileged (invokes kubectl, aws, terraform, docker, gcloud, helm)
     validations:
       required: true
 
@@ -97,6 +117,19 @@ body:
       label: Bypass env var
       description: If the hook can block, propose a `CLAUDE_*` env var to disable it.
       placeholder: CLAUDE_ALLOW_BILLING_SPIKE
+
+  - type: checkboxes
+    id: quality_bar
+    attributes:
+      label: Quality bar (what you'll deliver)
+      description: Pick one. Honesty here helps us route review.
+      options:
+        - label: I will write the hook + bats test + hero doc
+          required: false
+        - label: I will write only the hook
+          required: false
+        - label: I'm just proposing — someone else can build it
+          required: false
 
   - type: checkboxes
     id: contract

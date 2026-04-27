@@ -5,3 +5,10 @@
 
 # CI badge for path-to-9.5 branch will 404 until the branch is merged or pushed.
 # Add specific known-flaky patterns here as needed.
+
+# GitHub Pages site doesn't exist until pages.yml has run for the first time.
+# Skip until the site is live, then this can be removed.
+^https://mohamedabdallah-14\.github\.io
+
+# Local-dev URLs in docs-site/README.md.
+^http://localhost

@@ -6,7 +6,7 @@
 #              without interrupting the user. For any non-read-only tool, outputs
 #              nothing and lets Claude Code apply its normal permission logic.
 #
-# Read-only tools approved: Read, Glob, Grep, LS, WebSearch, WebFetch, TodoRead
+# Read-only tools approved: Read, Glob, Grep, LS, WebSearch, WebFetch
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):
 #
@@ -14,7 +14,7 @@
 #     "hooks": {
 #       "PreToolUse": [
 #         {
-#           "matcher": "Read|Glob|Grep|LS|WebSearch|WebFetch|TodoRead",
+#           "matcher": "Read|Glob|Grep|LS|WebSearch|WebFetch",
 #           "hooks": [
 #             {
 #               "type": "command",
@@ -48,7 +48,7 @@ fi
 # ── decision ──────────────────────────────────────────────────────────────────
 
 case "$TOOL_NAME" in
-  Read|Glob|Grep|LS|WebSearch|WebFetch|TodoRead)
+  Read|Glob|Grep|LS|WebSearch|WebFetch)
     # PreToolUse contract: hookSpecificOutput must include hookEventName.
     jq -n '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow"}}'
     ;;

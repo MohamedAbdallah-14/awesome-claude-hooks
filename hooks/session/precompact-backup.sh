@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: CC0-1.0
 # Hook name:   precompact-backup
 # Event:       PreCompact
-# Description: Backs up the full transcript to a timestamped file before Claude compacts it, so previous turns are recoverable.
+# Description: Backs up the full transcript before Claude compacts it.
+#              Writes a timestamped file so previous turns stay recoverable.
 #
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):

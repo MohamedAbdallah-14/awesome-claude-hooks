@@ -31,7 +31,7 @@
 set -euo pipefail
 
 # shellcheck source=../_lib/os-detect.sh
-source "$(dirname "$0")/../_lib/os-detect.sh"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../_lib/os-detect.sh"
 
 if ! command -v jq &>/dev/null; then
   exit 0

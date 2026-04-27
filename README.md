@@ -11,9 +11,11 @@
 [![CI](https://github.com/MohamedAbdallah-14/awesome-claude-hooks/actions/workflows/ci.yml/badge.svg)](https://github.com/MohamedAbdallah-14/awesome-claude-hooks/actions/workflows/ci.yml)
 [![shellcheck](https://img.shields.io/badge/shellcheck-clean-brightgreen.svg)](#testing)
 
-**Production-ready Claude Code hooks**: security guards, quality gates, workflow automation, context injection, and team-safe defaults — all tested, auditable, and copy-paste installable.
+**79 production-ready Claude Code hooks**, spec-aligned and bats-tested. Install a curated profile in one command.
 
-79 hooks across 12 categories. shellcheck-clean. bats-tested on Ubuntu and macOS. Spec-aligned with the official Claude Code [hooks reference](https://code.claude.com/docs/en/hooks).
+Security guards, quality gates, workflow automation, context injection, and team-safe defaults. shellcheck-clean. Tested on Ubuntu and macOS. Aligned with the official Claude Code [hooks reference](https://code.claude.com/docs/en/hooks).
+
+**Browse hooks:** [mohamedabdallah-14.github.io/awesome-claude-hooks](https://mohamedabdallah-14.github.io/awesome-claude-hooks/) — filter by category, event, risk level, or profile.
 
 ---
 
@@ -31,17 +33,9 @@ Claude Code hooks let you enforce rules deterministically: block dangerous comma
 
 ---
 
-## Contents
+## Browse all hooks
 
-- [Quick start](#quick-start)
-- [Start here by intent](#start-here-by-intent)
-- [Profiles](#profiles)
-- [What this modifies](#what-this-modifies)
-- [Hook catalog](#hook-catalog)
-- [Starter packs](#starter-packs)
-- [Docs](#docs)
-- [Testing](#testing)
-- [Contributing](#contributing)
+Searchable browser: **[mohamedabdallah-14.github.io/awesome-claude-hooks](https://mohamedabdallah-14.github.io/awesome-claude-hooks/)**. Plain markdown index: [`docs/hooks.md`](docs/hooks.md).
 
 ---
 
@@ -56,18 +50,13 @@ bash scripts/install.sh --profile=safe-default --global
 
 That installs five low-risk hooks (audit logs, session summary, context warning, desktop notification) into `~/.claude/settings.json`. Claude Code picks them up on the next session.
 
-To pick a different bundle:
+Other common invocations:
 
 ```bash
-bash scripts/install.sh --list-profiles    # show available profiles
+bash scripts/install.sh --list-profiles            # show available profiles
 bash scripts/install.sh --profile=security --global
 bash scripts/install.sh --profile=team --project   # writes .claude/settings.json
-```
-
-To preview without writing anything:
-
-```bash
-bash scripts/install.sh --profile=devops --dry-run
+bash scripts/install.sh --profile=devops --dry-run # preview without writing
 ```
 
 ---
@@ -148,20 +137,18 @@ bash scripts/install.sh --profile=solo-dev --global
 | `notifications` | 10 | Desktop + macOS + Linux + Slack + Telegram + Discord + Pushover + sounds + terminal title. |
 | `ai-assisted` | 5 | Haiku-powered review, OWASP scan, migration safety, commit + PR drafts. Needs `ANTHROPIC_API_KEY`. |
 
-`bash scripts/install.sh --list-profiles` prints the resolved hook list for each.
-
-The profile definitions live in [`hooks.registry.yaml`](hooks.registry.yaml) and are picked up automatically by the installer.
+Profile definitions live in [`hooks.registry.yaml`](hooks.registry.yaml). Run `bash scripts/install.sh --list-profiles` to see the resolved hook list for each.
 
 ---
 
 ## What this modifies
 
-Hooks run with your full user permissions. The installer is conservative — it touches only Claude Code's settings file.
+Hooks run with your full user permissions. The installer is conservative and touches only Claude Code's settings file.
 
 - **May edit** `~/.claude/settings.json` (with `--global`) or `.claude/settings.json` in the cwd (with `--project`).
 - **Always backs up** the existing settings file before writing (e.g. `settings.json.backup`).
-- **Does not install binaries** — every hook is a shell script that lives in this repo.
-- **Does not modify** your shell profile, PATH, git config, npm config, or anything outside of Claude Code's settings.
+- **Does not install binaries**. Every hook is a shell script that lives in this repo.
+- **Does not modify** your shell profile, PATH, git config, npm config, or anything outside Claude Code's settings.
 - **Each hook discloses** its dependencies, network access, and bypass env var in its header. See [`docs/compatibility.md`](docs/compatibility.md) for the full operational matrix.
 
 For threat coverage, hook risk levels, and review guidance see [`SECURITY_MODEL.md`](SECURITY_MODEL.md).
@@ -169,14 +156,6 @@ For threat coverage, hook risk levels, and review guidance see [`SECURITY_MODEL.
 ---
 
 ## Hook catalog
-
-The full catalog with one-line descriptions is generated from [`hooks.registry.yaml`](hooks.registry.yaml):
-
-- **By category** → [`docs/hooks.md`](docs/hooks.md)
-- **By event** → [`docs/events.md`](docs/events.md)
-- **Compatibility matrix** (blocks, network access, writes files, platforms, tests) → [`docs/compatibility.md`](docs/compatibility.md)
-
-Top-level summary:
 
 | Category | Hooks | Examples |
 |----------|------:|----------|
@@ -193,34 +172,7 @@ Top-level summary:
 | [prompt/](hooks/prompt/) | 5 | auto-approve-readonly, rate-limiter, banned-words-enforcer |
 | [fun/](hooks/fun/) | 4 | motivational-quote, break-reminder, ascii-confetti |
 
-Hero docs for the top 5 hooks live under [`docs/hooks/`](docs/hooks/).
-
----
-
-## Starter packs
-
-Pre-wired `settings.json` configurations for common stacks. Each pack includes a curated set of hooks from the categories above, a `settings.json` ready to drop into your project root, and a one-line install script.
-
-| Pack | What's included |
-|------|----------------|
-| [nextjs/](starter-packs/nextjs/) | ESLint gate, Prettier auto-fix, TypeScript error tracking, git branch protection, Slack notify |
-| [flutter/](starter-packs/flutter/) | `dart analyze` gate, `flutter test` runner, git branch protection, macOS/Linux notify |
-| [python/](starter-packs/python/) | `ruff` lint gate, `black` auto-format, SQL injection scan, secret blocking, session timer |
-| [nestjs/](starter-packs/nestjs/) | ESLint gate, Prettier auto-fix, TypeScript error tracking, npm audit check, git protection |
-| [go/](starter-packs/go/) | `go vet` gate, `gofmt` auto-fix, secret blocking, git branch protection, session timer |
-| [rails/](starter-packs/rails/) | RuboCop gate, secret blocking, DB migration safety, git branch protection, session timer |
-| [rust/](starter-packs/rust/) | `cargo clippy` gate, `rustfmt` auto-fix, secret blocking, git branch protection, budget alert |
-| [laravel/](starter-packs/laravel/) | PHP-CS-Fixer auto-format, secret blocking, DB migration safety, git protection, Slack notify |
-| [android/](starter-packs/android/) | Kotlin lint gate, secret blocking, git branch protection, macOS/Linux notify, session timer |
-| [ios/](starter-packs/ios/) | SwiftLint gate, secret blocking, git branch protection, macOS notify, session timer |
-| [data-science/](starter-packs/data-science/) | `ruff` lint gate, `black` auto-format, SQL injection scan, secret blocking, budget alert |
-
-Install a starter pack:
-
-```bash
-# Example: Next.js
-cp ~/.claude/hooks/starter-packs/nextjs/settings.json .claude/settings.json
-```
+Pre-wired stack bundles (Next.js, Flutter, Python, NestJS, Go, Rails, Rust, Laravel, Android, iOS, data-science) live under [`starter-packs/`](starter-packs/).
 
 ---
 
@@ -228,23 +180,23 @@ cp ~/.claude/hooks/starter-packs/nextjs/settings.json .claude/settings.json
 
 Worked walkthroughs (problem, before/after, install, test, bypass, safety) for the highest-stakes hooks:
 
-- [block-secrets](docs/hooks/block-secrets.md) — catch hardcoded API keys before they hit git
-- [block-dangerous-bash](docs/hooks/block-dangerous-bash.md) — stop `rm -rf /`, fork bombs, disk wipes
-- [protect-dotenv](docs/hooks/protect-dotenv.md) — refuse writes to `.env` files
-- [validate-json-yaml](docs/hooks/validate-json-yaml.md) — reject broken config files at write time
-- [terraform-destroy-guard](docs/hooks/terraform-destroy-guard.md) — block `terraform destroy` unless explicitly opted in
+- [block-secrets](docs/hooks/block-secrets.md)
+- [block-dangerous-bash](docs/hooks/block-dangerous-bash.md)
+- [protect-dotenv](docs/hooks/protect-dotenv.md)
+- [validate-json-yaml](docs/hooks/validate-json-yaml.md)
+- [terraform-destroy-guard](docs/hooks/terraform-destroy-guard.md)
 
 ---
 
 ## Docs
 
 - [`docs/hook-contract.md`](docs/hook-contract.md) — what every hook must include, and how to write a new one
-- [`docs/hooks.md`](docs/hooks.md) — full catalog by category (generated)
 - [`docs/events.md`](docs/events.md) — hooks grouped by Claude Code event (generated)
-- [`docs/compatibility.md`](docs/compatibility.md) — operational matrix: blocks, network, writes, platforms (generated)
-- [`SECURITY_MODEL.md`](SECURITY_MODEL.md) — threats covered + not covered, hook risk levels, review guidance
+- [`docs/compatibility.md`](docs/compatibility.md) — operational matrix (generated)
+- [`docs/claude-code-versions.md`](docs/claude-code-versions.md) — minimum Claude Code version per event
+- [`SECURITY_MODEL.md`](SECURITY_MODEL.md) — threats covered + not covered, hook risk levels
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — how to propose a new hook
-- [Claude Code hooks reference](https://code.claude.com/docs/en/hooks) — the official spec everything aligns to
+- [Claude Code hooks reference](https://code.claude.com/docs/en/hooks) — the official spec
 
 ---
 
@@ -254,10 +206,10 @@ Every hook is shellcheck-clean. Hooks that can block (security, quality, git) ha
 
 ```bash
 brew install shellcheck bats-core jq        # macOS
-sudo apt-get install shellcheck bats jq      # Debian/Ubuntu
+sudo apt-get install shellcheck bats jq     # Debian/Ubuntu
 
 shellcheck -S warning hooks/**/*.sh scripts/*.sh
-bash scripts/lint-hooks.sh                   # enforces docs/hook-contract.md
+bash scripts/lint-hooks.sh                  # enforces docs/hook-contract.md
 bats -r tests
 ```
 
@@ -267,10 +219,10 @@ CI runs all three on every push and on PRs against `main`, on Ubuntu and macOS.
 
 ## Contributing
 
-Bug fixes, new hooks, and new starter packs are all welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the submission checklist — primarily: the script must be self-contained, work without external services by default, and include a comment block at the top describing the event, required env vars, and any optional configuration.
+Bug fixes, new hooks, and new starter packs are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the submission checklist. Primarily: the script must be self-contained, work without external services by default, and include a header comment block describing the event, required env vars, and any optional configuration.
 
 ---
 
 ## License
 
-CC0 — public domain. Use freely, no attribution required.
+CC0. Public domain. Use freely, no attribution required.

@@ -37,3 +37,7 @@ settings.json.backup
 # macOS extended attribute junk that leaks into zips
 __MACOSX/
 AGENTS.md
+
+# docs-site/ fetches its own copy of the registry; it's generated at deploy
+# time (and by `make pages-serve` locally), so don't commit it.
+docs-site/registry.json

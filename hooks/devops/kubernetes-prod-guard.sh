@@ -4,6 +4,8 @@
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Blocks kubectl commands targeting production clusters or namespaces.
 #
+# Config (env vars):
+#   CLAUDE_ALLOW_K8S_PROD=1   Bypass the gate. Default: gate enforced.
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):
 #

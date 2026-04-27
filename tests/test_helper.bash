@@ -57,6 +57,52 @@ assert_blocked() {
   fi
 }
 
+# Build a PostToolUse JSON payload for Write/Edit/MultiEdit.
+# Usage: posttool_payload <tool_name> <file_path> [content]
+posttool_payload() {
+  local tool="$1" path="$2" content="${3:-}"
+  jq -n --arg t "$tool" --arg p "$path" --arg c "$content" \
+    '{hook_event_name:"PostToolUse",session_id:"test",tool_name:$t,tool_input:{file_path:$p,content:$c},tool_response:{success:true}}'
+}
+
+# Assert: PostToolUse hook returned a block decision.
+#
+# Per the official Claude Code hooks contract
+# (https://code.claude.com/docs/en/hooks), PostToolUse blocks use the
+# top-level `decision: "block"` shape:
+#
+#   {
+#     "decision": "block",
+#     "reason": "...",
+#     "hookSpecificOutput": {
+#       "hookEventName": "PostToolUse",
+#       "additionalContext": "..."
+#     }
+#   }
+#
+# A legacy `hookSpecificOutput.permissionDecision: "deny"` shape (mirroring
+# PreToolUse) is also accepted here so older hooks in this repo still pass
+# while we migrate them to the canonical contract.
+# Usage inside a @test: assert_blocked_post
+assert_blocked_post() {
+  [ "$status" -eq 0 ] || { echo "expected exit 0 (got $status). output: $output" >&2; return 1; }
+  if ! printf '%s' "$output" | jq -e '
+        # Canonical contract shape.
+        ( .decision == "block"
+          and (.reason | type == "string")
+          and (.hookSpecificOutput.hookEventName == "PostToolUse")
+        )
+        or
+        # Legacy PreToolUse-style shape still emitted by some PostToolUse hooks.
+        ( .hookSpecificOutput.permissionDecision == "deny"
+          and (.hookSpecificOutput.hookEventName == "PostToolUse")
+        )
+      ' >/dev/null; then
+    echo "expected PostToolUse block (decision=block + hookSpecificOutput.hookEventName=PostToolUse). output: $output" >&2
+    return 1
+  fi
+}
+
 # Assert: hook allowed the action (no decision JSON, exit 0, no stdout body).
 assert_allowed() {
   [ "$status" -eq 0 ] || { echo "expected exit 0 (got $status). output: $output" >&2; return 1; }

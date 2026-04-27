@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: CC0-1.0
 # Hook name:   terminal-title
-# Event:       PreToolUse AND Stop
-# Description: Updates the terminal window/tab title to reflect Claude Code's
-#              current status in real time.
-#              PreToolUse → "⚙ Claude: running <tool_name>..."
-#              Stop       → "✅ Claude: done"
+# Event:       Stop
+# Multi-event: also intended to be wired under PreToolUse — see Install snippet.
+# Description: Updates the terminal window/tab title on Stop ("✅ Claude: done")
+#              so the terminal reflects Claude Code's status when the agent
+#              hands control back. If wired additionally under PreToolUse via
+#              the Install snippet, the title becomes
+#              "⚙ Claude: running <tool_name>..." while a tool is in flight;
+#              the canonical event in this registry entry is Stop.
 #
 #              Works with: iTerm2, Terminal.app, tmux, xterm, and most other
 #              terminals that support the ANSI OSC 0 escape sequence.

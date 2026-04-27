@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Browse, filter, and search production-ready Claude Code hooks.">
+  <title>awesome-claude-hooks - browse the catalog</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#results">Skip to results</a>
+
+  <header class="site-header" role="banner">
+    <div class="wrap">
+      <h1>awesome-claude-hooks</h1>
+      <p class="tagline">Production-ready Claude Code hooks. Filter, search, copy.</p>
+      <p class="meta">
+        <span id="hook-count-display">Loading catalog...</span>
+        <span class="dot" aria-hidden="true">&middot;</span>
+        <a href="https://github.com/MohamedAbdallah-14/awesome-claude-hooks" rel="noopener">GitHub</a>
+        <span class="dot" aria-hidden="true">&middot;</span>
+        <a href="https://github.com/MohamedAbdallah-14/awesome-claude-hooks/blob/main/docs/getting-started.md" rel="noopener">Getting started</a>
+      </p>
+    </div>
+  </header>
+
+  <main class="layout wrap" id="main">
+    <aside class="sidebar" aria-label="Filters">
+      <form id="filters" autocomplete="off" novalidate>
+        <div class="filter-group">
+          <label for="q" class="block-label">Search</label>
+          <input type="search" id="q" name="q" placeholder="id or description..." aria-label="Search hooks">
+        </div>
+
+        <div class="filter-group">
+          <label for="sort" class="block-label">Sort by</label>
+          <select id="sort" name="sort" aria-label="Sort hooks">
+            <option value="id">id (alphabetical)</option>
+            <option value="category">category</option>
+            <option value="risk">risk level</option>
+            <option value="event">event</option>
+          </select>
+        </div>
+
+        <fieldset class="filter-group" id="fs-toggles">
+          <legend>Properties</legend>
+          <label class="check"><input type="checkbox" name="t" value="tests"> Has tests</label>
+          <label class="check"><input type="checkbox" name="t" value="blocks"> Blocks actions</label>
+          <label class="check"><input type="checkbox" name="t" value="network"> Network access</label>
+          <label class="check"><input type="checkbox" name="t" value="writes"> Writes files</label>
+        </fieldset>
+
+        <fieldset class="filter-group" id="fs-risk">
+          <legend>Risk level</legend>
+          <div id="risk-options" class="check-list"></div>
+        </fieldset>
+
+        <fieldset class="filter-group" id="fs-cat">
+          <legend>Category</legend>
+          <div id="cat-options" class="check-list"></div>
+        </fieldset>
+
+        <fieldset class="filter-group" id="fs-event">
+          <legend>Event</legend>
+          <div id="event-options" class="check-list"></div>
+        </fieldset>
+
+        <fieldset class="filter-group" id="fs-profile">
+          <legend>Profile</legend>
+          <div id="profile-options" class="check-list"></div>
+        </fieldset>
+
+        <button type="reset" id="reset-btn" class="reset">Clear filters</button>
+      </form>
+    </aside>
+
+    <section class="results" id="results" aria-live="polite" aria-busy="true">
+      <div class="results-header">
+        <p id="status">Loading...</p>
+      </div>
+      <ul id="cards" class="cards" role="list"></ul>
+      <p id="empty" class="empty" hidden>No hooks match those filters.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>
+        Generated from <code>hooks.registry.json</code>.
+        <a href="https://github.com/MohamedAbdallah-14/awesome-claude-hooks/blob/main/CONTRIBUTING.md" rel="noopener">Contribute a hook</a>.
+        Released under CC0.
+      </p>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 # Hook name:   github-actions-validator
 # Event:       PreToolUse (matcher: "Write")
 # Description: Validates YAML syntax of GitHub Actions workflow files before they are written.
-#              Fires on Write tool calls; payload has tool_input.path and tool_input.content.
+#              Fires on Write tool calls; payload has tool_input.file_path and tool_input.content.
 #
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):
@@ -32,7 +32,7 @@ if ! command -v jq &>/dev/null; then
   exit 0
 fi
 
-FILE_PATH=$(jq -r '.tool_input.path // empty' <<< "$INPUT")
+FILE_PATH=$(jq -r '.tool_input.file_path // .tool_input.path // empty' <<< "$INPUT")
 
 if [[ -z "$FILE_PATH" ]]; then
   exit 0

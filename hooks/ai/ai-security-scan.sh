@@ -30,7 +30,7 @@ ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
 if [[ -z "$ANTHROPIC_API_KEY" ]]; then exit 0; fi
 
 # ── parse input ────────────────────────────────────────────────────────────────
-FILE_PATH=$(jq -r '.tool_input.path // empty' <<< "$INPUT")
+FILE_PATH=$(jq -r '.tool_input.file_path // .tool_input.path // empty' <<< "$INPUT")
 CONTENT=$(jq -r '.tool_input.content // empty' <<< "$INPUT")
 
 if [[ -z "$FILE_PATH" || -z "$CONTENT" ]]; then exit 0; fi

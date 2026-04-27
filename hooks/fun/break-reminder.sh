@@ -40,7 +40,9 @@ set -euo pipefail
 
 INTERVAL_MINS="${CLAUDE_BREAK_REMINDER_INTERVAL:-90}"
 SESSION_LOG="${CLAUDE_SESSION_LOG:-${HOME}/.claude/sessions.log}"
-REMINDED_FILE="/tmp/claude-break-reminded.time"
+# CLAUDE_BREAK_REMINDER_FILE lets tests (especially parallel runs) point this
+# at a per-process path so concurrent workers don't race over /tmp marker.
+REMINDED_FILE="${CLAUDE_BREAK_REMINDER_FILE:-/tmp/claude-break-reminded.time}"
 COOLDOWN_SECS=1800  # 30 minutes between reminders
 
 # ── rate limit: skip if reminded recently ────────────────────────────────────

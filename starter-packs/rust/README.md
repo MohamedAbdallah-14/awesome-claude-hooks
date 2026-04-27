@@ -1,26 +1,52 @@
 # Rust Starter Pack
 
-Pre-configured Claude Code hooks and project instructions for Rust projects.
+Drop-in `settings.json` for Rust crates and workspaces. Layers `safe-default` with security blocks and `main`-branch protection.
 
-## What's included
+## Hooks included
 
-**settings.json hooks**
-- Pre-Bash: blocks hardcoded secrets, blocks dangerous shell commands, and prevents direct commits to `main`/`master`.
-- Pre-Write: audits every file write and validates JSON/TOML/YAML before saving — useful for `Cargo.toml` and config file edits.
-- Post-Write: runs an AI code review for Rust-specific issues (missing `SAFETY` comments, `unwrap()` in library code, error-handling gaps), then a dedicated AI security scan that flags unsafe patterns, dependency risks, and memory issues.
-- Post-Bash: logs every shell command to an infra audit trail — useful when `cargo build` or custom scripts touch the filesystem or network.
-- On stop: macOS desktop notification, git context injection for the next prompt, session duration log, and a tool-usage cost breakdown.
+**Pre-Bash**
+- `security/block-secrets`, `security/protect-dotenv`, `security/block-dangerous-bash`, `security/audit-bash-commands`.
+- `git/protect-main-branch`.
 
-**CLAUDE.md rules**
-- `cargo check` before `cargo build` — enforced to keep the inner loop fast.
-- `cargo clippy -- -D warnings` and `cargo fmt` must pass clean before any commit.
-- `unwrap()` banned in library code; `?`, `thiserror`, and `anyhow` are the required pattern.
-- Every `unsafe` block requires a `// SAFETY:` comment.
-- `cargo audit` required before adding new dependencies.
+**Pre-Edit/Write**
+- `security/block-secrets` — file-write path.
+- `quality/validate-json-yaml` — parse-check JSON/YAML (config, GitHub Actions). Note: this hook does not currently parse TOML, so `Cargo.toml` syntax errors will not be caught here.
 
-## Setup
+**Post-Edit/Write**
+- `security/audit-file-writes` — write log.
 
-1. Copy `settings.json` to `.claude/settings.json` in your Rust project root.
-2. Copy `CLAUDE.md` to your project root.
-3. Hooks assume `~/.claude/hooks/hooks` as the base path. If you cloned the hooks repo elsewhere, replace that prefix throughout `settings.json`.
-4. Install `cargo-audit` if not present: `cargo install cargo-audit`.
+**Post-Bash**
+- `context/inject-recent-commits`.
+
+**SessionStart**
+- `session/context-threshold-guard`.
+
+**Stop**
+- `notifications/desktop-notify`, `session/session-summary`, `context/inject-git-context`, `cost/log-tool-usage`.
+
+## Missing: Rust-specific gates
+
+There is no dedicated Rust quality hook in this repo yet — no `cargo-clippy-gate`, no `cargo-fmt-gate`, no `cargo-check-gate`. The Rust pack therefore relies on:
+
+- `CLAUDE.md` rules to enforce `cargo check` / `cargo clippy -- -D warnings` / `cargo fmt` discipline.
+- Your CI / pre-commit hooks for the actual cargo invocations.
+
+**Follow-up:** add `quality/cargo-clippy-gate.sh` and `quality/cargo-fmt-gate.sh` (mirror `quality/go-vet.sh` and `quality/python-lint.sh`). Until then this pack is security + workflow only on the Rust side.
+
+## Install
+
+```bash
+cp ~/.claude/awesome-hooks/starter-packs/rust/settings.json .claude/settings.json
+cp ~/.claude/awesome-hooks/starter-packs/rust/CLAUDE.md ./CLAUDE.md
+```
+
+Closest matching profile:
+
+```bash
+bash scripts/install.sh --profile=safe-default --global
+```
+
+## Notes
+
+- Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
+- Install `cargo-audit` (`cargo install cargo-audit`) so the workflow rules in `CLAUDE.md` are runnable.

@@ -1,26 +1,46 @@
 # Android Starter Pack
 
-Pre-configured Claude Code hooks and project instructions for Android (Kotlin) apps.
+Drop-in `settings.json` for Android (Kotlin) projects. Layers `safe-default` with secret/dotenv blocks, JSON/YAML validation, and `main`-branch protection.
 
-## What's included
+## Hooks included
 
-**settings.json hooks**
-- Pre-Bash: blocks secrets and `.env` mutations, blocks dangerous shell commands, prevents direct pushes to the main branch.
-- Pre-Write: audits file writes for sensitive paths, validates any JSON or YAML files before they land.
-- Post-Write: runs an AI code review pass on every written file.
-- On stop: macOS desktop notification, git context summary, session timer, auto-changelog update.
+**Pre-Bash**
+- `security/block-secrets`, `security/protect-dotenv`, `security/block-dangerous-bash`, `security/audit-bash-commands`.
+- `git/protect-main-branch`.
 
-**CLAUDE.md rules**
-- `./gradlew` enforced — no bare `gradle` invocations.
-- MVVM + Repository architecture with coroutines and `Flow` for async work.
-- Null safety enforced: `!!` requires a documented invariant.
-- No business logic in `Activity` or `Fragment`.
-- Secrets (keystore, `google-services.json`, API keys) must never be committed.
-- ProGuard rules updated when adding reflection-dependent libraries.
+**Pre-Edit/Write**
+- `security/block-secrets`, `quality/validate-json-yaml` (covers `*.yml`, `*.json`, GitHub Actions, Fastlane configs).
 
-## Setup
+**Post-Edit/Write**
+- `security/audit-file-writes`.
 
-1. Copy `settings.json` to `.claude/settings.json` in your Android project root.
-2. Copy `CLAUDE.md` to your project root.
-3. Hooks use `~/.claude/hooks/hooks` as the base path — the default clone location. If you cloned the hooks repo elsewhere, replace that prefix with your actual path.
-4. Optional: add the OWASP Dependency Check Gradle plugin to get CVE scanning via `./gradlew dependencyCheckAnalyze`.
+**Post-Bash**
+- `context/inject-recent-commits`.
+
+**SessionStart**
+- `session/context-threshold-guard`.
+
+**Stop**
+- `notifications/desktop-notify`, `session/session-summary`, `context/inject-git-context`, `cost/log-tool-usage`.
+
+## Missing: Kotlin/Android-specific gates
+
+There is no dedicated Kotlin or Gradle quality hook (no `ktlint-gate`, no `detekt-gate`, no `gradle-lint-gate`). **Follow-up:** add `quality/ktlint-gate.sh` (wrap `./gradlew ktlintCheck`) and/or `quality/detekt-gate.sh`. Until then, the pack is security + workflow only on the Kotlin side.
+
+## Install
+
+```bash
+cp ~/.claude/awesome-hooks/starter-packs/android/settings.json .claude/settings.json
+cp ~/.claude/awesome-hooks/starter-packs/android/CLAUDE.md ./CLAUDE.md
+```
+
+Closest matching profile:
+
+```bash
+bash scripts/install.sh --profile=safe-default --global
+```
+
+## Notes
+
+- Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
+- Add the OWASP Dependency Check Gradle plugin if you want CVE scanning via `./gradlew dependencyCheckAnalyze`.
