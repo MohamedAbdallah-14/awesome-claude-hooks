@@ -11,7 +11,7 @@ setup() {
   export KUBECONFIG="/dev/null"
 }
 
-@test "allows kubectl get pods (no namespace flag)" {
+@test "allows kubectl get pods in staging namespace" {
   payload=$(pretool_payload Bash "kubectl get pods -n staging")
   run_hook "$HOOK" "$payload"
   assert_allowed

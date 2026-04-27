@@ -11,10 +11,22 @@ setup() {
   REMINDED_FILE="/tmp/claude-break-reminded.time"
   # Make sure there's no stale reminder from earlier tests on this box
   rm -f "$REMINDED_FILE"
+  # Stub osascript / notify-send so the hook doesn't fire real desktop
+  # notifications during tests (this was leaking into the maintainer's
+  # macOS Notification Center).
+  STUB_DIR=$(mktemp -d)
+  for bin in osascript notify-send; do
+    cat > "${STUB_DIR}/${bin}" <<EOF
+#!/usr/bin/env bash
+exit 0
+EOF
+    chmod +x "${STUB_DIR}/${bin}"
+  done
+  export PATH="${STUB_DIR}:${PATH}"
 }
 
 teardown() {
-  rm -rf "$TMP_HOME"
+  rm -rf "$TMP_HOME" "$STUB_DIR"
   rm -f "$REMINDED_FILE"
 }
 

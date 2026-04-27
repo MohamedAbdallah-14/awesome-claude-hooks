@@ -54,7 +54,7 @@ Claude Code honors the decision and skips the prompt. For `Bash`, the hook outpu
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Read|Glob|Grep|LS|WebSearch|WebFetch|TodoRead",
+        "matcher": "Read|Glob|Grep|LS|WebSearch|WebFetch",
         "hooks": [
           {
             "type": "command",

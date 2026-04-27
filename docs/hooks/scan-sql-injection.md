@@ -3,7 +3,7 @@
 > Source: [`hooks/security/scan-sql-injection.sh`](../../hooks/security/scan-sql-injection.sh)
 > Event: `PreToolUse` (matcher `Write|Edit|MultiEdit`)
 > Risk level: `warn` by default, `blocking` with opt-in
-> Bypass: `CLAUDE_SQL_BLOCK=0` (default — warn only); set to `1` to enable blocking
+> Bypass: none (per-call). `CLAUDE_SQL_BLOCK=1` upgrades warn → block; `0` (default) keeps warn-only.
 
 ## Problem
 

@@ -30,13 +30,13 @@ The SQL match is case-insensitive (the command is uppercased before matching). T
 
 Claude wants to run:
 
-```
+```bash
 psql -c "DELETE FROM events;"
 ```
 
 Or:
 
-```
+```bash
 npx knex migrate:rollback
 ```
 

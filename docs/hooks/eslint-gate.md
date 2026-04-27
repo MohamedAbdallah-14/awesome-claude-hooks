@@ -51,7 +51,7 @@ export function parse(s) {
 
 The PostToolUse hook fires. Claude sees in the conversation:
 
-```
+```text
 [eslint-gate] ESLint found issues in /repo/src/utils/parse.ts:
 /repo/src/utils/parse.ts: line 2, col 1, Error - 'path' is defined but never used. (no-unused-vars)
 /repo/src/utils/parse.ts: line 4, col 21, Error - Argument 's' should be typed. (@typescript-eslint/explicit-module-boundary-types)

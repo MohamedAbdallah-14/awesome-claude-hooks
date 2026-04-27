@@ -28,7 +28,7 @@ The current-context check shells out to `kubectl config current-context` if `kub
 
 Claude wants to run:
 
-```
+```bash
 kubectl delete pod worker-abc123
 ```
 

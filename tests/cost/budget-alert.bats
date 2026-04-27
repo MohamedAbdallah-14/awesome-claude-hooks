@@ -8,6 +8,18 @@ HOOK="${HOOKS_DIR}/cost/budget-alert.sh"
 setup() {
   TMPHOME=$(mktemp -d)
   export HOME="$TMPHOME"
+  # Stub osascript and notify-send so the hook does not fire real
+  # macOS notifications during tests (the previous implementation
+  # leaked Notification Center entries).
+  STUB_DIR=$(mktemp -d)
+  for bin in osascript notify-send; do
+    cat > "${STUB_DIR}/${bin}" <<EOF
+#!/usr/bin/env bash
+exit 0
+EOF
+    chmod +x "${STUB_DIR}/${bin}"
+  done
+  export PATH="${STUB_DIR}:${PATH}"
   # Use a unique session id per test so /tmp counter files don't collide.
   SID="budget-alert-test-$$-$RANDOM"
   COUNT_FILE="/tmp/claude-ops-${SID}.count"
@@ -15,7 +27,7 @@ setup() {
 }
 
 teardown() {
-  rm -rf "$TMPHOME"
+  rm -rf "$TMPHOME" "$STUB_DIR"
   rm -f "$COUNT_FILE"
 }
 

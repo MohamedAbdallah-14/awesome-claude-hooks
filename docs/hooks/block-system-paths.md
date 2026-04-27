@@ -147,5 +147,5 @@ Unset the variable when done. Leaving it set means the next session inherits the
 
 - No network calls.
 - Reads stdin only; does not write to disk.
-- File-path normalization uses `python3` if available; falls back to the raw path. Symlinks pointing into a blocked prefix may slip through if `python3` is missing — uncommon on macOS or modern Linux.
+- File-path normalization uses `python3` if available; if `python3` is missing, the hook falls back to comparing the raw input path. Known limitation: a symlink such as `/tmp/etc -> /etc` will not match the `/etc` prefix in fallback mode and would slip past. Verify `command -v python3` on the host before relying on this hook for symlink-aware blocking, and pair it with [`block-dangerous-bash`](../../hooks/security/block-dangerous-bash.sh) for broader command-level coverage.
 - The bash-pattern matcher is regex-based. It is intentionally conservative: it catches the obvious destructive forms, not every creative variation. Pair with [`block-dangerous-bash`](../../hooks/security/block-dangerous-bash.sh) for broader command-level coverage.

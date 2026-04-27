@@ -75,9 +75,12 @@ fi
 if [[ "$BASENAME" =~ ^\.env\. ]]; then
   IS_ENV_FILE=1
 fi
-if [[ "$BASENAME" =~ ^\.env\.(example|sample|template|dist)$ ]]; then
-  IS_ENV_FILE=0
-fi
+# bash 3.2 doesn't allow `(a|b)` grouping inside [[ =~ ]] — use case instead.
+case "$BASENAME" in
+  .env.example|.env.sample|.env.template|.env.dist)
+    IS_ENV_FILE=0
+    ;;
+esac
 
 # *.env suffix: database.env, config.env, etc.
 if [[ "$BASENAME" =~ \.env$ ]]; then

@@ -3,7 +3,7 @@
 > Source: [`hooks/security/check-npm-audit.sh`](../../hooks/security/check-npm-audit.sh)
 > Event: `PreToolUse` (matcher `Bash`)
 > Risk level: `warn` by default, `blocking` with opt-in
-> Bypass: `CLAUDE_NPM_AUDIT_BLOCK=0` (default — warn only); set to `1` to enable blocking
+> Block toggle: `CLAUDE_NPM_AUDIT_BLOCK=1` enables blocking on existing critical CVEs (default `0` = warn only)
 
 ## Problem
 

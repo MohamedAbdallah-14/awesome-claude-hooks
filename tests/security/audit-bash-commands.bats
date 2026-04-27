@@ -38,7 +38,8 @@ posttool_bash_payload() {
   custom="${tmpdir}/custom-audit.log"
   payload=$(posttool_bash_payload "echo hello" 0)
   pfile=$(mktemp); printf '%s' "$payload" > "$pfile"
-  run env CLAUDE_BASH_AUDIT_LOG="$custom" bash -c "bash '$HOOK' < '$pfile'"
+  run env -i HOME="$tmpdir" PATH="$PATH" CLAUDE_BASH_AUDIT_LOG="$custom" \
+    bash -c "bash '$HOOK' < '$pfile'"
   rm -f "$pfile"
 
   [ "$status" -eq 0 ]

@@ -45,7 +45,9 @@ case "${TERM:-}" in
   xterm*|screen*|tmux*|rxvt*|linux|vte*)
     USE_COLOR=1 ;;
 esac
-[[ "${COLORTERM:-}" =~ ^(truecolor|24bit)$ ]] && USE_COLOR=1
+case "${COLORTERM:-}" in
+  truecolor|24bit) USE_COLOR=1 ;;
+esac
 [[ "${NO_COLOR:-}" != "" ]] && USE_COLOR=0
 
 # ── ANSI helpers ──────────────────────────────────────────────────────────────
