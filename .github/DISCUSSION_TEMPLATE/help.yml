@@ -1,0 +1,47 @@
+title: "[help] "
+labels: [help, question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Need help wiring a hook, configuring `settings.json`, or debugging why
+        a payload isn't matching? You're in the right place.
+
+        Before posting, skim:
+        - [docs/hooks.md](https://github.com/MohamedAbdallah-14/awesome-claude-hooks/blob/main/docs/hooks.md) — full hook catalog
+        - [docs/hook-contract.md](https://github.com/MohamedAbdallah-14/awesome-claude-hooks/blob/main/docs/hook-contract.md) — exit codes, JSON shape, stdout vs stderr
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to do?
+      description: Describe the end state. "I want Claude to X when Y."
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you've tried
+      description: |
+        Hooks installed, settings.json snippets, payloads tested, error messages.
+        Linking the relevant docs section you read also helps.
+    validations:
+      required: false
+
+  - type: textarea
+    id: not_working
+    attributes:
+      label: What's not working
+      description: Observed behavior vs. what you expected. Paste output if useful.
+    validations:
+      required: true
+
+  - type: input
+    id: claude_code_version
+    attributes:
+      label: Claude Code version (optional)
+      description: Run `claude --version`.
+      placeholder: "1.0.42"
+    validations:
+      required: false

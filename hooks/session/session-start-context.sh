@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: CC0-1.0
 # Hook name:   session-start-context
 # Event:       SessionStart
-# Description: Injects useful project context at session start: current branch, recent commits, modified files, and any project notes.
+# Description: Injects useful project context at session start.
+#              Includes current branch, recent commits, modified files, and any project notes.
 #
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):

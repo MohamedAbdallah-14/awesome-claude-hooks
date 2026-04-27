@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: CC0-1.0
 # Hook name:   terminal-title
-# Event:       PreToolUse AND Stop
+# Event:       Stop
+# Multi-event: also intended to be wired under PreToolUse — see Install snippet.
 # Description: Updates the terminal window/tab title to reflect Claude Code's
 #              current status in real time.
 #              PreToolUse → "⚙ Claude: running <tool_name>..."

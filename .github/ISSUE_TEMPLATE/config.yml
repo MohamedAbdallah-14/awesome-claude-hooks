@@ -1,8 +1,17 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Security issue
+  - name: Report a security vulnerability (DO NOT FILE A PUBLIC ISSUE)
     url: https://github.com/MohamedAbdallah-14/awesome-claude-hooks/security/advisories/new
-    about: Do NOT open a public issue for security problems. Use a GitHub security advisory instead. See SECURITY.md.
+    about: |
+      Report privately via a GitHub security advisory. Do NOT open a public
+      issue for vulnerabilities, secrets in payloads, or sandbox-escape bugs.
+      See SECURITY.md for the full disclosure policy.
   - name: Question or usage help
-    url: https://github.com/MohamedAbdallah-14/awesome-claude-hooks/discussions
+    url: https://github.com/MohamedAbdallah-14/awesome-claude-hooks/discussions/categories/q-a
     about: Use Discussions for "how do I..." questions about installing or configuring hooks.
+  - name: Show off a hook you wrote
+    url: https://github.com/MohamedAbdallah-14/awesome-claude-hooks/discussions/categories/show-and-tell
+    about: Share custom hooks you've built on top of this repo.
+  - name: Claude Code hooks spec
+    url: https://code.claude.com/docs/en/hooks
+    about: Official spec for hook events, payloads, and exit semantics. Read this before filing a spec-drift report.

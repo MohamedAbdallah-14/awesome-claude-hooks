@@ -5,6 +5,8 @@
 # Description: Blocks docker rm/stop/kill/volume rm on containers or volumes whose name
 #              contains prod, production, or live.
 #
+# Config (env vars):
+#   CLAUDE_ALLOW_DOCKER_PROD=1   Bypass the gate. Default: gate enforced.
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):
 #

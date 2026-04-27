@@ -57,6 +57,27 @@ assert_blocked() {
   fi
 }
 
+# Build a PostToolUse JSON payload for Write/Edit/MultiEdit.
+# Usage: posttool_payload <tool_name> <file_path> [content]
+posttool_payload() {
+  local tool="$1" path="$2" content="${3:-}"
+  jq -n --arg t "$tool" --arg p "$path" --arg c "$content" \
+    '{hook_event_name:"PostToolUse",session_id:"test",tool_name:$t,tool_input:{file_path:$p,content:$c},tool_response:{success:true}}'
+}
+
+# Assert: PostToolUse hook returned a deny decision via hookSpecificOutput.
+# Usage inside a @test: assert_blocked_post
+assert_blocked_post() {
+  [ "$status" -eq 0 ] || { echo "expected exit 0 (got $status). output: $output" >&2; return 1; }
+  if ! printf '%s' "$output" | jq -e '
+        .hookSpecificOutput.permissionDecision == "deny" and
+        (.hookSpecificOutput.hookEventName == "PostToolUse")
+      ' >/dev/null; then
+    echo "expected PostToolUse hookSpecificOutput.permissionDecision=deny. output: $output" >&2
+    return 1
+  fi
+}
+
 # Assert: hook allowed the action (no decision JSON, exit 0, no stdout body).
 assert_allowed() {
   [ "$status" -eq 0 ] || { echo "expected exit 0 (got $status). output: $output" >&2; return 1; }

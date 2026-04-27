@@ -1,0 +1,80 @@
+name: Spec drift
+description: A hook's behavior diverges from the official Claude Code hooks spec.
+title: "[spec-drift] "
+labels: [spec-drift, bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when a hook in this repo does something the [official Claude Code
+        hooks spec](https://code.claude.com/docs/en/hooks) says it shouldn't, or
+        fails to do something the spec requires (wrong exit code, wrong JSON
+        shape, wrong stdout/stderr channel, ignored matcher, etc.).
+
+        For plain bugs that aren't spec-related, use the regular bug report.
+
+  - type: input
+    id: hook
+    attributes:
+      label: Hook
+      description: Path of the hook that drifts from spec.
+      placeholder: hooks/security/block-secrets.sh
+    validations:
+      required: true
+
+  - type: input
+    id: spec_section
+    attributes:
+      label: Spec section / link
+      description: Link or anchor into https://code.claude.com/docs/en/hooks that defines the expected behavior.
+      placeholder: https://code.claude.com/docs/en/hooks#hookevent-pretooluse
+    validations:
+      required: true
+
+  - type: input
+    id: claude_code_version
+    attributes:
+      label: Claude Code version
+      description: Run `claude --version`. Spec semantics evolve, so version pin matters.
+      placeholder: "1.0.42"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: What the hook does (current)
+      description: Describe the observed behavior. Be concrete.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What the spec says (expected)
+      description: Quote or paraphrase the relevant part of the spec.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: |
+        Paste the exact JSON payload piped to the hook AND the observed
+        stdout/stderr/exit code.
+      render: shell
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: prereqs
+    attributes:
+      label: Sanity checks
+      options:
+        - label: I re-read the linked spec section in the last 7 days
+          required: true
+        - label: I confirmed this is repo behavior, not Claude Code itself
+          required: true
+        - label: I searched existing issues for duplicates
+          required: true

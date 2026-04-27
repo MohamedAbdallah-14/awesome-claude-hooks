@@ -324,10 +324,16 @@ get_hook_meta() {
     exit 1
   fi
 
+  # The header format is `Event: <Name> (matcher: "<pattern>")` but `xargs`
+  # in get_hook_meta's caller strips surrounding double-quotes before we get
+  # here, so accept both quoted and bare matcher tokens.
   local event matcher=""
-  if [[ "$event_line" =~ ^($HOOK_EVENT_NAMES)([[:space:]]+\(matcher:[[:space:]]*\"([^\"]+)\"\))?[[:space:]]*$ ]]; then
+  local _matcher_re='[[:space:]]+\(matcher:[[:space:]]*"?([^")]+)"?\)'
+  if [[ "$event_line" =~ ^($HOOK_EVENT_NAMES)(${_matcher_re})?[[:space:]]*$ ]]; then
     event="${BASH_REMATCH[1]}"
     matcher="${BASH_REMATCH[3]:-}"
+    # Trim trailing whitespace from the captured matcher.
+    matcher="${matcher%"${matcher##*[![:space:]]}"}"
   else
     err "Unknown hook event in $fpath: '$event_line'"
     err "Valid events: $(printf '%s' "$HOOK_EVENT_NAMES" | tr '|' ' ')"

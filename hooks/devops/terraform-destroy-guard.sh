@@ -5,6 +5,8 @@
 # Description: Blocks terraform destroy unless CLAUDE_ALLOW_DESTROY=1 is set.
 #              Warns (but allows) on terraform apply -destroy.
 #
+# Config (env vars):
+#   CLAUDE_ALLOW_DESTROY=1   Bypass the gate. Default: gate enforced.
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):
 #

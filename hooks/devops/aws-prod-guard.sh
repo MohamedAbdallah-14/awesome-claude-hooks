@@ -4,6 +4,8 @@
 # Event:       PreToolUse (matcher: "Bash")
 # Description: Blocks destructive AWS CLI commands targeting production profiles.
 #
+# Config (env vars):
+#   CLAUDE_ALLOW_AWS_PROD=1   Bypass the gate. Default: gate enforced.
 #
 # Install — add to ~/.claude/settings.json (or project .claude/settings.json):
 #

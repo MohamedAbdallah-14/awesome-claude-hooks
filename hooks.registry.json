@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "hook_count": 79,
+  "hook_count": 90,
   "profiles": {
     "safe-default": [
       "audit-bash-commands",
@@ -127,7 +127,7 @@
       "category": "ai",
       "path": "hooks/ai/ai-migration-safety.sh",
       "event": "PreToolUse",
-      "matcher": "",
+      "matcher": "Bash",
       "description": "Intercepts bash commands that look like database migrations. Asks Haiku whether the migration is REVERSIBLE, IRREVERSIBLE, or UNKNOWN. Blocks with exit 2 only if IRREVERSIBLE. Passes through if REVERSIBLE, UNKNOWN, or if the API key is absent.",
       "risk_level": "blocking",
       "platforms": [
@@ -213,7 +213,7 @@
         "CLAUDE_AUTO_CHANGELOG",
         "CLAUDE_CHANGELOG_FILE"
       ],
-      "tests": null,
+      "tests": "tests/automation/auto-changelog.bats",
       "profiles": []
     },
     {
@@ -237,7 +237,7 @@
         "CLAUDE_AUTOFORMAT_ENABLED",
         "CLAUDE_AUTOFORMAT_SKIP_TYPES"
       ],
-      "tests": null,
+      "tests": "tests/automation/auto-format-on-save.bats",
       "profiles": [
         "solo-dev"
       ]
@@ -263,7 +263,7 @@
         "CLAUDE_AUTO_COMMIT",
         "CLAUDE_AUTO_COMMIT_BRANCH_PROTECTION"
       ],
-      "tests": null,
+      "tests": "tests/automation/auto-git-commit.bats",
       "profiles": []
     },
     {
@@ -286,7 +286,7 @@
       "bypass_env": [
         "CLAUDE_PRETTIER_SKIP_PATTERNS"
       ],
-      "tests": null,
+      "tests": "tests/automation/auto-prettier.bats",
       "profiles": []
     },
     {
@@ -310,7 +310,7 @@
         "CLAUDE_AUTO_PUSH",
         "CLAUDE_AUTO_PUSH_PROTECTED"
       ],
-      "tests": null,
+      "tests": "tests/automation/auto-push.bats",
       "profiles": []
     },
     {
@@ -334,7 +334,7 @@
         "CLAUDE_AUTO_TEST_ENABLED",
         "CLAUDE_AUTO_TEST_TIMEOUT"
       ],
-      "tests": null,
+      "tests": "tests/automation/auto-run-tests.bats",
       "profiles": []
     },
     {
@@ -357,7 +357,7 @@
       "bypass_env": [
         "CLAUDE_AUTO_UPDATE_README"
       ],
-      "tests": null,
+      "tests": "tests/automation/auto-update-readme.bats",
       "profiles": []
     },
     {
@@ -378,7 +378,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/context/inject-docker-status.bats",
       "profiles": []
     },
     {
@@ -400,7 +400,7 @@
       "bypass_env": [
         "CLAUDE_ENV_SUMMARY_INCLUDE_VERSIONS"
       ],
-      "tests": null,
+      "tests": "tests/context/inject-env-summary.bats",
       "profiles": []
     },
     {
@@ -421,7 +421,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/context/inject-file-history.bats",
       "profiles": []
     },
     {
@@ -444,7 +444,7 @@
       "bypass_env": [
         "CLAUDE_GIT_CONTEXT_MAX_FILES"
       ],
-      "tests": null,
+      "tests": "tests/context/inject-git-context.bats",
       "profiles": []
     },
     {
@@ -465,7 +465,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/context/inject-package-info.bats",
       "profiles": []
     },
     {
@@ -488,7 +488,7 @@
       "bypass_env": [
         "CLAUDE_GIT_LOG_COUNT"
       ],
-      "tests": null,
+      "tests": "tests/context/inject-recent-commits.bats",
       "profiles": []
     },
     {
@@ -511,7 +511,7 @@
       "bypass_env": [
         "CLAUDE_TEST_RESULTS_FILE"
       ],
-      "tests": null,
+      "tests": "tests/context/inject-test-results.bats",
       "profiles": []
     },
     {
@@ -532,7 +532,7 @@
       "bypass_env": [
         "CLAUDE_TSC_TIMEOUT"
       ],
-      "tests": null,
+      "tests": "tests/context/inject-typescript-errors.bats",
       "profiles": []
     },
     {
@@ -555,7 +555,7 @@
         "CLAUDE_BUDGET_HARD_LIMIT",
         "CLAUDE_BUDGET_SOFT_LIMIT"
       ],
-      "tests": null,
+      "tests": "tests/cost/budget-alert.bats",
       "profiles": []
     },
     {
@@ -603,7 +603,7 @@
       "bypass_env": [
         "CLAUDE_BASH_HISTORY_LOG"
       ],
-      "tests": null,
+      "tests": "tests/cost/log-bash-history.bats",
       "profiles": []
     },
     {
@@ -626,7 +626,7 @@
       "bypass_env": [
         "CLAUDE_USAGE_LOG"
       ],
-      "tests": null,
+      "tests": "tests/cost/log-tool-usage.bats",
       "profiles": []
     },
     {
@@ -649,7 +649,7 @@
       "bypass_env": [
         "CLAUDE_SESSION_LOG"
       ],
-      "tests": null,
+      "tests": "tests/cost/session-timer.bats",
       "profiles": []
     },
     {
@@ -659,7 +659,7 @@
       "path": "hooks/devops/aws-prod-guard.sh",
       "event": "PreToolUse",
       "matcher": "Bash",
-      "description": "Blocks destructive AWS CLI commands targeting production profiles. #",
+      "description": "Blocks destructive AWS CLI commands targeting production profiles.",
       "risk_level": "blocking",
       "platforms": [
         "macos",
@@ -707,7 +707,7 @@
       "path": "hooks/devops/docker-prod-guard.sh",
       "event": "PreToolUse",
       "matcher": "Bash",
-      "description": "Blocks docker rm/stop/kill/volume rm on containers or volumes whose name contains prod, production, or live. #",
+      "description": "Blocks docker rm/stop/kill/volume rm on containers or volumes whose name contains prod, production, or live.",
       "risk_level": "blocking",
       "platforms": [
         "macos",
@@ -778,7 +778,7 @@
       "path": "hooks/devops/kubernetes-prod-guard.sh",
       "event": "PreToolUse",
       "matcher": "Bash",
-      "description": "Blocks kubectl commands targeting production clusters or namespaces. #",
+      "description": "Blocks kubectl commands targeting production clusters or namespaces.",
       "risk_level": "blocking",
       "platforms": [
         "macos",
@@ -803,7 +803,7 @@
       "path": "hooks/devops/terraform-destroy-guard.sh",
       "event": "PreToolUse",
       "matcher": "Bash",
-      "description": "Blocks terraform destroy unless CLAUDE_ALLOW_DESTROY=1 is set. Warns (but allows) on terraform apply -destroy. #",
+      "description": "Blocks terraform destroy unless CLAUDE_ALLOW_DESTROY=1 is set. Warns (but allows) on terraform apply -destroy.",
       "risk_level": "blocking",
       "platforms": [
         "macos",
@@ -839,7 +839,7 @@
       "bypass_env": [
         "CLAUDE_CONFETTI"
       ],
-      "tests": null,
+      "tests": "tests/fun/ascii-confetti.bats",
       "profiles": []
     },
     {
@@ -862,7 +862,7 @@
         "CLAUDE_BREAK_REMINDER_INTERVAL",
         "CLAUDE_SESSION_LOG"
       ],
-      "tests": null,
+      "tests": "tests/fun/break-reminder.bats",
       "profiles": []
     },
     {
@@ -885,7 +885,7 @@
       "bypass_env": [
         "CLAUDE_MOTIVATIONAL"
       ],
-      "tests": null,
+      "tests": "tests/fun/motivational-quote.bats",
       "profiles": []
     },
     {
@@ -910,7 +910,7 @@
         "CLAUDE_SHOW_SESSION_STATS",
         "CLAUDE_USAGE_LOG"
       ],
-      "tests": null,
+      "tests": "tests/fun/session-stats.bats",
       "profiles": []
     },
     {
@@ -935,6 +935,30 @@
         "CLAUDE_PROTECTED_BRANCHES"
       ],
       "tests": null,
+      "profiles": []
+    },
+    {
+      "id": "auto-resume-from-stash",
+      "name": "Auto Resume From Stash",
+      "category": "git",
+      "path": "hooks/git/auto-resume-from-stash.sh",
+      "event": "SessionStart",
+      "matcher": "resume",
+      "description": "Smart `git stash pop`. When a Claude session is resumed, look for a stash whose message starts with the magic prefix `claude-auto:` AND was created on the current branch, and pop it. Idempotent \u2014 only ever pops one stash, and only one matching the current branch. # Pairs with a SessionEnd-side hook (or your own habit) that creates such a stash via: git stash push -u -m \"claude-auto: $(git rev-parse --abbrev-ref HEAD)\" # On its own, this hook is safe: if there is no matching stash, it does nothing. It never touches stashes whose message lacks the `claude-auto:` prefix, so manually created stashes are left alone. # Surfaces a one-line `additionalContext` so Claude knows the stash was popped and can mention it to the user.",
+      "risk_level": "contextual",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_AUTO_RESUME_STASH_OFF",
+        "CLAUDE_AUTO_STASH_PREFIX"
+      ],
+      "tests": "tests/git/auto-resume-from-stash.bats",
       "profiles": []
     },
     {
@@ -1089,7 +1113,7 @@
         "CLAUDE_NOTIFY_TITLE_PS",
         "CLAUDE_OS"
       ],
-      "tests": null,
+      "tests": "tests/notifications/desktop-notify.bats",
       "profiles": [
         "safe-default",
         "solo-dev",
@@ -1116,7 +1140,7 @@
       "bypass_env": [
         "CLAUDE_DISCORD_WEBHOOK"
       ],
-      "tests": null,
+      "tests": "tests/notifications/discord-notify.bats",
       "profiles": [
         "notifications"
       ]
@@ -1140,7 +1164,7 @@
       "bypass_env": [
         "CLAUDE_NOTIFY_URGENCY"
       ],
-      "tests": null,
+      "tests": "tests/notifications/linux-notify.bats",
       "profiles": [
         "notifications"
       ]
@@ -1163,7 +1187,7 @@
       "bypass_env": [
         "CLAUDE_NOTIFY_SOUND"
       ],
-      "tests": null,
+      "tests": "tests/notifications/macos-notify.bats",
       "profiles": [
         "notifications"
       ]
@@ -1190,7 +1214,7 @@
         "CLAUDE_PUSHOVER_TOKEN",
         "CLAUDE_PUSHOVER_USER"
       ],
-      "tests": null,
+      "tests": "tests/notifications/pushover-notify.bats",
       "profiles": [
         "notifications"
       ]
@@ -1217,7 +1241,7 @@
         "CLAUDE_SLACK_USERNAME",
         "CLAUDE_SLACK_WEBHOOK"
       ],
-      "tests": null,
+      "tests": "tests/notifications/slack-notify.bats",
       "profiles": [
         "notifications"
       ]
@@ -1241,7 +1265,7 @@
       "bypass_env": [
         "CLAUDE_SOUND_COMPLETE"
       ],
-      "tests": null,
+      "tests": "tests/notifications/sound-complete.bats",
       "profiles": [
         "notifications"
       ]
@@ -1265,7 +1289,7 @@
       "bypass_env": [
         "CLAUDE_SOUND_ERROR"
       ],
-      "tests": null,
+      "tests": "tests/notifications/sound-error.bats",
       "profiles": [
         "notifications"
       ]
@@ -1291,7 +1315,7 @@
         "CLAUDE_TELEGRAM_BOT_TOKEN",
         "CLAUDE_TELEGRAM_CHAT_ID"
       ],
-      "tests": null,
+      "tests": "tests/notifications/telegram-notify.bats",
       "profiles": [
         "notifications"
       ]
@@ -1301,7 +1325,7 @@
       "name": "Terminal Title",
       "category": "notifications",
       "path": "hooks/notifications/terminal-title.sh",
-      "event": "PreToolUse",
+      "event": "Stop",
       "matcher": "",
       "description": "Updates the terminal window/tab title to reflect Claude Code's current status in real time. PreToolUse \u2192 \"\u2699 Claude: running <tool_name>...\" Stop \u2192 \"\u2705 Claude: done\" # Works with: iTerm2, Terminal.app, tmux, xterm, and most other terminals that support the ANSI OSC 0 escape sequence. In tmux, updates the *window* title via tmux rename-window.",
       "risk_level": "modifying",
@@ -1314,7 +1338,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/notifications/terminal-title.bats",
       "profiles": [
         "notifications"
       ]
@@ -1358,7 +1382,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/prompt/banned-words-enforcer.bats",
       "profiles": []
     },
     {
@@ -1379,7 +1403,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/prompt/no-ask-human-blocker.bats",
       "profiles": []
     },
     {
@@ -1400,7 +1424,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/prompt/rate-limiter.bats",
       "profiles": []
     },
     {
@@ -1423,7 +1447,53 @@
       "bypass_env": [
         "CLAUDE_MD"
       ],
-      "tests": null,
+      "tests": "tests/prompt/session-context-injector.bats",
+      "profiles": []
+    },
+    {
+      "id": "cargo-clippy-gate",
+      "name": "Cargo Clippy Gate",
+      "category": "quality",
+      "path": "hooks/quality/cargo-clippy-gate.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .rs file, runs `cargo clippy --quiet -- -D warnings` from the current working directory. Blocks the change with a deny decision on any clippy warning or error. Skips silently when there is no Cargo.toml in cwd or when cargo isn't on PATH (so non-Rust projects pass through). # Matches: .rs",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_CARGO_CLIPPY_GATE_SKIP"
+      ],
+      "tests": "tests/quality/cargo-clippy-gate.bats",
+      "profiles": []
+    },
+    {
+      "id": "cargo-fmt-gate",
+      "name": "Cargo Fmt Gate",
+      "category": "quality",
+      "path": "hooks/quality/cargo-fmt-gate.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .rs file, runs `cargo fmt --check` (or falls back to `rustfmt --check <file>` if no Cargo.toml is in cwd). Blocks the change with a deny decision when the file would be reformatted, so Claude can rerun with rustfmt applied. # Matches: .rs",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_CARGO_FMT_GATE_SKIP"
+      ],
+      "tests": "tests/quality/cargo-fmt-gate.bats",
       "profiles": []
     },
     {
@@ -1503,6 +1573,52 @@
       ]
     },
     {
+      "id": "ktlint-gate",
+      "name": "Ktlint Gate",
+      "category": "quality",
+      "path": "hooks/quality/ktlint-gate.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .kt or .kts file, runs `ktlint <file>`. Blocks the change with a deny decision on any lint error so Claude can re-run with --format applied or fix the offences manually. Silently skips when ktlint isn't on PATH. # Matches: .kt .kts",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_KTLINT_GATE_SKIP"
+      ],
+      "tests": "tests/quality/ktlint-gate.bats",
+      "profiles": []
+    },
+    {
+      "id": "php-pint-gate",
+      "name": "Php Pint Gate",
+      "category": "quality",
+      "path": "hooks/quality/php-pint-gate.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .php file, runs Laravel Pint in --test mode (vendor/bin/pint --test <file>). When Pint isn't vendored, falls back to `php -l <file>` for a syntax-only check. Blocks the change with a deny decision on style or syntax issues. Silently skips when neither Pint nor php is available. # Matches: .php",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_PHP_PINT_GATE_SKIP"
+      ],
+      "tests": "tests/quality/php-pint-gate.bats",
+      "profiles": []
+    },
+    {
       "id": "prettier-gate",
       "name": "Prettier Gate",
       "category": "quality",
@@ -1551,6 +1667,74 @@
       "profiles": [
         "quality"
       ]
+    },
+    {
+      "id": "rubocop-gate",
+      "name": "Rubocop Gate",
+      "category": "quality",
+      "path": "hooks/quality/rubocop-gate.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .rb file, runs `rubocop --force-exclusion --no-color --format quiet <file>`. Blocks the change with a deny decision on any offence so Claude can re-run with rubocop -A applied. Silently skips when rubocop isn't on PATH. # Matches: .rb",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_RUBOCOP_GATE_SKIP"
+      ],
+      "tests": "tests/quality/rubocop-gate.bats",
+      "profiles": []
+    },
+    {
+      "id": "suggest-fix-on-failure",
+      "name": "Suggest Fix On Failure",
+      "category": "quality",
+      "path": "hooks/quality/suggest-fix-on-failure.sh",
+      "event": "PostToolUseFailure",
+      "matcher": "Bash",
+      "description": "When a Bash tool call fails, look at the command + error and surface a one-line hint Claude can act on (missing dep, wrong cwd, lockfile drift, port in use, etc.). Generic across npm / pnpm / yarn / pip / uv / poetry / cargo / go / bundler / make / pytest / jest. Pure pattern matching \u2014 no network, no LLM call, deterministic. # Returns Style B JSON with `additionalContext` so Claude sees the hint on its next turn. Never blocks.",
+      "risk_level": "contextual",
+      "platforms": [
+        "macos",
+        "linux"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_SUGGEST_FIX_OFF"
+      ],
+      "tests": "tests/quality/suggest-fix-on-failure.bats",
+      "profiles": []
+    },
+    {
+      "id": "swiftlint-gate",
+      "name": "Swiftlint Gate",
+      "category": "quality",
+      "path": "hooks/quality/swiftlint-gate.sh",
+      "event": "PostToolUse",
+      "matcher": "Write|Edit|MultiEdit",
+      "description": "After Claude writes a .swift file, runs `swiftlint lint --quiet --use-stdin` against the file contents. Blocks the change with a deny decision when SwiftLint reports any issue. Silently skips when swiftlint isn't on PATH. # Matches: .swift",
+      "risk_level": "blocking",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": true,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_SWIFTLINT_GATE_SKIP"
+      ],
+      "tests": "tests/quality/swiftlint-gate.bats",
+      "profiles": []
     },
     {
       "id": "test-coverage-check",
@@ -1776,6 +1960,30 @@
       ]
     },
     {
+      "id": "permission-denied-logger",
+      "name": "Permission Denied Logger",
+      "category": "security",
+      "path": "hooks/security/permission-denied-logger.sh",
+      "event": "PermissionDenied",
+      "matcher": "",
+      "description": "Append every denied tool call to an audit JSONL log (~/.claude/permission-denials/YYYY-MM-DD.jsonl). One line per denial with timestamp, session id, tool name, denial reason, and the offending input. Compliance and security teams use this to spot repeat patterns. Observability only \u2014 never blocks, never sets `retry`.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_PERM_DENIED_DIR",
+        "CLAUDE_PERM_DENIED_LOG_OFF"
+      ],
+      "tests": "tests/security/permission-denied-logger.bats",
+      "profiles": []
+    },
+    {
       "id": "protect-dotenv",
       "name": "Protect Dotenv",
       "category": "security",
@@ -1843,7 +2051,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/session/context-threshold-guard.bats",
       "profiles": [
         "safe-default"
       ]
@@ -1855,7 +2063,7 @@
       "path": "hooks/session/env-file-injector.sh",
       "event": "SessionStart",
       "matcher": "",
-      "description": "Loads .claude.env from the repo root and injects key=value pairs as session context. Redacts values that look like real secrets. #",
+      "description": "Injects .claude.env key=value pairs as session context. Loaded from the repo root. Redacts values that look like real secrets. #",
       "risk_level": "contextual",
       "platforms": [
         "macos",
@@ -1866,7 +2074,31 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/session/env-file-injector.bats",
+      "profiles": []
+    },
+    {
+      "id": "log-tool-failures",
+      "name": "Log Tool Failures",
+      "category": "session",
+      "path": "hooks/session/log-tool-failures.sh",
+      "event": "PostToolUseFailure",
+      "matcher": "",
+      "description": "Append every failed tool call to a daily JSONL log (~/.claude/tool-failures/YYYY-MM-DD.jsonl). One line per failure with timestamp, session id, tool name, error, duration, and the offending input. Observability only \u2014 never blocks. Useful for forensics, flake detection, and sharing reproducible failures with teammates.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos",
+        "linux",
+        "wsl"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_LOG_TOOL_FAILURES_OFF",
+        "CLAUDE_TOOL_FAILURES_DIR"
+      ],
+      "tests": "tests/session/log-tool-failures.bats",
       "profiles": []
     },
     {
@@ -1876,7 +2108,7 @@
       "path": "hooks/session/precompact-backup.sh",
       "event": "PreCompact",
       "matcher": "",
-      "description": "Backs up the full transcript to a timestamped file before Claude compacts it, so previous turns are recoverable. #",
+      "description": "Backs up the full transcript before Claude compacts it. Writes a timestamped file so previous turns stay recoverable. #",
       "risk_level": "passive",
       "platforms": [
         "macos",
@@ -1887,7 +2119,29 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/session/precompact-backup.bats",
+      "profiles": []
+    },
+    {
+      "id": "session-end-summary",
+      "name": "Session End Summary",
+      "category": "session",
+      "path": "hooks/session/session-end-summary.sh",
+      "event": "SessionEnd",
+      "matcher": "",
+      "description": "On session termination, append a markdown digest of the session to ~/.claude/sessions/YYYY-MM-DD.md. Captures: session id, end reason (clear/resume/logout/...), cwd, tool-call count, files touched (Write/Edit/MultiEdit counts), and approximate duration. Strictly observability. # This is the SessionEnd companion to the existing `session-summary` hook (which fires on Stop, the per-turn event). Both can run side-by-side \u2014 Stop fires every turn, SessionEnd fires once when the session terminates.",
+      "risk_level": "modifying",
+      "platforms": [
+        "macos"
+      ],
+      "blocks_actions": false,
+      "writes_files": true,
+      "network_access": false,
+      "bypass_env": [
+        "CLAUDE_SESSIONS_DIR",
+        "CLAUDE_SESSION_END_SUMMARY_OFF"
+      ],
+      "tests": "tests/session/session-end-summary.bats",
       "profiles": []
     },
     {
@@ -1908,7 +2162,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/session/session-name-from-branch.bats",
       "profiles": [
         "solo-dev"
       ]
@@ -1920,7 +2174,7 @@
       "path": "hooks/session/session-start-context.sh",
       "event": "SessionStart",
       "matcher": "",
-      "description": "Injects useful project context at session start: current branch, recent commits, modified files, and any project notes. #",
+      "description": "Injects useful project context at session start. Includes current branch, recent commits, modified files, and any project notes. #",
       "risk_level": "contextual",
       "platforms": [
         "macos",
@@ -1931,7 +2185,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/session/session-start-context.bats",
       "profiles": [
         "solo-dev"
       ]
@@ -1943,7 +2197,7 @@
       "path": "hooks/session/session-summary.sh",
       "event": "Stop",
       "matcher": "",
-      "description": "Appends a one-line summary of the session (start time, cwd, tool call count) to a daily markdown log. #",
+      "description": "Appends a one-line session summary to a daily markdown log. Records start time, cwd, and tool call count. #",
       "risk_level": "modifying",
       "platforms": [
         "macos",
@@ -1954,7 +2208,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [],
-      "tests": null,
+      "tests": "tests/session/session-summary.bats",
       "profiles": [
         "safe-default",
         "team"

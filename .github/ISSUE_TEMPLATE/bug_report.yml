@@ -28,6 +28,15 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: claude_code_version
+    attributes:
+      label: Claude Code version
+      description: Run `claude --version`.
+      placeholder: "1.0.42"
+    validations:
+      required: true
+
   - type: dropdown
     id: os
     attributes:
@@ -83,14 +92,27 @@ body:
     validations:
       required: true
 
+  - type: textarea
+    id: doctor
+    attributes:
+      label: hook-doctor output (optional)
+      description: |
+        If you ran `bash scripts/hook-doctor.sh`, paste the output here.
+        Helps us rule out environment issues fast.
+      render: shell
+
   - type: checkboxes
     id: prereqs
     attributes:
       label: Sanity checks
       options:
+        - label: I confirmed this is not a Claude Code spec issue (see https://code.claude.com/docs/en/hooks). If it is, I'll file a spec-drift report instead.
+          required: true
+        - label: I searched existing issues for duplicates
+          required: true
         - label: I ran `bash scripts/lint-hooks.sh` and it passes on my checkout
           required: false
         - label: I ran `shellcheck -S warning` against the hook and it's clean
           required: false
-        - label: I searched existing issues for duplicates
-          required: true
+        - label: I ran `bash scripts/hook-doctor.sh` and pasted the output above
+          required: false
