@@ -69,7 +69,7 @@ without speculating, so we don't.
 | SessionStart | unverified (≤ 2.1.78) | 3 |
 | SessionEnd | unverified (≤ 2.1.78, fixed 2.1.101) | 0 |
 
-Total: 28 events, 79 hooks across 6 events currently in use.
+Total: 28 events, 90 hooks across 9 events currently in use.
 
 ### Notable behavioral changes
 

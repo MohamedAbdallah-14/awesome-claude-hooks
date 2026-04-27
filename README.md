@@ -7,11 +7,11 @@
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 [![License: CC0](https://img.shields.io/badge/License-CC0-lightgrey.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Hooks](https://img.shields.io/badge/hooks-79-blue.svg)](#hook-catalog)
+[![Hooks](https://img.shields.io/badge/hooks-90-blue.svg)](#hook-catalog)
 [![CI](https://github.com/MohamedAbdallah-14/awesome-claude-hooks/actions/workflows/ci.yml/badge.svg)](https://github.com/MohamedAbdallah-14/awesome-claude-hooks/actions/workflows/ci.yml)
 [![shellcheck](https://img.shields.io/badge/shellcheck-clean-brightgreen.svg)](#testing)
 
-**79 production-ready Claude Code hooks**, spec-aligned and bats-tested. Install a curated profile in one command.
+**90 production-ready Claude Code hooks**, spec-aligned and bats-tested. Install a curated profile in one command.
 
 Security guards, quality gates, workflow automation, context injection, and team-safe defaults. shellcheck-clean. Tested on Ubuntu and macOS. Aligned with the official Claude Code [hooks reference](https://code.claude.com/docs/en/hooks).
 
