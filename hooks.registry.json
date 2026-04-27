@@ -859,6 +859,7 @@
       "writes_files": true,
       "network_access": false,
       "bypass_env": [
+        "CLAUDE_BREAK_REMINDER_FILE",
         "CLAUDE_BREAK_REMINDER_INTERVAL",
         "CLAUDE_SESSION_LOG"
       ],
@@ -1327,7 +1328,7 @@
       "path": "hooks/notifications/terminal-title.sh",
       "event": "Stop",
       "matcher": "",
-      "description": "Updates the terminal window/tab title to reflect Claude Code's current status in real time. PreToolUse \u2192 \"\u2699 Claude: running <tool_name>...\" Stop \u2192 \"\u2705 Claude: done\" # Works with: iTerm2, Terminal.app, tmux, xterm, and most other terminals that support the ANSI OSC 0 escape sequence. In tmux, updates the *window* title via tmux rename-window.",
+      "description": "Updates the terminal window/tab title on Stop (\"\u2705 Claude: done\") so the terminal reflects Claude Code's status when the agent hands control back. If wired additionally under PreToolUse via the Install snippet, the title becomes \"\u2699 Claude: running <tool_name>...\" while a tool is in flight; the canonical event in this registry entry is Stop. # Works with: iTerm2, Terminal.app, tmux, xterm, and most other terminals that support the ANSI OSC 0 escape sequence. In tmux, updates the *window* title via tmux rename-window.",
       "risk_level": "modifying",
       "platforms": [
         "macos",
@@ -1480,7 +1481,7 @@
       "path": "hooks/quality/cargo-fmt-gate.sh",
       "event": "PostToolUse",
       "matcher": "Write|Edit|MultiEdit",
-      "description": "After Claude writes a .rs file, runs `cargo fmt --check` (or falls back to `rustfmt --check <file>` if no Cargo.toml is in cwd). Blocks the change with a deny decision when the file would be reformatted, so Claude can rerun with rustfmt applied. # Matches: .rs",
+      "description": "After Claude writes a .rs file, runs `rustfmt --check <file>` against the just-edited file (preferred), or `cargo fmt --check -- <file>` when a Cargo.toml is in cwd and rustfmt is unavailable. Blocks the change with a deny decision when the file would be reformatted, so Claude can rerun with rustfmt applied. Scoping the check to the edited file avoids spurious failures from unrelated unformatted files elsewhere in the workspace. # Matches: .rs",
       "risk_level": "blocking",
       "platforms": [
         "macos",
@@ -1698,11 +1699,12 @@
       "path": "hooks/quality/suggest-fix-on-failure.sh",
       "event": "PostToolUseFailure",
       "matcher": "Bash",
-      "description": "When a Bash tool call fails, look at the command + error and surface a one-line hint Claude can act on (missing dep, wrong cwd, lockfile drift, port in use, etc.). Generic across npm / pnpm / yarn / pip / uv / poetry / cargo / go / bundler / make / pytest / jest. Pure pattern matching \u2014 no network, no LLM call, deterministic. # Returns Style B JSON with `additionalContext` so Claude sees the hint on its next turn. Never blocks.",
+      "description": "When a Bash tool call fails, look at the command + error and surface a one-line hint Claude can act on (missing dep, wrong cwd, lockfile drift, port in use, etc.). Generic across npm / pnpm / yarn / pip / uv / poetry / cargo / go / bundler / make / pytest / jest. Pure pattern matching \u2014 no network, no LLM call, deterministic. # Returns Style B JSON with `additionalContext` so Claude sees the hint on its next turn. Never blocks. # Platforms: macos, linux, wsl. Pure regex over command + error strings; no platform-specific dependencies.",
       "risk_level": "contextual",
       "platforms": [
         "macos",
-        "linux"
+        "linux",
+        "wsl"
       ],
       "blocks_actions": false,
       "writes_files": true,
@@ -2129,10 +2131,12 @@
       "path": "hooks/session/session-end-summary.sh",
       "event": "SessionEnd",
       "matcher": "",
-      "description": "On session termination, append a markdown digest of the session to ~/.claude/sessions/YYYY-MM-DD.md. Captures: session id, end reason (clear/resume/logout/...), cwd, tool-call count, files touched (Write/Edit/MultiEdit counts), and approximate duration. Strictly observability. # This is the SessionEnd companion to the existing `session-summary` hook (which fires on Stop, the per-turn event). Both can run side-by-side \u2014 Stop fires every turn, SessionEnd fires once when the session terminates.",
+      "description": "On session termination, append a markdown digest of the session to ~/.claude/sessions/YYYY-MM-DD.md. Captures: session id, end reason (clear/resume/logout/...), cwd, tool-call count, files touched (Write/Edit/MultiEdit counts), and approximate duration. Strictly observability. # This is the SessionEnd companion to the existing `session-summary` hook (which fires on Stop, the per-turn event). Both can run side-by-side \u2014 Stop fires every turn, SessionEnd fires once when the session terminates. # Platforms: macos, linux, wsl. Pure jq + file-append; no platform-specific dependencies. The duration math handles both BSD `date -j -f` (macOS) and GNU `date -d` (linux/wsl) explicitly.",
       "risk_level": "modifying",
       "platforms": [
-        "macos"
+        "macos",
+        "linux",
+        "wsl"
       ],
       "blocks_actions": false,
       "writes_files": true,

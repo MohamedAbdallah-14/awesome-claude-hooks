@@ -81,11 +81,14 @@ LINT_EXIT=0
 LINT_OUTPUT=$(cat "$FILE_PATH" | swiftlint lint --quiet --use-stdin 2>&1) || LINT_EXIT=$?
 
 # swiftlint exits 0 even with warnings unless --strict is used; treat any
-# output line containing "warning:" or "error:" as a failure.
+# diagnostic line as a failure. SwiftLint's `--use-stdin` output format is
+# `<nopath>:<line>:<col>: warning|error: …`, so anchor on the line:col prefix
+# rather than the bare word `warning|error:` (which would also match a stray
+# rule description containing that word).
 HAS_ISSUES=0
 if [[ $LINT_EXIT -ne 0 ]]; then
   HAS_ISSUES=1
-elif printf '%s\n' "$LINT_OUTPUT" | grep -Eq '(warning|error):'; then
+elif printf '%s\n' "$LINT_OUTPUT" | grep -Eq ':[0-9]+:[0-9]+: (warning|error):'; then
   HAS_ISSUES=1
 fi
 

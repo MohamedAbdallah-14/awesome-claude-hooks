@@ -39,7 +39,17 @@ docs: registry
 lint: shellcheck contract
 
 test:
-	@bats -r tests
+	@# Stub real-world notification binaries so test runs never leak
+	@# desktop notifications, sounds, or webhooks into the maintainer's
+	@# machine. Per-test setups already stub the same binaries, but this
+	@# belt-and-braces stub catches any test that forgets.
+	@stub=$$(mktemp -d); \
+	for bin in osascript notify-send afplay paplay aplay terminal-notifier curl wget tmux; do \
+	  printf '#!/usr/bin/env bash\nexit 0\n' > "$$stub/$$bin"; \
+	  chmod +x "$$stub/$$bin"; \
+	done; \
+	PATH="$$stub:$$PATH" bats -r tests; \
+	rc=$$?; rm -rf "$$stub"; exit $$rc
 
 all: registry docs lint test
 
@@ -76,10 +86,11 @@ doctor:
 
 # Serve the static catalog browser locally.
 # `app.js` does fetch('./registry.json'), so we copy the canonical registry
-# in first. The trap-on-INT keeps Ctrl-C clean. Port is overridable:
+# in first. The trap-on-INT keeps Ctrl-C clean (no `make: *** [pages-serve]
+# Error 130`). Port is overridable:
 #   make pages-serve PORT=8080
 PORT ?= 8000
 pages-serve:
 	@cp hooks.registry.json docs-site/registry.json
 	@echo "Serving docs-site/ on http://localhost:$(PORT) (Ctrl-C to stop)"
-	@cd docs-site && python3 -m http.server $(PORT)
+	@cd docs-site && bash -c 'trap "exit 0" INT; python3 -m http.server $(PORT)'

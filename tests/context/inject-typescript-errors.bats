@@ -61,8 +61,17 @@ edit_payload() {
   echo '{}' > "${WORK}/tsconfig.json"
   echo "const x: number = 1;" > "${WORK}/foo.ts"
 
-  PROJECT_HASH=$(printf '%s' "$WORK" | md5sum 2>/dev/null | cut -c1-8 \
-    || printf '%s' "$WORK" | md5 2>/dev/null | cut -c1-8)
+  # Mirror the hook's hash logic exactly (see hooks/context/inject-typescript-errors.sh).
+  # Without pipefail, `cut` masks `md5sum` failure on macOS, so an `||`-chained
+  # pipeline can produce an empty PROJECT_HASH and the test cache path won't
+  # match what the hook computes. Branch on `command -v` instead.
+  if command -v md5sum >/dev/null 2>&1; then
+    PROJECT_HASH=$(printf '%s' "$WORK" | md5sum | cut -c1-8)
+  elif command -v md5 >/dev/null 2>&1; then
+    PROJECT_HASH=$(printf '%s' "$WORK" | md5 | cut -c1-8)
+  else
+    PROJECT_HASH="default"
+  fi
   CACHE_FILE="/tmp/claude-ts-errors-${PROJECT_HASH}.cache"
   echo "TypeScript: 0 errors (cached sentinel)" > "$CACHE_FILE"
 

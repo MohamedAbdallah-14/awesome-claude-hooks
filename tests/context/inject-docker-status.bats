@@ -56,8 +56,10 @@ bash_payload() {
   fi
 }
 
-@test "exits 0 even when jq is missing (simulated by stripping PATH)" {
-  # We cannot really remove jq, but a malformed input still triggers the early-approve path.
+@test "exits 0 on empty {} payload (early-approve path)" {
+  # An empty payload triggers the same early-approve path the hook uses when
+  # jq can't extract anything useful. We can't realistically strip jq from
+  # PATH here without breaking bats setup, so this exercises the same branch.
   payload="{}"
   pfile=$(mktemp); printf '%s' "$payload" > "$pfile"
   run env HOME="$TMPHOME" bash -c "bash '$HOOK' < '$pfile'"

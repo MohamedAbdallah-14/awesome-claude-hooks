@@ -88,7 +88,7 @@ body:
     attributes:
       label: Why it belongs in this collection
       description: |
-        What hook in the existing 79 doesn't already do this? If something
+        Which hook already in the registry doesn't cover this? If something
         close exists, why does this need to be separate (different event,
         different matcher, different blocking semantics, different env)?
     validations:

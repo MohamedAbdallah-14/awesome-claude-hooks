@@ -8,8 +8,10 @@ HOOK="${HOOKS_DIR}/fun/break-reminder.sh"
 setup() {
   TMP_HOME=$(mktemp -d)
   mkdir -p "${TMP_HOME}/.claude"
-  REMINDED_FILE="/tmp/claude-break-reminded.time"
-  # Make sure there's no stale reminder from earlier tests on this box
+  # Per-test marker keeps parallel bats workers (`bats --jobs N`) from
+  # racing on /tmp. The hook honours CLAUDE_BREAK_REMINDER_FILE.
+  REMINDED_FILE="${TMP_HOME}/claude-break-reminded.time"
+  export CLAUDE_BREAK_REMINDER_FILE="$REMINDED_FILE"
   rm -f "$REMINDED_FILE"
   # Stub osascript / notify-send so the hook doesn't fire real desktop
   # notifications during tests (this was leaking into the maintainer's

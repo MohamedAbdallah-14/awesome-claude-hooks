@@ -76,4 +76,7 @@ teardown() {
   payload=$(post_payload 1 "")
   run_hook "$HOOK" "$payload"
   [ "$status" -eq 0 ]
+  # Hook is observability-only; emitting Style B JSON for Claude would be
+  # a regression. Exit-status alone wouldn't catch that.
+  [ -z "$output" ] || ! printf '%s' "$output" | jq -e 'has("hookSpecificOutput") or has("additionalContext") or has("decision")' >/dev/null 2>&1
 }

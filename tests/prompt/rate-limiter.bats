@@ -68,6 +68,12 @@ call_with_session() {
   payload=$(call_with_session 'foo/../bar; rm -rf')
   run_hook "$HOOK" "$payload"
   [ "$status" -eq 0 ]
+  # Sanitisation must collapse traversal segments — no resolved file at
+  # /tmp/bar should ever appear as a side effect.
+  [ ! -e /tmp/bar ]
+  [ ! -e /tmp/bar.txt ]
+  # And a sanitised rate file should exist under the expected namespace.
+  ls /tmp/claude-rate-*.txt >/dev/null 2>&1 || ls /tmp/claude-rate-*.ts >/dev/null 2>&1
   # Cleanup any rate file the hook may have made under sanitised name
   rm -f /tmp/claude-rate-foo*.txt /tmp/claude-rate-foo*.ts
   rm -f /tmp/claude-rate-bar*.txt /tmp/claude-rate-bar*.ts

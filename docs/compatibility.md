@@ -72,7 +72,7 @@ Operational metadata for every hook. Generated from `hooks.registry.yaml`.
 | [`prettier-gate`](../hooks/quality/prettier-gate.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | — | — | ✅ | macos, linux, wsl | — |
 | [`python-lint`](../hooks/quality/python-lint.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | — | — | ✅ | macos, linux, wsl | — |
 | [`rubocop-gate`](../hooks/quality/rubocop-gate.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
-| [`suggest-fix-on-failure`](../hooks/quality/suggest-fix-on-failure.sh) | `PostToolUseFailure` (`Bash`) | — | — | ✅ | macos, linux | ✅ |
+| [`suggest-fix-on-failure`](../hooks/quality/suggest-fix-on-failure.sh) | `PostToolUseFailure` (`Bash`) | — | — | ✅ | macos, linux, wsl | ✅ |
 | [`swiftlint-gate`](../hooks/quality/swiftlint-gate.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | ✅ | — | ✅ | macos, linux, wsl | ✅ |
 | [`test-coverage-check`](../hooks/quality/test-coverage-check.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | — | — | ✅ | macos | — |
 | [`tsc-check`](../hooks/quality/tsc-check.sh) | `PostToolUse` (`Write|Edit|MultiEdit`) | — | — | ✅ | macos, linux, wsl | — |
@@ -90,7 +90,7 @@ Operational metadata for every hook. Generated from `hooks.registry.yaml`.
 | [`env-file-injector`](../hooks/session/env-file-injector.sh) | `SessionStart` | — | — | ✅ | macos, linux, wsl | ✅ |
 | [`log-tool-failures`](../hooks/session/log-tool-failures.sh) | `PostToolUseFailure` | — | — | ✅ | macos, linux, wsl | ✅ |
 | [`precompact-backup`](../hooks/session/precompact-backup.sh) | `PreCompact` | — | — | ✅ | macos, linux, wsl | ✅ |
-| [`session-end-summary`](../hooks/session/session-end-summary.sh) | `SessionEnd` | — | — | ✅ | macos | ✅ |
+| [`session-end-summary`](../hooks/session/session-end-summary.sh) | `SessionEnd` | — | — | ✅ | macos, linux, wsl | ✅ |
 | [`session-name-from-branch`](../hooks/session/session-name-from-branch.sh) | `SessionStart` | — | — | ✅ | macos, linux, wsl | ✅ |
 | [`session-start-context`](../hooks/session/session-start-context.sh) | `SessionStart` | — | — | ✅ | macos, linux, wsl | ✅ |
 | [`session-summary`](../hooks/session/session-summary.sh) | `Stop` | — | — | ✅ | macos, linux, wsl | ✅ |

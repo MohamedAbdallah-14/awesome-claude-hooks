@@ -40,7 +40,7 @@ bash_payload() {
   tail -1 "$log" | grep -q '"/tmp/foo.txt"'
 }
 
-@test "Bash payload is recorded with truncated command in context column" {
+@test "Bash payload is recorded with command in context column" {
   payload=$(bash_payload "echo hello world")
   pfile=$(mktemp); printf '%s' "$payload" > "$pfile"
   run env HOME="$TMPHOME" PATH="$PATH" bash -c "bash '$HOOK' < '$pfile'"

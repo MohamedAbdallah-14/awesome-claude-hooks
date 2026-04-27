@@ -26,12 +26,12 @@ What's next, what's deliberately not next, and what's never going to be.
 
 ### Event coverage gaps — proposed hooks
 
-Backlog grouped by the uncovered Claude Code event each hook fills. We currently ship hooks for only 6 of 28 events; the entries below close the biggest blank spots. Sources at the end of the section.
+Backlog grouped by the uncovered Claude Code event each hook fills. We currently ship hooks for ~9 of 28 events; the entries below close the biggest remaining blank spots. Sources at the end of the section.
 
-**`PermissionDenied` (0 hooks today)**
+**`PermissionDenied` (1 hook today: `permission-denied-logger`)**
 - `permission-denied-retry-readonly` — `PermissionDenied` (matcher: `Read|Glob|Grep`): set `retry: true` for inert read tools so denials don't dead-end the loop.
 
-**`SessionEnd` (0 hooks today)**
+**`SessionEnd` (1 hook today: `session-end-summary`)**
 - `session-end-cleanup` — `SessionEnd`: delete stale tmp files and kill orphaned background processes spawned during the session.
 
 **`CwdChanged` (0 hooks today)**

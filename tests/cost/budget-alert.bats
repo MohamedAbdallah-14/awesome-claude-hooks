@@ -55,11 +55,25 @@ posttool_payload() {
   payload=$(posttool_payload)
   printf '4\n' > "$COUNT_FILE"
   pfile=$(mktemp); printf '%s' "$payload" > "$pfile"
+  # Strip osascript / notify-send from PATH so the hook deterministically
+  # falls back to its stderr alert form. That gives us something concrete
+  # to grep for: a regression that silently stops emitting the soft alert
+  # would leave stderr empty and fail this assertion.
+  CLEAN=$(mktemp -d)
+  for b in cat bash sh env jq; do
+    real="$(command -v "$b" 2>/dev/null || true)"
+    [[ -n "$real" ]] && ln -sf "$real" "$CLEAN/$b"
+  done
   # SOFT_LIMIT=5 so the increment from 4→5 hits the threshold
-  run env HOME="$TMPHOME" CLAUDE_BUDGET_SOFT_LIMIT=5 CLAUDE_BUDGET_HARD_LIMIT=99 bash -c "bash '$HOOK' < '$pfile'"
-  rm -f "$pfile"
+  run env HOME="$TMPHOME" PATH="$CLEAN" \
+    CLAUDE_BUDGET_SOFT_LIMIT=5 CLAUDE_BUDGET_HARD_LIMIT=99 \
+    bash -c "bash '$HOOK' < '$pfile' 2>&1"
+  rm -f "$pfile"; rm -rf "$CLEAN"
   [ "$status" -eq 0 ]
   [ "$(cat "$COUNT_FILE")" = "5" ]
+  # The fallback alert prints to stderr ("[budget-alert] …Usage Notice…");
+  # confirm the soft-threshold path actually fired.
+  printf '%s' "$output" | grep -qi 'budget-alert.*Usage Notice'
 }
 
 @test "hard threshold: emits context block at HARD_LIMIT" {

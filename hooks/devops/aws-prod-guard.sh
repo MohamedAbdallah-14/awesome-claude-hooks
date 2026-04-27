@@ -66,7 +66,30 @@ fi
 # `forecast`/`explain` from the list because those names also appear as
 # non-readonly trailing arg values.
 READONLY_VERBS='(describe|list|get|ls|head|lookup|scan|query|search|show)'
-if echo "$COMMAND" | grep -qE "(^|[[:space:]])aws[[:space:]]+[[:alnum:]_-]+[[:space:]]+${READONLY_VERBS}([-_[:alnum:]]+)?([[:space:]]|$)"; then
+
+# Split COMMAND on shell separators (;, &&, ||, |, &) and ensure EVERY aws
+# invocation is readonly before short-circuiting. Otherwise a chain like
+# `aws s3 ls && aws s3 rm s3://prod-bucket/data` would be allowed because
+# the first segment looks readonly.
+ALL_AWS_READONLY=1
+ANY_AWS_SEEN=0
+# Use awk to split on the multi-char separators; tr collapses single-char ones.
+SEGMENTS=$(printf '%s' "$COMMAND" | awk '{
+  gsub(/&&|\|\||;|\||&/, "\n");
+  print
+}')
+while IFS= read -r segment; do
+  # Only consider segments that actually invoke aws.
+  if echo "$segment" | grep -qE '(^|[[:space:]])aws[[:space:]]'; then
+    ANY_AWS_SEEN=1
+    if ! echo "$segment" | grep -qE "(^|[[:space:]])aws[[:space:]]+[[:alnum:]_-]+[[:space:]]+${READONLY_VERBS}([-_[:alnum:]]+)?([[:space:]]|$)"; then
+      ALL_AWS_READONLY=0
+      break
+    fi
+  fi
+done <<< "$SEGMENTS"
+
+if [[ "$ANY_AWS_SEEN" -eq 1 && "$ALL_AWS_READONLY" -eq 1 ]]; then
   exit 0
 fi
 

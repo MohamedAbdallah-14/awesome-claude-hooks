@@ -53,9 +53,13 @@ INPUT=$(cat)
 # ── target log path ───────────────────────────────────────────────────────────
 
 LOG_DIR="${CLAUDE_PERM_DENIED_DIR:-${HOME}/.claude/permission-denials}"
-mkdir -p "$LOG_DIR"
+# Defensive mkdir so read-only directories don't break the "never blocks"
+# guarantee under `set -euo pipefail`.
+mkdir -p "$LOG_DIR" 2>/dev/null || exit 0
 
-LOG_FILE="${LOG_DIR}/$(date +%Y-%m-%d).jsonl"
+# UTC per-day file matches the UTC TIMESTAMP below — otherwise around local
+# midnight a record's `ts` field would land in the previous local-day's file.
+LOG_FILE="${LOG_DIR}/$(date -u +%Y-%m-%d).jsonl"
 TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 # ── extract structured fields ─────────────────────────────────────────────────

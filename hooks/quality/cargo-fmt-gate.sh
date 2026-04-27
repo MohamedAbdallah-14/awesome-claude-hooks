@@ -2,10 +2,13 @@
 # SPDX-License-Identifier: CC0-1.0
 # Hook name:   cargo-fmt-gate
 # Event:       PostToolUse (matcher: "Write|Edit|MultiEdit")
-# Description: After Claude writes a .rs file, runs `cargo fmt --check` (or
-#              falls back to `rustfmt --check <file>` if no Cargo.toml is in
-#              cwd). Blocks the change with a deny decision when the file
-#              would be reformatted, so Claude can rerun with rustfmt applied.
+# Description: After Claude writes a .rs file, runs `rustfmt --check <file>`
+#              against the just-edited file (preferred), or `cargo fmt --check
+#              -- <file>` when a Cargo.toml is in cwd and rustfmt is unavailable.
+#              Blocks the change with a deny decision when the file would be
+#              reformatted, so Claude can rerun with rustfmt applied. Scoping
+#              the check to the edited file avoids spurious failures from
+#              unrelated unformatted files elsewhere in the workspace.
 #
 #              Matches: .rs
 #
@@ -73,10 +76,16 @@ fi
 FMT_OUTPUT=""
 FMT_EXIT=0
 
-if [[ -f "Cargo.toml" ]] && command -v cargo &>/dev/null; then
-  FMT_OUTPUT=$(cargo fmt --check 2>&1) || FMT_EXIT=$?
-elif command -v rustfmt &>/dev/null; then
+# Prefer rustfmt directly: it accepts a file path and is the simplest way to
+# scope the check to *only* the file Claude just edited. Falling back to
+# `cargo fmt --check -- <file>` (note the `--`) keeps the per-file scope when
+# only cargo is available. Both forms emit a non-zero exit if the file would
+# be reformatted; the workspace-wide `cargo fmt --check` form is intentionally
+# avoided so unrelated unformatted files don't cause false denies.
+if command -v rustfmt &>/dev/null; then
   FMT_OUTPUT=$(rustfmt --check "$FILE_PATH" 2>&1) || FMT_EXIT=$?
+elif [[ -f "Cargo.toml" ]] && command -v cargo &>/dev/null; then
+  FMT_OUTPUT=$(cargo fmt --check -- "$FILE_PATH" 2>&1) || FMT_EXIT=$?
 else
   # Neither cargo nor rustfmt available — silently skip so users without
   # a Rust toolchain aren't blocked.
@@ -93,7 +102,7 @@ REASON="cargo-fmt-gate: $FILE_PATH is not formatted to rustfmt rules.
 
 $FMT_OUTPUT
 
-Fix with: cargo fmt   (or: rustfmt $FILE_PATH)
+Fix with: rustfmt $FILE_PATH   (or: cargo fmt -- $FILE_PATH)
 Bypass once with: CLAUDE_CARGO_FMT_GATE_SKIP=1"
 
 jq -n --arg reason "$REASON" '{

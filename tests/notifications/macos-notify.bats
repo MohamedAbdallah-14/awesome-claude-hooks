@@ -69,7 +69,12 @@ teardown() {
 
 @test "macos-notify: never writes JSON to stdout" {
   payload=$(stop_payload)
-  run_hook "$HOOK" "$payload"
+  # Reuse the stub PATH wiring so the system osascript isn't invoked on
+  # Darwin (which would fire a real notification banner every test run).
+  tmp=$(mktemp); printf '%s' "$payload" > "$tmp"
+  run env STUB_LOG="$STUB_LOG" PATH="${STUB_DIR}:${PATH}" \
+    bash -c "bash '$HOOK' < '$tmp'"
+  rm -f "$tmp"
   [ "$status" -eq 0 ]
   [ -z "$output" ] || ! echo "$output" | jq -e . >/dev/null 2>&1
 }

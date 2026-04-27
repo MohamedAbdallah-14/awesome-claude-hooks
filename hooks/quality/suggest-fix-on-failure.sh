@@ -12,6 +12,9 @@
 #              Returns Style B JSON with `additionalContext` so Claude
 #              sees the hint on its next turn. Never blocks.
 #
+# Platforms: macos, linux, wsl. Pure regex over command + error strings;
+#            no platform-specific dependencies.
+#
 # Config (env vars):
 #   CLAUDE_SUGGEST_FIX_OFF=1   Disable this hook (bypass).
 #
@@ -65,8 +68,11 @@ if [[ -z "$COMMAND" && -z "$ERROR" ]]; then
 fi
 
 # Combine command + error for pattern scanning. Cap to 8 KB so massive
-# stack traces don't blow up grep.
-HAYSTACK=$(printf '%s\n%s' "$COMMAND" "$ERROR" | head -c 8192)
+# stack traces don't blow up grep. Done with bash parameter expansion (no
+# pipe to `head`) so a large $ERROR can't trip pipefail/EPIPE under
+# `set -euo pipefail` — the very case the cap exists to defend against.
+HAYSTACK="${COMMAND}"$'\n'"${ERROR}"
+HAYSTACK="${HAYSTACK:0:8192}"
 
 # ── pattern-based hints ───────────────────────────────────────────────────────
 # Each rule: a regex on $HAYSTACK and a hint to surface.

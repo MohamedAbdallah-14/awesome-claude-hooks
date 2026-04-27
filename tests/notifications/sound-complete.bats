@@ -35,12 +35,16 @@ teardown() {
   fi
   payload=$(stop_payload)
   tmp=$(mktemp); printf '%s' "$payload" > "$tmp"
+  # Hook backgrounds afplay; poll briefly so the stub log has flushed before
+  # we assert. Without this the assertion races the background process.
   run env PATH="${STUB_DIR}:${PATH}" STUB_LOG="$STUB_LOG" \
-    bash -c "bash '$HOOK' < '$tmp'"
+    bash -c "bash '$HOOK' < '$tmp'; for _ in 1 2 3 4 5 6 7 8 9 10; do [ -s '$STUB_LOG' ] && break; sleep 0.1; done"
   rm -f "$tmp"
   [ "$status" -eq 0 ]
-  # afplay should have been called with a .aiff path
-  grep -q "afplay:" "$STUB_LOG" || true
+  # Real assertion (was previously neutralised by `|| true`): the hook MUST
+  # have invoked afplay. A regression that silently drops the call should fail.
+  [ -s "$STUB_LOG" ]
+  grep -q "^afplay:" "$STUB_LOG"
 }
 
 @test "sound-complete: respects CLAUDE_SOUND_COMPLETE override" {

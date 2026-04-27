@@ -70,7 +70,22 @@ EOF
 
 @test "missing linter binary silently skips" {
   payload=$(posttool_payload Write "$PHP_FILE")
-  PATH="$JQ_DIR:/usr/bin:/bin" run bash -c "printf '%s' '$payload' | bash '$HOOK'"
+  # Listing /usr/bin and /bin lets a host-installed php/pint leak in and
+  # run the real linter, making this assertion non-deterministic across CI
+  # hosts. Pin PATH to a clean dir that contains only the few utilities the
+  # hook itself needs (cat for stdin, bash/sh/env for shebang resolution),
+  # plus the jq stub. Without php/pint anywhere on PATH the hook's
+  # `command -v pint`/`command -v php` checks both miss and it takes its
+  # silent-skip branch deterministically.
+  CLEAN=$(mktemp -d)
+  for b in cat bash sh env; do
+    real="$(/usr/bin/env which "$b" 2>/dev/null || true)"
+    if [[ -n "$real" && -x "$real" ]]; then
+      ln -sf "$real" "$CLEAN/$b"
+    fi
+  done
+  PATH="$JQ_DIR:$CLEAN" run bash -c "printf '%s' '$payload' | bash '$HOOK'"
+  rm -rf "$CLEAN"
   [ "$status" -eq 0 ]
   [ -z "$output" ]
 }

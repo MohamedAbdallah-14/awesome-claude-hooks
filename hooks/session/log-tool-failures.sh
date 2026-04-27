@@ -53,9 +53,13 @@ INPUT=$(cat)
 # ── target log path ───────────────────────────────────────────────────────────
 
 LOG_DIR="${CLAUDE_TOOL_FAILURES_DIR:-${HOME}/.claude/tool-failures}"
-mkdir -p "$LOG_DIR"
+# Defensive mkdir: failures (read-only $HOME, etc.) must not abort under
+# `set -euo pipefail`. The hook is observability-only — never block.
+mkdir -p "$LOG_DIR" 2>/dev/null || exit 0
 
-LOG_FILE="${LOG_DIR}/$(date +%Y-%m-%d).jsonl"
+# Bucket the per-day file by UTC so the file name lines up with TIMESTAMP
+# (also UTC). Otherwise records straddle local-midnight into the wrong file.
+LOG_FILE="${LOG_DIR}/$(date -u +%Y-%m-%d).jsonl"
 TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 # ── extract structured fields ─────────────────────────────────────────────────

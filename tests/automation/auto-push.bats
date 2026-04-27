@@ -74,8 +74,13 @@ stop_payload() {
   NONGIT=$(mktemp -d)
   payload=$(stop_payload)
   pfile=$(mktemp); printf '%s' "$payload" > "$pfile"
-  run env HOME="$TMPHOME" CLAUDE_AUTO_PUSH=1 bash -c "cd '$NONGIT' && bash '$HOOK' < '$pfile'"
+  # Capture stdout only — stderr is allowed to carry a one-line "skipping"
+  # diagnostic. Stdout is what reaches Claude as JSON, and the hook MUST
+  # NOT emit anything there for the non-git case (so a regression that
+  # accidentally prints a git error or set -u trace to stdout fails here).
+  run env HOME="$TMPHOME" CLAUDE_AUTO_PUSH=1 bash -c "cd '$NONGIT' && bash '$HOOK' < '$pfile' 2>/dev/null"
   rm -f "$pfile"
   [ "$status" -eq 0 ]
+  [ -z "$output" ]
   rm -rf "$NONGIT"
 }

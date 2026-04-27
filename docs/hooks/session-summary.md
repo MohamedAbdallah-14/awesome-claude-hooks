@@ -27,7 +27,7 @@ A session ends. Nothing is written anywhere except Claude's own transcript.
 
 ## After
 
-```
+```text
 ## 2026-04-27
 
 - 09:14:22 | /Users/me/projects/api    | 7 tool calls

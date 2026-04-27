@@ -57,3 +57,13 @@ HOOK="${HOOKS_DIR}/devops/aws-prod-guard.sh"
   rm -f "$tmp"
   assert_allowed
 }
+
+@test "blocks compound aws cmd: readonly && destructive on prod profile" {
+  # Regression: a compound command must be blocked if ANY segment is destructive,
+  # even if a leading segment looks readonly.
+  payload=$(pretool_payload Bash "aws s3 ls --profile prod && aws s3 rm s3://prod-bucket/data --profile prod")
+  tmp=$(mktemp); printf '%s' "$payload" > "$tmp"
+  run env bash -c "bash '$HOOK' < '$tmp' 2>/dev/null"
+  rm -f "$tmp"
+  assert_blocked
+}

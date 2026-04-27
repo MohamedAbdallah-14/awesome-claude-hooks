@@ -228,6 +228,9 @@
     idSpan.className = "card-id";
     var idLink = document.createElement("a");
     idLink.href = GH_BASE + (h.path || "");
+    // Open the source on GitHub in a new tab; rel="noopener" only matters
+    // when target is set, so pair them.
+    idLink.target = "_blank";
     idLink.rel = "noopener";
     idLink.textContent = h.id;
     idSpan.appendChild(idLink);
@@ -299,6 +302,9 @@
     if (HERO_DOCS[h.id]) {
       var heroA = document.createElement("a");
       heroA.className = "hero-link";
+      // Hero docs live on GitHub; open in a new tab so the catalog page
+      // stays put. rel="noopener" needs target="_blank" to be effective.
+      heroA.target = "_blank";
       heroA.rel = "noopener";
       heroA.href = DOC_BASE + encodeURIComponent(h.id) + ".md";
       heroA.textContent = "view hero doc →";
