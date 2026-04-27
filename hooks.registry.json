@@ -128,7 +128,7 @@
       "path": "hooks/ai/ai-migration-safety.sh",
       "event": "PreToolUse",
       "matcher": "Bash",
-      "description": "Intercepts bash commands that look like database migrations. Asks Haiku whether the migration is REVERSIBLE, IRREVERSIBLE, or UNKNOWN. Blocks with exit 2 only if IRREVERSIBLE. Passes through if REVERSIBLE, UNKNOWN, or if the API key is absent.",
+      "description": "Intercepts bash commands that look like database migrations. Asks Haiku whether the migration is REVERSIBLE, IRREVERSIBLE, or UNKNOWN. Blocks via hookSpecificOutput.permissionDecision=\"deny\" only if IRREVERSIBLE. Passes through if REVERSIBLE, UNKNOWN, or if the API key is absent.",
       "risk_level": "blocking",
       "platforms": [
         "macos",
@@ -1045,7 +1045,7 @@
       "path": "hooks/git/stash-guard.sh",
       "event": "PreToolUse",
       "matcher": "Bash",
-      "description": "Warns (or blocks) when Claude is about to run commands that could silently discard or conflict with uncommitted changes. # Monitored commands: git checkout <branch> \u2014 switching branches with dirty tree git switch <branch> \u2014 same git stash pop \u2014 can create merge conflicts git stash apply \u2014 same git pull --rebase \u2014 rebasing onto a dirty tree git pull \u2014 merge into dirty tree git reset --hard \u2014 explicitly destructive git merge <branch> \u2014 merging into dirty tree # Default behaviour: approve with a context warning (exit 0). With CLAUDE_STASH_GUARD_BLOCK=1: block (exit 2) instead.",
+      "description": "Warns (or blocks) when Claude is about to run commands that could silently discard or conflict with uncommitted changes. # Monitored commands: git checkout <branch> \u2014 switching branches with dirty tree git switch <branch> \u2014 same git stash pop \u2014 can create merge conflicts git stash apply \u2014 same git pull --rebase \u2014 rebasing onto a dirty tree git pull \u2014 merge into dirty tree git reset --hard \u2014 explicitly destructive git merge <branch> \u2014 merging into dirty tree # Default behaviour: approve with a context warning (exit 0). With CLAUDE_STASH_GUARD_BLOCK=1: block via permissionDecision=deny.",
       "risk_level": "blocking",
       "platforms": [
         "macos",

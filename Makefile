@@ -1,4 +1,4 @@
-.PHONY: help lint shellcheck contract test docs registry all install-deps doctor pages-serve
+.PHONY: help lint shellcheck contract test docs registry all install-deps doctor pages-serve demo bench
 
 help:
 	@echo "Targets:"
@@ -12,6 +12,8 @@ help:
 	@echo "  make doctor         Diagnostic: tool versions + bash-3.2 hook warnings (always exit 0)"
 	@echo "  make all            registry + docs + lint + test"
 	@echo "  make pages-serve    Copy registry into docs-site/ and serve it on http://localhost:8000"
+	@echo "  make demo           Re-record demo.cast and re-render assets/demo.gif"
+	@echo "  make bench          Run hook latency benchmarks; write docs/benchmarks.md"
 
 install-deps:
 	@if command -v brew >/dev/null 2>&1; then \
@@ -53,6 +55,10 @@ test:
 
 all: registry docs lint test
 
+# Full bench is opt-in (slow) — `make all` deliberately does not run it.
+bench-quick:
+	@bash scripts/bench-hooks.sh --quick
+
 # Diagnostic-only — never fails CI. Reports tool presence/versions and which
 # hooks would warn under bash 3.2 (the macOS /bin/bash). Useful for debugging
 # contributor environments without gating on it.
@@ -89,6 +95,17 @@ doctor:
 # in first. The trap-on-INT keeps Ctrl-C clean (no `make: *** [pages-serve]
 # Error 130`). Port is overridable:
 #   make pages-serve PORT=8080
+demo:
+	@command -v asciinema >/dev/null 2>&1 || { echo "asciinema not found — brew install asciinema"; exit 1; }
+	@command -v agg       >/dev/null 2>&1 || { echo "agg not found — brew install agg"; exit 1; }
+	@asciinema rec --overwrite --command 'bash demo/demo.sh' \
+	  --rows 28 --cols 100 --idle-time-limit 1 demo/demo.cast
+	@agg --cols 100 --rows 28 --speed 1.5 --font-size 14 demo/demo.cast assets/demo.gif
+	@echo "Wrote demo/demo.cast and assets/demo.gif"
+
+bench:
+	@bash scripts/bench-hooks.sh
+
 PORT ?= 8000
 pages-serve:
 	@cp hooks.registry.json docs-site/registry.json

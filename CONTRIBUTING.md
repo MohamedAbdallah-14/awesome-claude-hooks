@@ -11,7 +11,7 @@ If `make all` is green locally, CI will be green on Ubuntu and macOS. The full h
 
 ## Three ways to contribute
 
-1. **File an issue** using the [Propose a new hook](.github/ISSUE_TEMPLATE/new_hook.yml) template. Useful when you have an idea but not the time to implement.
+1. **File an issue** using the [Propose a new hook](.github/ISSUE_TEMPLATE/new_hook.yml) template. The repo's scaffolder bot will validate the form, and on a green validation it will commit a contract-conformant skeleton to a `scaffold/<issue#>-<name>` branch and open a draft PR for you. You take it from the TODO markers.
 2. **Open a PR** with a working hook, a bats test, and (ideally) a hero doc.
 3. **Improve docs or starter packs** — fix a broken example, add a stack to [`starter-packs/`](starter-packs/), tighten a category README.
 

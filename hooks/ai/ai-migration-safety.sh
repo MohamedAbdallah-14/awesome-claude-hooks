@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: CC0-1.0
 # Hook name:   ai-migration-safety
 # Event:       PreToolUse (matcher: "Bash")
-# Mode:        BLOCKING (exit 2 on IRREVERSIBLE migrations)
+# Mode:        BLOCKING (emits permissionDecision=deny on IRREVERSIBLE migrations)
 # Description: Intercepts bash commands that look like database migrations.
 #              Asks Haiku whether the migration is REVERSIBLE, IRREVERSIBLE, or
-#              UNKNOWN. Blocks with exit 2 only if IRREVERSIBLE. Passes through
-#              if REVERSIBLE, UNKNOWN, or if the API key is absent.
+#              UNKNOWN. Blocks via hookSpecificOutput.permissionDecision="deny"
+#              only if IRREVERSIBLE. Passes through if REVERSIBLE, UNKNOWN, or
+#              if the API key is absent.
 #
 # Config (env vars):
 #   ANTHROPIC_API_KEY   If absent, hook allows all migrations through.
