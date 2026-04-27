@@ -24,9 +24,51 @@ What's next, what's deliberately not next, and what's never going to be.
 - More language-specific quality gates: rust (`cargo clippy`/`cargo fmt`), kotlin, swift.
 - A `claude-code-hooks` linter for *user* `~/.claude/settings.json` files (extended `hook-doctor`).
 
+### Event coverage gaps — proposed hooks
+
+Backlog grouped by the uncovered Claude Code event each hook fills. We currently ship hooks for only 6 of 28 events; the entries below close the biggest blank spots. Sources at the end of the section.
+
+**`PermissionDenied` (0 hooks today)**
+- `permission-denied-retry-readonly` — `PermissionDenied` (matcher: `Read|Glob|Grep`): set `retry: true` for inert read tools so denials don't dead-end the loop.
+
+**`SessionEnd` (0 hooks today)**
+- `session-end-cleanup` — `SessionEnd`: delete stale tmp files and kill orphaned background processes spawned during the session.
+
+**`CwdChanged` (0 hooks today)**
+- `cwd-change-context` — `CwdChanged`: inject project context (name from `package.json`/`Cargo.toml`/`pyproject.toml`) when Claude `cd`s into a new repo.
+
+**`SubagentStart` / `SubagentStop` (0 hooks today)**
+- `subagent-budget-guard` — `SubagentStart`: block subagent spawns once a per-session budget is exceeded; logs to `~/.claude/subagent-budget.log`.
+- `subagent-result-archiver` — `SubagentStop`: archive each subagent's `result_summary` to a per-session JSONL for multi-agent debugging.
+
+**`Notification` / `StopFailure` (0 hooks today)**
+- `notification-aggregator` — `Notification`: dedupe and rate-limit Claude Code notifications (collapse identical permission prompts within N seconds).
+- `stop-failure-alert` — `StopFailure`: desktop notification on rate-limit/billing/auth errors so silent 429s don't strand a session.
+
+**`PreCompact` (extending coverage)**
+- `precompact-context-snapshot` — `PreCompact`: save the most recent N user messages + tool decisions to a markdown file before compaction; targeted recovery vs. our existing whole-transcript backup.
+
+**`WorktreeCreate` / `WorktreeRemove` (0 hooks today)**
+- `worktree-bootstrap` — `WorktreeCreate`: run `npm ci` / `uv sync` / `bundle install` in new worktrees; idempotent and lockfile-aware.
+- `worktree-archive-on-remove` — `WorktreeRemove`: tar the worktree (or diff against `main`) before deletion to catch uncommitted work.
+
+**`InstructionsLoaded` (0 hooks today)**
+- `instructions-loaded-audit` — `InstructionsLoaded`: log every `CLAUDE.md` / rules file loaded (path, reason, parent) for compliance auditability.
+
+**`ConfigChange` (0 hooks today)**
+- `config-change-guard` — `ConfigChange`: block `permissions.defaultMode` flips to `auto`/`acceptAll` without an env-var bypass.
+
+**`FileChanged` (0 hooks today)**
+- `file-changed-env-reload` — `FileChanged` (matcher: `.envrc|.env`): re-export env vars to `$CLAUDE_ENV_FILE` when `.env`/`.envrc` changes mid-session.
+
+**`TaskCreated` / `TaskCompleted` (0 hooks today)**
+- `task-naming-validator` — `TaskCreated`: reject tasks whose name doesn't match a configured regex (e.g. `<scope>-<verb>-<noun>`).
+- `task-completion-checklist` — `TaskCompleted`: block completion if `.claude/done-criteria.md` has unchecked items.
+
+Sources: disler/claude-code-hooks-mastery, CC Notify, Claude Code event spec examples, community patterns. See research notes accompanying the proposals.
+
 ## Considered, not doing
 
-- A standalone GitHub Pages site with search. The generated `docs/hooks.md` already does category and event browsing; full-text search is overkill at 79 hooks.
 - An npm/pip package. The repo is shell scripts. A package wrapper buys nothing the clone-and-symlink flow doesn't already give.
 - A custom badge generator service. Shields.io covers everything we need.
 - Mock-webhook integration tests for `slack-notify` / `discord-notify` / `telegram-notify`. The cost of running a fake HTTP server in CI exceeds the value of testing a single `curl -X POST`.
