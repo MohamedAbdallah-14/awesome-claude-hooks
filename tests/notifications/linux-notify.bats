@@ -78,7 +78,11 @@ EOF
 
 @test "linux-notify: never writes JSON output" {
   payload=$(stop_payload)
-  run_hook "$HOOK" "$payload"
+  tmp=$(mktemp); printf '%s' "$payload" > "$tmp"
+  # Discard stderr — the hook's missing-binary warnings legitimately go
+  # there. This assertion only cares about stdout staying empty.
+  run bash -c "bash '$HOOK' < '$tmp' 2>/dev/null"
+  rm -f "$tmp"
   [ "$status" -eq 0 ]
   # Hook is observability-only; a regression that emits JSON for Claude
   # would still pass an exit-status-only test, so guard stdout explicitly.
