@@ -6,7 +6,11 @@ allowed-tools: Bash
 
 Install the hook profile named `$ARGUMENTS` to the user's global Claude Code settings.
 
+**Validate `$ARGUMENTS` before running any shell invocation.** The argument is interpolated into `bash` commands; do not skip this step.
+
 Steps:
+
+0. **Validation gate:** confirm `$ARGUMENTS` matches the safe token pattern `^[a-zA-Z0-9_-]+$`. If it doesn't, refuse to construct any command, run `bash scripts/install.sh --list-profiles`, and ask the user to pick a real profile. Also confirm the value appears in that list before proceeding.
 
 1. Run `bash scripts/install.sh --profile=$ARGUMENTS --global --dry-run`. Show the user exactly which hooks would be added and where the settings file would be written.
 

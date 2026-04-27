@@ -5,10 +5,17 @@ load '../test_helper'
 
 HOOK="${HOOKS_DIR}/devops/github-actions-validator.sh"
 
-# Helper: build a Write payload that uses tool_input.path (this hook's
-# expected key) and tool_input.content. The shared pretool_payload Write
-# emits file_path, so we construct it manually.
+# Helper: build a Write payload using the canonical tool_input.file_path.
+# The hook also accepts the legacy tool_input.path as a fallback (see hook
+# source); the canonical-shape test below pins the canonical contract.
 gh_workflow_payload() {
+  local path="$1" content="$2"
+  jq -n --arg p "$path" --arg c "$content" \
+    '{hook_event_name:"PreToolUse",session_id:"test",tool_name:"Write",tool_input:{file_path:$p,content:$c}}'
+}
+
+# Legacy-shape helper for the back-compat test below.
+gh_workflow_payload_legacy() {
   local path="$1" content="$2"
   jq -n --arg p "$path" --arg c "$content" \
     '{hook_event_name:"PreToolUse",session_id:"test",tool_name:"Write",tool_input:{path:$p,content:$c}}'
@@ -64,4 +71,12 @@ jobs:
   payload=$(gh_workflow_payload "config/app.yaml" "key: value")
   run_hook "$HOOK" "$payload"
   assert_allowed
+}
+
+@test "back-compat: still parses legacy tool_input.path payload" {
+  # The canonical key is tool_input.file_path, but the hook keeps a fallback
+  # so older synthetic payloads or third-party drivers don't silently no-op.
+  payload=$(gh_workflow_payload_legacy ".github/workflows/ci.yml" "this: is: not: valid: yaml: at: all:")
+  run_hook "$HOOK" "$payload"
+  assert_blocked
 }

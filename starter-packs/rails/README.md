@@ -44,4 +44,4 @@ bash scripts/install.sh --profile=team --project
 ## Notes
 
 - Paths assume `~/.claude/awesome-hooks`. Find-and-replace if you cloned elsewhere.
-- `db-migration-guard.sh` defaults to conservative — set `ALLOW_DESTRUCTIVE_MIGRATIONS=1` to bypass when you need to.
+- `db-migration-guard.sh` defaults to conservative — set `CLAUDE_ALLOW_DB_DESTRUCTIVE=1` to bypass when you need to.

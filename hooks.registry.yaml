@@ -614,7 +614,7 @@ hooks:
     path: hooks/devops/github-actions-validator.sh
     event: PreToolUse
     matcher: Write
-    description: "Validates YAML syntax of GitHub Actions workflow files before they are written. Fires on Write tool calls; payload has tool_input.path and tool_input.content. #"
+    description: "Validates YAML syntax of GitHub Actions workflow files before they are written. Fires on Write tool calls; payload has tool_input.file_path and tool_input.content. #"
     risk_level: blocking
     platforms:
       - macos

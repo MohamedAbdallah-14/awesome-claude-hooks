@@ -79,7 +79,7 @@ jobs:
             exit 1
           fi
 
-  bash-3.2-compat:
+  bash-3-2-compat:
     name: bash 3.2 syntax (hooks/)
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -179,7 +179,7 @@ jobs:
   required-checks:
     # Aggregator job so branch protection only needs one required check.
     name: required checks
-    needs: [shellcheck, lint-hooks, registry-drift, bats, bash-3.2-compat]
+    needs: [shellcheck, lint-hooks, registry-drift, bats, bash-3-2-compat]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -189,13 +189,13 @@ jobs:
           LINT_HOOKS: ${{ needs.lint-hooks.result }}
           REGISTRY: ${{ needs.registry-drift.result }}
           BATS: ${{ needs.bats.result }}
-          BASH32: ${{ needs['bash-3.2-compat'].result }}
+          BASH32: ${{ needs.bash-3-2-compat.result }}
         run: |
           echo "shellcheck=$SHELLCHECK"
           echo "lint-hooks=$LINT_HOOKS"
           echo "registry-drift=$REGISTRY"
           echo "bats=$BATS"
-          echo "bash-3.2-compat=$BASH32"
+          echo "bash-3-2-compat=$BASH32"
           if [ "$SHELLCHECK" != "success" ] || [ "$LINT_HOOKS" != "success" ] || [ "$REGISTRY" != "success" ] || [ "$BATS" != "success" ] || [ "$BASH32" != "success" ]; then
             echo "One or more required checks failed." >&2
             exit 1

@@ -18,10 +18,6 @@
           },
           {
             "type": "command",
-            "command": "bash ~/.claude/awesome-hooks/hooks/security/audit-bash-commands.sh"
-          },
-          {
-            "type": "command",
             "command": "bash ~/.claude/awesome-hooks/hooks/git/protect-main-branch.sh"
           },
           {
@@ -46,11 +42,19 @@
             "command": "bash ~/.claude/awesome-hooks/hooks/quality/validate-json-yaml.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/context/inject-recent-commits.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           {
             "type": "command",
@@ -71,23 +75,13 @@
         ]
       },
       {
-        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/awesome-hooks/hooks/context/inject-recent-commits.sh"
+            "command": "bash ~/.claude/awesome-hooks/hooks/security/audit-bash-commands.sh"
           }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/awesome-hooks/hooks/session/context-threshold-guard.sh"
-          }
-        ]
+        ],
+        "matcher": "Bash"
       }
     ],
     "Stop": [
@@ -108,6 +102,16 @@
           {
             "type": "command",
             "command": "bash ~/.claude/awesome-hooks/hooks/git/validate-commit-message.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/awesome-hooks/hooks/session/context-threshold-guard.sh"
           }
         ]
       }
