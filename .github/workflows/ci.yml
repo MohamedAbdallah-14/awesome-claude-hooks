@@ -180,6 +180,52 @@ jobs:
         # The default TAP formatter is what we want here anyway.
         run: bats -r tests
 
+  bench-smoke:
+    # Quick latency smoke. Catches a hook regression that adds a multi-hundred-
+    # millisecond hot-path (a `find /` somewhere, a sync `curl`, etc.) on the
+    # PreToolUse synchronous path Claude Code waits on.
+    name: bench smoke (PreToolUse p99)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
+
+      - name: Install jq
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y jq
+
+      - name: Make hooks executable
+        run: chmod +x hooks/**/*.sh
+
+      - name: Run quick benchmark
+        run: bash scripts/bench-hooks.sh --quick
+
+      - name: Fail if any PreToolUse p99 exceeds threshold
+        env:
+          THRESHOLD_MS: 500
+        run: |
+          set -euo pipefail
+          jq --argjson t "$THRESHOLD_MS" -r '
+            .[] | select(.event == "PreToolUse") | select(.p99_ms > $t)
+            | "  \(.path) — p99 \(.p99_ms)ms exceeds \($t)ms"
+          ' docs/benchmarks.json > /tmp/bench-fail.txt
+          if [ -s /tmp/bench-fail.txt ]; then
+            echo "PreToolUse hooks exceeding ${THRESHOLD_MS}ms p99:" >&2
+            cat /tmp/bench-fail.txt >&2
+            exit 1
+          fi
+          echo "All PreToolUse hooks under ${THRESHOLD_MS}ms p99."
+
+      - name: Upload benchmark report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: benchmarks
+          path: |
+            docs/benchmarks.md
+            docs/benchmarks.json
+
   required-checks:
     # Aggregator job so branch protection only needs one required check.
     name: required checks

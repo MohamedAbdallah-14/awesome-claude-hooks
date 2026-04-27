@@ -1,0 +1,180 @@
+name: Scaffold from new-hook issue
+
+# When someone opens an issue using the "Propose a new hook" template, this
+# workflow:
+#   1. parses the structured form fields (the "### Label" markers GitHub
+#      generates from .github/ISSUE_TEMPLATE/new_hook.yml)
+#   2. validates name/category/event/matcher against the contract
+#   3. on success: runs scripts/new-hook.sh non-interactively, commits the
+#      scaffold to a branch named `scaffold/<issue#>-<name>`, opens a draft
+#      PR linked to the issue, and posts a follow-up comment on the issue
+#   4. on validation failure: posts a comment listing exactly what to fix
+#
+# Only runs when the issue carries the `new-hook` label (set automatically by
+# the issue form). Manual edits to the issue body re-run validation.
+#
+# Security: every value derived from the issue body is passed through env:
+# variables, never inlined into a run: or github-script template literal.
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  # One scaffold attempt per issue at a time. Edited issues cancel a
+  # superseded validation run.
+  group: scaffold-issue-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  scaffold:
+    if: contains(github.event.issue.labels.*.name, 'new-hook')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.0
+
+      - name: Install jq
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y jq
+
+      - name: Parse issue body
+        id: parse
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: bash scripts/parse-new-hook-issue.sh
+
+      - name: Comment validation failure
+        if: steps.parse.outputs.valid != 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        env:
+          ERRORS: ${{ steps.parse.outputs.errors }}
+        with:
+          script: |
+            const errors = process.env.ERRORS || "(parser produced no detail)";
+            const body = [
+              "Thanks for proposing a hook. The scaffolding bot can't run yet — a few fields need fixing:",
+              "",
+              errors,
+              "",
+              "Edit the issue and the bot will re-validate automatically.",
+              "",
+              "_Reference: [`docs/hook-contract.md`](../blob/main/docs/hook-contract.md)._"
+            ].join("\n");
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
+
+      - name: Configure git
+        if: steps.parse.outputs.valid == 'true'
+        run: |
+          git config user.name 'awesome-hooks-bot'
+          git config user.email 'bot@users.noreply.github.com'
+
+      - name: Run scaffold
+        id: scaffold
+        if: steps.parse.outputs.valid == 'true'
+        env:
+          NAME: ${{ steps.parse.outputs.name }}
+          CATEGORY: ${{ steps.parse.outputs.category }}
+          EVENT: ${{ steps.parse.outputs.event }}
+          MATCHER: ${{ steps.parse.outputs.matcher }}
+          DESCRIPTION: ${{ steps.parse.outputs.description }}
+          BYPASS: ${{ steps.parse.outputs.bypass }}
+          STYLE: ${{ steps.parse.outputs.style }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          BRANCH="scaffold/${ISSUE_NUMBER}-${NAME}"
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+          git checkout -b "$BRANCH"
+
+          # Build the flag array — quoting via array prevents word-splitting
+          # of values that contain spaces (DESCRIPTION).
+          args=(
+            "--name=${NAME}"
+            "--category=${CATEGORY}"
+            "--event=${EVENT}"
+            "--description=${DESCRIPTION}"
+            "--style=${STYLE}"
+          )
+          [ -n "${MATCHER}" ] && args+=("--matcher=${MATCHER}")
+          [ -n "${BYPASS}"  ] && args+=("--bypass=${BYPASS}")
+
+          bash scripts/new-hook.sh "${args[@]}" </dev/null
+
+          git add hooks/ tests/
+          if git diff --cached --quiet; then
+            echo "nothing-to-commit=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "scaffold ${CATEGORY}/${NAME} (closes #${ISSUE_NUMBER})"
+          git push --set-upstream origin "$BRANCH"
+
+      - name: Open draft PR
+        if: steps.parse.outputs.valid == 'true' && steps.scaffold.outputs.nothing-to-commit != 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        env:
+          NAME: ${{ steps.parse.outputs.name }}
+          CATEGORY: ${{ steps.parse.outputs.category }}
+          EVENT: ${{ steps.parse.outputs.event }}
+          BRANCH: ${{ steps.scaffold.outputs.branch }}
+        with:
+          script: |
+            const name = process.env.NAME;
+            const category = process.env.CATEGORY;
+            const event = process.env.EVENT;
+            const branch = process.env.BRANCH;
+            const issueNum = context.issue.number;
+
+            const prBody = [
+              `Auto-scaffolded from #${issueNum}.`,
+              "",
+              `- Hook: \`hooks/${category}/${name}.sh\``,
+              `- Test: \`tests/${category}/${name}.bats\``,
+              `- Event: \`${event}\``,
+              "",
+              "## What's left for the contributor",
+              "",
+              "1. Implement the actual logic inside the hook script (search for `# TODO`).",
+              "2. Replace the example test cases with real ones.",
+              "3. Run `make all` locally and push fixes until green.",
+              "4. Convert this draft to ready-for-review.",
+              "",
+              `Closes #${issueNum}.`
+            ].join("\n");
+
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `scaffold: ${category}/${name}`,
+              head: branch,
+              base: 'main',
+              draft: true,
+              body: prBody
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNum,
+              body: [
+                `Scaffolded in #${pr.number}. Pull the branch with:`,
+                "",
+                "```bash",
+                "git fetch origin",
+                `git checkout ${branch}`,
+                "```",
+                "",
+                "Fill in the TODOs, run `make all`, push, then mark the PR ready for review."
+              ].join("\n")
+            });
