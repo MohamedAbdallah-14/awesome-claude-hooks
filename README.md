@@ -17,10 +17,6 @@ Security guards, quality gates, workflow automation, context injection, and team
 
 **Browse hooks:** [mohamedabdallah-14.github.io/awesome-claude-hooks](https://mohamedabdallah-14.github.io/awesome-claude-hooks/) — filter by category, event, risk level, or profile.
 
-<p align="center">
-  <img src="assets/demo.gif" alt="Demo: install the security profile, then a synthetic Write to .env is denied with a structured permissionDecision JSON" width="100%">
-</p>
-
 ---
 
 ## Why this exists
