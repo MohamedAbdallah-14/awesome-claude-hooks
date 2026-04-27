@@ -4,6 +4,42 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-04-27
+
+### Added
+- **11 new hooks (79 → 90).** Six quality gates for languages we didn't cover: `cargo-fmt-gate`, `cargo-clippy-gate` (Rust), `ktlint-gate` (Kotlin), `swiftlint-gate` (Swift), `rubocop-gate` (Ruby), `php-pint-gate` (PHP). All silently no-op when the underlying tool isn't on PATH. Five spec-coverage hooks for events the repo had zero coverage for: `log-tool-failures` and `suggest-fix-on-failure` (`PostToolUseFailure`), `permission-denied-logger` (`PermissionDenied`), `session-end-summary` (`SessionEnd`), and `auto-resume-from-stash` (`SessionStart` matcher `resume`).
+- **bats coverage now 421 cases (was 170).** Every hook in `security/`, `quality/`, `git/`, `devops/`, `ai/`, `automation/`, `context/`, `cost/`, `notifications/`, `fun/`, `prompt/`, `session/` has at least one test. Tests use new `assert_blocked` / `assert_allowed` / `posttool_payload` / `assert_blocked_post` helpers in `tests/test_helper.bash`.
+- **GitHub Pages browser** at <https://mohamedabdallah-14.github.io/awesome-claude-hooks/>. 820 lines of vanilla HTML+CSS+JS; filter by category, event, risk, profile, capability flags; full-text search; dark mode default; no external assets.
+- **`docs/hooks/`** gains 20 hero docs (was 5) covering the highest-stakes hooks across security, git, devops, ai, quality, automation, prompt, session.
+- **`docs/claude-code-versions.md`** — per-event minimum Claude Code version with hook counts. Versions cross-checked against the official changelog.
+- **`scripts/new-hook.sh`** — interactive scaffold (377 lines) for new hooks. Validates name/category/event/style; refuses to overwrite; generates lint-passing header + bats placeholder.
+- **`scripts/hook-doctor.sh`** — read-only validator (295 lines) that checks `~/.claude/settings.json` against the registry. Reports missing files, unknown events, dup commands, registry drift. Bash 3.2 compatible. `--json` output.
+- **`scripts/test-installer.sh`** — smoke-test for `--dry-run` across all 8 profiles.
+- **`make doctor`** — environment diagnostic (toolchain versions + settings validation + bash-3.2 compat check).
+- **`bash-3.2-compat` CI job** — builds bash 3.2 from source (cached), `bash -n`s every hook. `lint-hooks.sh` warns (not errors) on `declare -A` / `mapfile` / `coproc` / case-modification parameter expansion.
+- **`.claude/commands/`** — slash commands for `/create-hook`, `/hook-doctor`, `/list-profiles`, `/install-profile`.
+- Issue templates: `spec_drift.yml` for divergence-from-spec reports. Discussion templates: `help.yml` and `show-and-tell.yml`.
+- `ROADMAP.md` "On deck" backlog of 15 hooks grouped by uncovered events (covers `PermissionDenied`, `CwdChanged`, `SubagentStart`/`Stop`, `Notification`, `StopFailure`, `WorktreeCreate`/`Remove`, `InstructionsLoaded`, `ConfigChange`, `FileChanged`, `TaskCreated`/`Completed`).
+- `SHOWCASE.md` scaffold; top-level `CLAUDE.md` so contributors using Claude Code on this repo get the right priors.
+
+### Changed
+- README rewritten around user intent. Headline leads with the hook count + spec alignment + one-command install. "Browse all hooks" callout near the top points at the Pages site + `docs/hooks.md`. 226 lines (was 277).
+- Per-category `hooks/<cat>/README.md` rewritten for all 12 categories. Each delegates to the registry + `docs/hooks.md` instead of duplicating tables. ~80% size reduction on the 8 that already existed; 4 new ones (ai, devops, prompt, session).
+- All 11 starter packs updated. Settings JSON paths now match the README's quick-start clone target. Each pack composes `safe-default` core + stack-specific gates. Documented gaps where a stack lacks a quality gate.
+- CONTRIBUTING.md rewritten around the new contribution flow: scaffold → contract pointer → bats → optional hero doc → `make all`. Trimmed ~60 lines of contract material now delegated to `docs/hook-contract.md`.
+- All third-party GitHub Actions pinned to commit SHA across CI / labeler / lychee / dependabot-automerge / pages / release / stale.
+- Hook headers normalized: every hook that reads a `CLAUDE_*` env var now has a `# Config (env vars):` block. `terminal-title` Event header fixed (was the non-canonical `PreToolUse AND Stop`). `ai-migration-safety` Event header fixed (was the non-canonical `PreToolUse  (BLOCKING)` with a separate `# Matcher:` line).
+
+### Fixed
+- `hooks/ai/ai-code-review.sh` and `ai-security-scan.sh` were reading `tool_input.path` instead of `tool_input.file_path`. Hooks would never have fired on real Write events. Now read `.file_path` with `.path` fallback.
+- `hooks/devops/aws-prod-guard.sh`: BSD-grep regex bug (character class `[-_]` placement misread as an invalid range) and readonly-verb pattern matching trailing `--user-name test` style tokens. Tightened readonly detection to require the verb right after `aws <service>`; dropped ambiguous verbs `test`/`validate`/`preview`/`estimate`/`forecast`/`explain` from the readonly list.
+- `hooks/security/scan-sql-injection.sh`: JS template-literal regex `\$\{` collapsed to `$\{` after one round of bash unescaping; ERE then read `$` as the end-of-line anchor and the rule never matched. Replaced with `[$]\{`.
+- `hooks/ai/ai-migration-safety.sh`: dead code path. Built `PROMPT` via `jq -Rs` from empty stdin, then immediately overwrote it. Dropped the dead first invocation.
+- `hooks/devops/db-migration-guard.sh`: had no env-var bypass, in violation of the contract. Added `CLAUDE_ALLOW_DB_DESTRUCTIVE`.
+- `hooks/cost/daily-usage-report.sh`: used `declare -A` (bash 4 only). Rewrote per-tool / per-file counting to delegate to awk so the hook works under macOS `/bin/bash` 3.2.
+- `hooks/prompt/auto-approve-readonly.sh`: matcher listed `TodoRead`, which isn't a real Claude Code tool name. Removed.
+- `scripts/install.sh:get_hook_meta()`: matcher regex required quotes around the matcher token, but `xargs` upstream stripped them, crashing the installer on every hook with a `matcher` header. Now accepts both quoted and bare matcher tokens.
+
 ## [0.3.0] — 2026-04-27
 
 ### Changed (breaking for hook authors)

@@ -9,3 +9,6 @@
 # GitHub Pages site doesn't exist until pages.yml has run for the first time.
 # Skip until the site is live, then this can be removed.
 ^https://mohamedabdallah-14\.github\.io
+
+# Local-dev URLs in docs-site/README.md.
+^http://localhost
