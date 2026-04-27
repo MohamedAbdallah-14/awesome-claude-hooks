@@ -159,16 +159,16 @@ For threat coverage, hook risk levels, and review guidance see [`SECURITY_MODEL.
 
 | Category | Hooks | Examples |
 |----------|------:|----------|
+| [quality/](hooks/quality/) | 15 | eslint-gate, tsc-check, cargo-clippy-gate, ktlint-gate, rubocop-gate |
 | [notifications/](hooks/notifications/) | 10 | desktop-notify, slack-notify, telegram-notify |
-| [security/](hooks/security/) | 8 | block-secrets, protect-dotenv, block-dangerous-bash |
-| [quality/](hooks/quality/) | 8 | eslint-gate, tsc-check, validate-json-yaml |
+| [security/](hooks/security/) | 9 | block-secrets, protect-dotenv, block-dangerous-bash, permission-denied-logger |
 | [context/](hooks/context/) | 8 | inject-git-context, inject-typescript-errors |
+| [session/](hooks/session/) | 8 | session-start-context, precompact-backup, log-tool-failures, session-end-summary |
 | [automation/](hooks/automation/) | 7 | auto-format-on-save, auto-run-tests, auto-changelog |
-| [git/](hooks/git/) | 6 | protect-main-branch, validate-commit-message, conflict-detector |
-| [cost/](hooks/cost/) | 5 | budget-alert, daily-usage-report, session-timer |
-| [session/](hooks/session/) | 6 | session-start-context, precompact-backup |
+| [git/](hooks/git/) | 7 | protect-main-branch, validate-commit-message, auto-resume-from-stash |
 | [devops/](hooks/devops/) | 7 | terraform-destroy-guard, kubernetes-prod-guard |
 | [ai/](hooks/ai/) | 5 | ai-code-review, ai-security-scan, ai-migration-safety |
+| [cost/](hooks/cost/) | 5 | budget-alert, daily-usage-report, session-timer |
 | [prompt/](hooks/prompt/) | 5 | auto-approve-readonly, rate-limiter, banned-words-enforcer |
 | [fun/](hooks/fun/) | 4 | motivational-quote, break-reminder, ascii-confetti |
 

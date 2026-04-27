@@ -12,7 +12,7 @@ Hooks fire on Claude Code lifecycle events. Each event delivers a JSON payload o
 
 ### Tool Events
 
-- **PreToolUse** — fires before ANY tool executes. Payload: `{tool_name, tool_input, session_id, cwd}`. Can block (exit 2) or rewrite input via `updatedInput`. Most powerful event.
+- **PreToolUse** — fires before ANY tool executes. Payload: `{tool_name, tool_input, session_id, cwd}`. Can block via `hookSpecificOutput.permissionDecision: "deny"` (with exit 0) or rewrite input via `updatedInput`. Most powerful event.
 - **PostToolUse** — fires after tool completes. Payload adds: `tool_response`. Cannot block (already ran). Use for: side effects, logging, analysis.
 
 ### User Events
@@ -119,12 +119,20 @@ Spawns a full subagent with the payload. Use for complex async processing.
 {"additionalContext": "text Claude will see before its next response"}
 ```
 
-### Block tool (PreToolUse only — exit code 2)
+### Block tool (PreToolUse — structured permission decision)
 
 ```bash
-echo '{"decision":"block","reason":"Blocked: targets production"}'
-exit 2
+jq -n --arg r "Blocked: targets production" '{
+  hookSpecificOutput: {
+    hookEventName: "PreToolUse",
+    permissionDecision: "deny",
+    permissionDecisionReason: $r
+  }
+}'
+exit 0
 ```
+
+JSON is parsed only on `exit 0`. On `exit 2` the stdout is ignored and stderr is shown to Claude — use that path only when you want a plain-text reason instead of a structured decision.
 
 ### Rewrite tool input (PreToolUse — updatedInput)
 

@@ -21,7 +21,9 @@ TOOL=$(echo "$INPUT" | jq -r '.tool_name // ""')
 # Your logic here
 # ...
 
-# Exit 0 = allow/success, exit 2 = block, other non-zero = error (treated as allow)
+# Exit 0 = parse stdout as JSON (this is how blocking decisions are reported).
+# Exit 2 = print stderr to Claude as an error; stdout is ignored.
+# Other non-zero = treated as allow; logged.
 exit 0
 ```
 
@@ -57,28 +59,32 @@ FILE=$(echo "$INPUT" | jq -re '.tool_input.file_path')
 
 | Code | Meaning | Effect |
 |------|---------|--------|
-| `0` | Success | Tool runs (PreToolUse) / session ends (Stop) |
-| `2` | Block | Tool is blocked (PreToolUse) / Claude re-activates (Stop) |
+| `0` | Success — stdout is parsed as JSON if present | JSON decision (block, approve, inject context, rewrite input) is honored |
+| `2` | Error path — stdout is ignored, stderr is shown to Claude as an error | Use when you want Claude to see a plain-text reason and not a structured decision |
 | Other | Error | Treated as allow in most contexts; logged |
 
-`exit 2` is the only "intentional block" signal. Use it only when you've printed a valid JSON decision to stdout. An exit 2 with no stdout output confuses Claude.
+Pick **one** signaling style per hook — never both. Claude Code does not parse JSON on exit 2; the JSON will be silently dropped.
+
+For PreToolUse blocking, prefer the structured form: emit `hookSpecificOutput` with `permissionDecision: "deny"` and exit 0. See `docs/hook-contract.md` for the full schema.
 
 ## Writing Output: JSON vs Plain Text
 
-Claude Code reads your hook's stdout. The behavior depends on content:
+Claude Code reads your hook's stdout on exit 0. The behavior depends on content:
 
 **JSON object** — parsed and acted on:
 ```bash
-# Block a tool call
-echo '{"decision":"block","reason":"Reason Claude will see."}'
-exit 2
+# Block a tool call (PreToolUse — structured form)
+jq -n --arg r "Reason Claude will see." '{
+  hookSpecificOutput: {
+    hookEventName: "PreToolUse",
+    permissionDecision: "deny",
+    permissionDecisionReason: $r
+  }
+}'
+exit 0
 
 # Inject context (works in all events)
 echo '{"context":"Information Claude should factor into its next step."}'
-exit 0
-
-# Approve with context (PreToolUse only)
-echo '{"decision":"approve","context":"Extra info."}'
 exit 0
 ```
 
@@ -225,9 +231,17 @@ FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // ""')
 # Only validate .env files
 echo "$FILE" | grep -qE '\.env' || exit 0
 
-# Block writes to .env files
-echo '{"decision":"block","reason":"Direct writes to .env files are blocked. Use .env.example and document the change, or confirm you mean to update local env."}'
-exit 2
+# Block writes to .env files (PreToolUse structured form)
+jq -n --arg r "Direct writes to .env files are blocked. Use .env.example and document the change, or confirm you mean to update local env." '
+{
+  hookSpecificOutput: {
+    hookEventName: "PreToolUse",
+    permissionDecision: "deny",
+    permissionDecisionReason: $r
+  }
+}
+'
+exit 0
 ```
 
 ### Pattern 4: Post-processing (do something after)

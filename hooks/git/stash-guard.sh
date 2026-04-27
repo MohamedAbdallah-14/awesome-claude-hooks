@@ -16,7 +16,7 @@
 #                git merge <branch>       — merging into dirty tree
 #
 #              Default behaviour: approve with a context warning (exit 0).
-#              With CLAUDE_STASH_GUARD_BLOCK=1: block (exit 2) instead.
+#              With CLAUDE_STASH_GUARD_BLOCK=1: block via permissionDecision=deny.
 #
 # Config (env vars):
 #   CLAUDE_STASH_GUARD_BLOCK=1   Upgrade from warn to hard block.
