@@ -9,7 +9,7 @@ What's next, what's deliberately not next, and what's never going to be.
 - `hooks.registry.yaml` is the single source of truth. `docs/hooks.md`, `docs/events.md`, `docs/compatibility.md` regenerate from it.
 - `--profile` system in the installer with 8 curated bundles.
 - bats coverage for every blocking hook in `security/`, `quality/`, `git/`, `devops/`, and `ai/`.
-- Hero docs for top 15 hooks under `docs/hooks/`.
+- Hero docs for top 26 hooks under `docs/hooks/`.
 - `SECURITY_MODEL.md` with hook risk levels and review guidance.
 - `scripts/new-hook.sh` scaffold and `scripts/hook-doctor.sh` validator.
 - Bash 3.2 syntax CI matrix for the hooks themselves (scripts/ stay bash 4+).

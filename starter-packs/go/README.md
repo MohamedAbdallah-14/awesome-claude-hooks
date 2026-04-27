@@ -18,8 +18,8 @@ Drop-in `settings.json` for Go services and binaries. Layers `safe-default` with
 **Post-Bash**
 - `context/inject-recent-commits`.
 
-**SessionStart**
-- `session/context-threshold-guard`.
+**UserPromptSubmit**
+- `session/context-threshold-guard` — warns when transcript grows past a threshold.
 
 **Stop**
 - `notifications/desktop-notify`, `session/session-summary`, `context/inject-git-context`, `cost/log-tool-usage`.

@@ -33,7 +33,7 @@ Non-AWS commands pass through unconditionally.
 
 Claude wants to run:
 
-```
+```bash
 aws s3 rb s3://customer-data --force
 ```
 

@@ -87,7 +87,7 @@ To verify the skip-types env var:
 
 ```bash
 echo '{"hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/fmt-test/demo.py"}}' \
-  | CLAUDE_AUTOFORMAT_SKIP_TYPES=py bash hooks/automation/auto-format-on-save.sh
+  | CLAUDE_AUTOFORMAT_SKIP_TYPES=py bash $OLDPWD/hooks/automation/auto-format-on-save.sh
 ```
 
 Expected: stderr message indicating the file was skipped because of the skip list.

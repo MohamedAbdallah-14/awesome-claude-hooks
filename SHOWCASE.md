@@ -14,7 +14,7 @@ Teams and projects using awesome-claude-hooks. Submit a PR adding yours — see 
 
 - _<quote, attribution>_
 
-## Tutorials and writeups
+## Tutorials and write-ups
 
 - _<title — author — link>_
 
@@ -31,7 +31,7 @@ Awesome-list inclusions, blog posts, podcasts, and conference talks that referen
 Open a PR adding a bullet under the relevant section. No gatekeeping.
 
 1. Fork the repo and edit `SHOWCASE.md`.
-2. Add a single bullet under the section that fits — Open source, Companies, Featured testimonials, Tutorials and writeups, or Mentioned in.
+2. Add a single bullet under the section that fits — Open source, Companies, Featured testimonials, Tutorials and write-ups, or Mentioned in.
 3. Match the placeholder format exactly. Keep it to one line.
 4. Open the PR. Title: `showcase: add <name>`.
 

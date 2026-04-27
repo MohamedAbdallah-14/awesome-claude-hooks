@@ -1,7 +1,7 @@
 # `auto-approve-readonly`
 
 > Source: [`hooks/prompt/auto-approve-readonly.sh`](../../hooks/prompt/auto-approve-readonly.sh)
-> Event: `PreToolUse` (matcher `Read|Glob|Grep|LS|WebSearch|WebFetch|TodoRead`)
+> Event: `PreToolUse` (matcher `Read|Glob|Grep|LS|WebSearch|WebFetch`)
 > Risk level: `non-blocking` (approves; never denies)
 > Bypass: remove the hook, or narrow the matcher
 
@@ -25,7 +25,6 @@ Tools auto-approved:
 | `LS` | Directory listing |
 | `WebSearch` | Outbound search query |
 | `WebFetch` | Outbound HTTP GET |
-| `TodoRead` | Reads todo list |
 
 Anything not in that list (Write, Edit, MultiEdit, Bash, Task, etc.) gets no output, so Claude Code's existing permission rules — allowlist, project settings, user prompts — handle them as normal.
 
@@ -35,7 +34,7 @@ User runs Claude Code with default permissions. Claude needs to grep for a funct
 
 ## After
 
-The PreToolUse hook fires before each tool. For `Read`/`Glob`/`Grep`/`LS`/`WebSearch`/`WebFetch`/`TodoRead`, it emits:
+The PreToolUse hook fires before each tool. For `Read`/`Glob`/`Grep`/`LS`/`WebSearch`/`WebFetch`, it emits:
 
 ```json
 {

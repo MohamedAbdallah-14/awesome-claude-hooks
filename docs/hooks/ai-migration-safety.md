@@ -37,7 +37,7 @@ The fail-open default is deliberate. False positives on migrations are expensive
 
 Claude wants to run:
 
-```
+```bash
 npx prisma migrate deploy
 ```
 

@@ -68,7 +68,7 @@ Claude reads the finding and switches to a parameterized query before the bug pr
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-echo '{"hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"path":"/tmp/x.js","content":"db.query(\"SELECT * FROM u WHERE id=\" + req.query.id)"}}' \
+echo '{"hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/x.js","content":"db.query(\"SELECT * FROM u WHERE id=\" + req.query.id)"}}' \
   | bash hooks/ai/ai-security-scan.sh; echo "exit: $?"
 ```
 

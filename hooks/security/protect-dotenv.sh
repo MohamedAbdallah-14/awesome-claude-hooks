@@ -69,10 +69,14 @@ if [[ "$BASENAME" == ".env" ]]; then
 fi
 
 # .env.* variants: .env.local, .env.production, .env.development, .env.test, etc.
-# Allowlist non-secret companions: .env.example, .env.sample, .env.template, .env.dist
-if [[ "$BASENAME" =~ ^\.env\. ]] \
-   && ! [[ "$BASENAME" =~ ^\.env\.(example|sample|template|dist)$ ]]; then
+# Allowlist non-secret companions: .env.example, .env.sample, .env.template, .env.dist.
+# bash 3.2 doesn't accept a multi-line [[ ]] with `&&` continuation, so the
+# allowlist check is split into two if blocks instead.
+if [[ "$BASENAME" =~ ^\.env\. ]]; then
   IS_ENV_FILE=1
+fi
+if [[ "$BASENAME" =~ ^\.env\.(example|sample|template|dist)$ ]]; then
+  IS_ENV_FILE=0
 fi
 
 # *.env suffix: database.env, config.env, etc.

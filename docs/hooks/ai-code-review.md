@@ -66,7 +66,7 @@ Claude reads the context on the next turn and patches the helper before threadin
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-echo '{"hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"path":"/tmp/x.py","content":"def page(n,s): return n*s  # off by one"}}' \
+echo '{"hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/x.py","content":"def page(n,s): return n*s  # off by one"}}' \
   | bash hooks/ai/ai-code-review.sh; echo "exit: $?"
 ```
 

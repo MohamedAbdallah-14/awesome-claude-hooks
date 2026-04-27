@@ -54,8 +54,11 @@ posttool_payload() {
   payload=$(posttool_payload)
   printf '6\n' > "$COUNT_FILE"
   pfile=$(mktemp); printf '%s' "$payload" > "$pfile"
-  # HARD_LIMIT=7 so increment hits 7
-  run env HOME="$TMPHOME" CLAUDE_BUDGET_SOFT_LIMIT=2 CLAUDE_BUDGET_HARD_LIMIT=7 bash -c "bash '$HOOK' < '$pfile'"
+  # HARD_LIMIT=7 so increment hits 7. Discard stderr so the
+  # notify-send / fallback warning the hook prints there doesn't
+  # land in $output and break jq parsing.
+  run env HOME="$TMPHOME" CLAUDE_BUDGET_SOFT_LIMIT=2 CLAUDE_BUDGET_HARD_LIMIT=7 \
+    bash -c "bash '$HOOK' < '$pfile' 2>/dev/null"
   rm -f "$pfile"
   [ "$status" -eq 0 ]
   printf '%s' "$output" | jq -e '.decision == "approve" and (.context | type == "string")' >/dev/null

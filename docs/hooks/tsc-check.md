@@ -36,7 +36,7 @@ Project sits at 12 known TS errors (legacy code). Claude refactors `src/parser.t
 
 The PostToolUse hook fires. Claude sees in the conversation:
 
-```
+```text
 [tsc-check] REGRESSION: TypeScript errors INCREASED by 6 in /repo
 [tsc-check]   Before this change: 12 error(s)
 [tsc-check]   After this change:  18 error(s)
